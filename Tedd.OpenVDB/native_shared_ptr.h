@@ -1,6 +1,7 @@
 #include "pch.h"
 #pragma once
 #pragma managed(push, on)
+#define FASTCALL [System::Runtime::CompilerServices::MethodImpl(System::Runtime::CompilerServices::MethodImplOptions::AggressiveInlining)]
 
 namespace Tedd {
 	namespace OpenVDB {
@@ -15,18 +16,22 @@ namespace Tedd {
 			std::shared_ptr<T>* pPtr;
 
 		public:
+			FASTCALL
 			native_shared_ptr()
 				: pPtr(new std::shared_ptr<T>())
 			{}
 
+			FASTCALL
 			native_shared_ptr(T* t) {
 				pPtr = new std::shared_ptr<T>(t);
 			}
 
+			FASTCALL
 			native_shared_ptr(std::shared_ptr<T> t) {
 				pPtr = new std::shared_ptr<T>(t);
 			}
 
+			FASTCALL
 			native_shared_ptr(const native_shared_ptr<T>% t) {
 				pPtr = new std::shared_ptr<T>(*t.pPtr);
 			}
@@ -39,33 +44,41 @@ namespace Tedd {
 				delete pPtr;
 			}
 
+			FASTCALL
 			operator std::shared_ptr<T>() {
 				return *pPtr;
 			}
 
+			FASTCALL
 			native_shared_ptr<T>% operator=(T* ptr) {
 				delete pPtr;
 				pPtr = new std::shared_ptr<T>(ptr);
 				return *this;
 			}
 
+			FASTCALL
 			T* operator->() {
 				return (*pPtr).get();
 			}
 
+			FASTCALL
 			void reset() {
 				pPtr->reset();
 			}
 
+			FASTCALL
 			void operator=(const native_shared_ptr<T>% rhs)
 			{
 				*pPtr = *rhs.pPtr;
 			}
+			
+			FASTCALL
 			void operator=(const std::shared_ptr<T>% rhs)
 			{
 				*pPtr = rhs;
 			}
 
+			FASTCALL
 			std::shared_ptr<T> getSharedPtr()
 			{
 				return *pPtr;
