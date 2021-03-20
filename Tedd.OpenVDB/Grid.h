@@ -7,10 +7,14 @@
 
 #include "Accessor.h"
 #include "Structs.h"
+// System::Security::SuppressUnmanagedCodeSecurity
+#define FASTCALL [System::Runtime::CompilerServices::MethodImpl(System::Runtime::CompilerServices::MethodImplOptions::AggressiveInlining)]
 
-#define NAME FloatGrid
 using GRIDTYPE = int;
 //#include "Grid_Impl.h"
+
+// https://docs.microsoft.com/en-us/cpp/dotnet/performance-considerations-for-interop-cpp?view=msvc-160
+// https://docs.microsoft.com/en-us/cpp/dotnet/double-thunking-cpp?view=msvc-160
 
 namespace Tedd {
 	namespace OpenVDB {
@@ -39,23 +43,29 @@ namespace Tedd {
 			//	return new Accessor<GRIDTYPE>(ptr_.get().getAccessor());
 			//}
 
-			long memUsage() {
+			FASTCALL
+				long __clrcall memUsage() {
 				return ptr_->memUsage();
 			}
 
-			void setName(System::String^ name) {
+			FASTCALL
+				void __clrcall setName(System::String^ name) {
 				ptr_->setName(SystemString2StdString(name));
 			}
-			System::String^ getName() {
+
+			FASTCALL
+				System::String^ getName() {
 				return StdString2SystemString(ptr_->getName());
 			}
 
-			long activeVoxelCount() {
+			FASTCALL
+				long __clrcall activeVoxelCount() {
 				return ptr_->activeVoxelCount();
 				//return ptr_.get().activeVoxelCount();
 			}
 
-			void set(BlockPos pos, GRIDTYPE value)
+			FASTCALL
+				void __clrcall set(BlockPos pos, GRIDTYPE value)
 			{
 				// Define a coordinate with large signed indices.
 				openvdb::Coord xyz(pos.X, pos.Y, pos.Z);
@@ -63,13 +73,30 @@ namespace Tedd {
 				accessor_->setValue(xyz, value);
 			}
 
-			GRIDTYPE get(BlockPos pos)
+			FASTCALL
+				void __clrcall set(int x, int y, int z, GRIDTYPE value)
+			{
+				// Define a coordinate with large signed indices.
+				openvdb::Coord xyz(x, y, z);
+				// Set the voxel value at (1000, -200000000, 30000000) to 1.
+				accessor_->setValue(xyz, value);
+			}
+
+			FASTCALL
+				GRIDTYPE __clrcall get(BlockPos pos)
 			{
 				openvdb::Coord xyz(pos.X, pos.Y, pos.Z);
 				return accessor_->getValue(xyz);
 			}
 
-			void saveFile(System::String^ filename)
+			FASTCALL
+				GRIDTYPE __clrcall get(int x, int y, int z)
+			{
+				openvdb::Coord xyz(x, y, z);
+				return accessor_->getValue(xyz);
+			}
+
+			void __clrcall saveFile(System::String^ filename)
 			{
 				openvdb::io::File file(SystemString2StdString(filename));
 				openvdb::GridPtrVec grids;
@@ -78,7 +105,7 @@ namespace Tedd {
 				file.close();
 			}
 
-			void loadFile(System::String^ filename, System::String^ gridName)
+			void __clrcall loadFile(System::String^ filename, System::String^ gridName)
 			{
 				openvdb::io::File file(SystemString2StdString(filename));
 
@@ -98,7 +125,7 @@ namespace Tedd {
 				gridPtr = file.readGrid(SystemString2StdString(gridName));
 
 				GRID::Ptr grid = openvdb::gridPtrCast<GRID>(gridPtr);
-				
+
 				//openvdb::GridPtrVec grids;
 				//grids.push_back(ptr_.getSharedPtr());
 				//file.write(grids);
@@ -112,7 +139,7 @@ namespace Tedd {
 			native_shared_ptr<ACCESSOR> accessor_;
 			bool gridIsSet_;
 
-			void setGrid(GRID::Ptr grid)
+			void __clrcall setGrid(GRID::Ptr grid)
 			{
 				unsetGrid();
 				gridIsSet_ = true;
@@ -120,7 +147,7 @@ namespace Tedd {
 				accessor_ = native_shared_ptr<ACCESSOR>(std::make_shared<ACCESSOR>(ptr_->getAccessor()));
 			}
 
-			void unsetGrid()
+			void __clrcall unsetGrid()
 			{
 				if (gridIsSet_)
 				{
@@ -132,12 +159,12 @@ namespace Tedd {
 				}
 			}
 
-			const std::string& SystemString2StdString(System::String^ string)
+			const std::string __clrcall SystemString2StdString(System::String^ string)
 			{
 				return msclr::interop::marshal_as<std::string>(string);
 			}
 
-			System::String^ StdString2SystemString(std::string string)
+			System::String^ __clrcall StdString2SystemString(std::string string)
 			{
 				return gcnew System::String(string.c_str());
 			}
