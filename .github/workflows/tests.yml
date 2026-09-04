@@ -1,5 +1,7 @@
 name: managed-tests
 on: [push, pull_request]
+permissions:
+  contents: read
 jobs:
   tests:
     strategy:
@@ -12,7 +14,35 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           global-json-file: global.json
-      - run: dotnet test Tedd.OpenVDB.slnx -c Release
+      - run: dotnet build Tedd.OpenVDB.slnx -c Release
+      - run: dotnet test Tedd.OpenVDB.slnx -c Release --no-build
         env:
           DOTNET_EnableHWIntrinsic: ${{ matrix.intrinsics }}
       - run: dotnet run --project samples/VoxelBlocks -c Release --no-build
+  publish:
+    needs: tests
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    concurrency:
+      group: nuget-publish
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - name: Build package
+        run: dotnet build src/Tedd.OpenVDB/Tedd.OpenVDB.csproj -c Release
+      - name: Publish on version change
+        uses: tedd/publish-nuget-neo@v1
+        with:
+          PROJECT_FILE_PATH: src/Tedd.OpenVDB/Tedd.OpenVDB.csproj
+          PACKAGE_NAME: tedd.openvdb
+          NUGET_KEY: ${{ secrets.NUGET_API_KEY }}
+          INCLUDE_SYMBOLS: true
+          TAG_COMMIT: true
+          REBUILD_PROJECT: false
