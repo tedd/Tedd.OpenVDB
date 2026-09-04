@@ -3,110 +3,101 @@
 // Ported from openvdb/math/Transform.h, Transform.cc and Maps.h.
 namespace Tedd.OpenVDB.Math;
 
-/// <summary>Mutable index/world transform with affine or nonlinear frustum mapping.</summary>
-/// <remarks>Pre/post operations act on the affine component, including the secondary map of a frustum.
-/// Concurrent readers are supported only while the transform is not being modified.</remarks>
+/// <summary>Mutable index/world transform that retains native map identity and specialized arithmetic.</summary>
+/// <remarks>Maps are immutable snapshots; mutating a transform replaces its map. Concurrent access requires external synchronization during mutation.</remarks>
 public sealed partial class Transform
 {
+    private MapBase _map = null!;
     private Mat4d _matrix, _inverse;
     private NonlinearFrustumMap? _frustum;
-    public Transform() : this(Mat4d.Identity) { }
-    public Transform(Mat4d matrix) => SetMatrix(matrix);
-    public Transform(NonlinearFrustumMap frustum)
+    /// <summary>The native default constructor uses an identity ScaleMap.</summary>
+    public Transform() => SetMap(new ScaleMap());
+    /// <summary>Creates an explicit AffineMap without simplification. The matrix factory follows native simplification.</summary>
+    public Transform(Mat4d matrix) => SetMap(new AffineMap(matrix));
+    public Transform(NonlinearFrustumMap frustum) { ArgumentNullException.ThrowIfNull(frustum); SetMap(frustum.Copy()); }
+    /// <summary>Constructs from a map using native automatic linear simplification.</summary>
+    public Transform(MapBase map)
     {
-        ArgumentNullException.ThrowIfNull(frustum);
-        SetMatrix(frustum.SecondMap); _frustum = frustum.Copy();
+        ArgumentNullException.ThrowIfNull(map);
+        SetMap(map.IsLinear && map is not UniformScaleMap ? MapBase.Simplify(map.GetAffineMap()) : map.Copy());
     }
-    /// <summary>The complete affine matrix, or the affine secondary matrix for a frustum.</summary>
+    /// <summary>Creates a transform with exact map identity unless simplification is requested.</summary>
+    public static Transform FromMap(MapBase map, bool simplify = false)
+    {
+        ArgumentNullException.ThrowIfNull(map);
+        if (simplify) return new(map);
+        var result = new Transform(); result.SetMap(map.Copy()); return result;
+    }
+    public MapBase BaseMap => _map;
+    /// <summary>Replaces the map from native transform framing without automatic simplification.</summary>
+    public void Read(Stream stream, bool leaveOpen = true, IO.VdbReadOptions? options = null) => SetMap(IO.VdbFile.ReadTransformMap(stream, leaveOpen, options)._map);
+    public void Write(Stream stream, bool leaveOpen = true) => IO.VdbFile.WriteTransformMap(stream, this, leaveOpen);
+    /// <summary>The affine matrix, or the secondary affine matrix for a frustum.</summary>
     public Mat4d Matrix => _matrix;
     public Mat4d InverseMatrix => _inverse;
     public NonlinearFrustumMap? FrustumMap => _frustum;
-    public string MapType => _frustum is null ? "AffineMap" : "NonlinearFrustumMap";
-    public bool IsLinear => _frustum is null;
-    public bool IsIdentity => _frustum?.IsIdentity ?? _matrix.ApproxEquals(Mat4d.Identity);
-    /// <summary>Determinant of the affine component, following OpenVDB's positionless overload.</summary>
-    public double VoxelVolume => _matrix.Determinant3x3;
-    public double VoxelVolumeAt(Vec3d indexLocation) => _frustum?.DeterminantAt(indexLocation) ?? VoxelVolume;
-    public Vec3d VoxelSize => _frustum?.VoxelSize ?? new Vec3d(_matrix.TransformDirection(Vec3d.UnitX).Length, _matrix.TransformDirection(Vec3d.UnitY).Length, _matrix.TransformDirection(Vec3d.UnitZ).Length);
-    public Vec3d VoxelSizeAt(Vec3d indexLocation) => _frustum?.VoxelSizeAt(indexLocation) ?? VoxelSize;
-    public bool HasUniformScale
-    {
-        get
-        {
-            if (_frustum is not null) return false;
-            var x = _matrix.TransformDirection(Vec3d.UnitX);
-            var y = _matrix.TransformDirection(Vec3d.UnitY);
-            var z = _matrix.TransformDirection(Vec3d.UnitZ);
-            double scaleSquared = System.Math.Pow(System.Math.Abs(VoxelVolume), 2.0 / 3.0);
-            const double tolerance = 1e-8;
-            return System.Math.Abs(x.LengthSquared / scaleSquared - 1) <= tolerance && System.Math.Abs(y.LengthSquared / scaleSquared - 1) <= tolerance &&
-                System.Math.Abs(z.LengthSquared / scaleSquared - 1) <= tolerance && System.Math.Abs(x.Dot(y) / scaleSquared) <= tolerance &&
-                System.Math.Abs(x.Dot(z) / scaleSquared) <= tolerance && System.Math.Abs(y.Dot(z) / scaleSquared) <= tolerance;
-        }
-    }
-    public static Transform CreateLinearTransform(double voxelSize = 1) => new(Mat4d.CreateScale(voxelSize));
-    public static Transform CreateLinearTransform(Mat4d matrix) => new(matrix);
+    public string MapType => _map.MapType;
+    public bool IsLinear => _map.IsLinear;
+    public bool IsIdentity => _map.IsIdentity;
+    public double VoxelVolume => _map.Determinant;
+    public double VoxelVolumeAt(Vec3d location) => _map.DeterminantAt(location);
+    public Vec3d VoxelSize => _map.VoxelSize;
+    public Vec3d VoxelSizeAt(Vec3d location) => _map.VoxelSizeAt(location);
+    public bool HasUniformScale => _map.HasUniformScale;
+    public static Transform CreateLinearTransform(double voxelSize = 1) => new(new UniformScaleMap(voxelSize));
+    public static Transform CreateLinearTransform(Mat4d matrix) => new(new AffineMap(matrix));
     public static Transform CreateFrustumTransform(BBoxd boundingBox, double taper, double depth, double voxelSize = 1) =>
-        new(new NonlinearFrustumMap(boundingBox, taper, depth, Mat4d.CreateScale(voxelSize)));
-    public Transform Copy() => _frustum is null ? new(_matrix) : new(_frustum);
-    public Transform Inverse() => _frustum is null ? new(_inverse) : throw new NotSupportedException("The inverse of a frustum cannot be represented as an OpenVDB transform map.");
-    public Vec3d IndexToWorld(Vec3d coordinate) => _frustum?.ApplyMap(coordinate) ?? _matrix.TransformPoint(coordinate);
-    public Vec3d IndexToWorld(Coord coordinate) => IndexToWorld(coordinate.AsVec3d());
-    public Vec3d WorldToIndex(Vec3d coordinate) => _frustum?.ApplyInverseMap(coordinate) ?? _inverse.TransformPoint(coordinate);
+        new(new NonlinearFrustumMap(boundingBox, taper, depth).PreScale(new Vec3d(voxelSize)));
+    /// <summary>Copies the map, applying the same linear simplification as native Transform.copy().</summary>
+    public Transform Copy() => new(_map.Copy());
+    public Transform Inverse() => FromMap(_map.InverseMap());
+    public Vec3d IndexToWorld(Vec3d coordinate) => _map.ApplyMap(coordinate);
+    public Vec3d IndexToWorld(Coord coordinate) => _map.ApplyMap(coordinate.AsVec3d());
+    public Vec3d WorldToIndex(Vec3d coordinate) => _map.ApplyInverseMap(coordinate);
     public Coord WorldToIndexCellCentered(Vec3d coordinate) => Coord.Round(WorldToIndex(coordinate));
     public Coord WorldToIndexNodeCentered(Vec3d coordinate) => Coord.Floor(WorldToIndex(coordinate));
-    public Vec3d ApplyJacobian(Vec3d vector) => _matrix.TransformDirection(vector);
-    public Vec3d ApplyInverseJacobian(Vec3d vector) => _inverse.TransformDirection(vector);
-    public Vec3d ApplyJacobianTranspose(Vec3d vector) => _matrix.Transpose().TransformDirection(vector);
-    public Vec3d ApplyInverseJacobianTranspose(Vec3d vector) => _inverse.Transpose().TransformDirection(vector);
-    public Vec3d ApplyJacobian(Vec3d vector, Vec3d indexLocation) => _frustum?.ApplyJacobian(vector, indexLocation) ?? ApplyJacobian(vector);
-    public Vec3d ApplyInverseJacobian(Vec3d vector, Vec3d indexLocation) => _frustum?.ApplyInverseJacobian(vector, indexLocation) ?? ApplyInverseJacobian(vector);
-    public Vec3d ApplyJacobianTranspose(Vec3d vector, Vec3d indexLocation) => _frustum?.ApplyJacobianTranspose(vector, indexLocation) ?? ApplyJacobianTranspose(vector);
-    public Vec3d ApplyInverseJacobianTranspose(Vec3d vector, Vec3d indexLocation) => _frustum?.ApplyInverseJacobianTranspose(vector, indexLocation) ?? ApplyInverseJacobianTranspose(vector);
-    public Mat3d Jacobian(Vec3d indexLocation) => _frustum?.Jacobian(indexLocation) ?? _matrix.GetMat3();
-    public Mat3d ApplyInverseJacobianCurvature(Mat3d hessian)
-    {
-        Mat3d inverse = _inverse.GetMat3();
-        return inverse * hessian * inverse.Transpose();
-    }
-    public Mat3d ApplyInverseJacobianCurvature(Mat3d hessian, Vec3d gradient, Vec3d indexLocation) =>
-        _frustum?.ApplyInverseJacobianCurvature(hessian, gradient, indexLocation) ?? ApplyInverseJacobianCurvature(hessian);
-
-    public void PreTranslate(Vec3d translation) => PreMult(Mat4d.CreateTranslation(translation));
-    public void PostTranslate(Vec3d translation) => PostMult(Mat4d.CreateTranslation(translation));
-    public void PreScale(double scale) => PreScale(new Vec3d(scale));
-    public void PostScale(double scale) => PostScale(new Vec3d(scale));
-    public void PreScale(Vec3d scale) => PreMult(Mat4d.CreateScale(scale));
-    public void PostScale(Vec3d scale) => PostMult(Mat4d.CreateScale(scale));
-    public void PreRotate(double radians, Axis axis = Axis.X) => PreMult(Mat4d.CreateRotation(radians, axis));
-    public void PostRotate(double radians, Axis axis = Axis.X) => PostMult(Mat4d.CreateRotation(radians, axis));
-    public void PreShear(double factor, Axis axis0, Axis axis1) => PreMult(Mat4d.CreateShear(factor, axis0, axis1));
-    public void PostShear(double factor, Axis axis0, Axis axis1) => PostMult(Mat4d.CreateShear(factor, axis0, axis1));
+    public Vec3d ApplyJacobian(Vec3d vector) => _map.ApplyJacobian(vector);
+    public Vec3d ApplyInverseJacobian(Vec3d vector) => _map.ApplyInverseJacobian(vector);
+    public Vec3d ApplyJacobianTranspose(Vec3d vector) => _map.ApplyJacobianTranspose(vector);
+    public Vec3d ApplyInverseJacobianTranspose(Vec3d vector) => _map.ApplyInverseJacobianTranspose(vector);
+    public Vec3d ApplyJacobian(Vec3d vector, Vec3d location) => _map.ApplyJacobian(vector, location);
+    public Vec3d ApplyInverseJacobian(Vec3d vector, Vec3d location) => _map.ApplyInverseJacobian(vector, location);
+    public Vec3d ApplyJacobianTranspose(Vec3d vector, Vec3d location) => _map.ApplyJacobianTranspose(vector, location);
+    public Vec3d ApplyInverseJacobianTranspose(Vec3d vector, Vec3d location) => _map.ApplyInverseJacobianTranspose(vector, location);
+    public Mat3d Jacobian(Vec3d location) => _map.Jacobian(location);
+    public Mat3d ApplyInverseJacobianCurvature(Mat3d hessian) => _map.ApplyInverseJacobianCurvature(hessian);
+    public Mat3d ApplyInverseJacobianCurvature(Mat3d hessian, Vec3d gradient, Vec3d location) => _map.ApplyInverseJacobianCurvature(hessian, gradient, location);
+    public void PreTranslate(Vec3d value) => SetMap(_map.PreTranslate(value));
+    public void PostTranslate(Vec3d value) => SetMap(_map.PostTranslate(value));
+    public void PreScale(double value) => PreScale(new Vec3d(value));
+    public void PostScale(double value) => PostScale(new Vec3d(value));
+    public void PreScale(Vec3d value) => SetMap(_map.PreScale(value));
+    public void PostScale(Vec3d value) => SetMap(_map.PostScale(value));
+    public void PreRotate(double radians, Axis axis = Axis.X) => SetMap(_map.PreRotate(radians, axis));
+    public void PostRotate(double radians, Axis axis = Axis.X) => SetMap(_map.PostRotate(radians, axis));
+    public void PreShear(double value, Axis axis0, Axis axis1) => SetMap(_map.PreShear(value, axis0, axis1));
+    public void PostShear(double value, Axis axis0, Axis axis1) => SetMap(_map.PostShear(value, axis0, axis1));
     public void PreMult(Mat4d matrix) => SetMatrix(matrix * _matrix);
     public void PostMult(Mat4d matrix) => SetMatrix(_matrix * matrix);
     public void PreMult(Mat3d matrix) => PreMult(matrix.ToMat4());
     public void PostMult(Mat3d matrix) => PostMult(matrix.ToMat4());
-    public void SetFrustumTaper(double taper) => _frustum = (_frustum ?? throw new InvalidOperationException("This is not a frustum transform.")).WithTaper(taper);
-    public void SetFrustumDepth(double depth) => _frustum = (_frustum ?? throw new InvalidOperationException("This is not a frustum transform.")).WithDepth(depth);
-    /// <summary>Transforms a batch, allowing identical or partially overlapping spans.</summary>
+    public void SetFrustumTaper(double taper) => SetMap((_frustum ?? throw new InvalidOperationException("This is not a frustum transform.")).WithTaper(taper));
+    public void SetFrustumDepth(double depth) => SetMap((_frustum ?? throw new InvalidOperationException("This is not a frustum transform.")).WithDepth(depth));
     public void IndexToWorld(ReadOnlySpan<Vec3d> source, Span<Vec3d> destination) => TransformPoints(source, destination, false);
     public void WorldToIndex(ReadOnlySpan<Vec3d> source, Span<Vec3d> destination) => TransformPoints(source, destination, true);
     private void TransformPoints(ReadOnlySpan<Vec3d> source, Span<Vec3d> destination, bool inverse)
     {
         if (destination.Length < source.Length) throw new ArgumentException("The destination is too short.", nameof(destination));
-        // Cache map state outside the loop. A managed map reference remains safe across GC safepoints.
-        Mat4d matrix = inverse ? _inverse : _matrix;
-        NonlinearFrustumMap? frustum = _frustum;
+        MapBase map = _map;
         if (source.Overlaps(destination, out int offset) && offset > 0)
-            for (int i = source.Length - 1; i >= 0; --i) destination[i] = frustum is null ? matrix.TransformPoint(source[i]) : inverse ? frustum.ApplyInverseMap(source[i]) : frustum.ApplyMap(source[i]);
+            for (int i = source.Length - 1; i >= 0; --i) destination[i] = inverse ? map.ApplyInverseMap(source[i]) : map.ApplyMap(source[i]);
         else
-            for (int i = 0; i < source.Length; ++i) destination[i] = frustum is null ? matrix.TransformPoint(source[i]) : inverse ? frustum.ApplyInverseMap(source[i]) : frustum.ApplyMap(source[i]);
+            for (int i = 0; i < source.Length; ++i) destination[i] = inverse ? map.ApplyInverseMap(source[i]) : map.ApplyMap(source[i]);
     }
-    private void SetMatrix(Mat4d matrix)
+    private void SetMatrix(Mat4d matrix) => SetMap(_frustum is null ? MapBase.Simplify(new AffineMap(matrix)) : _frustum.WithSecondMap(matrix));
+    private void SetMap(MapBase map)
     {
-        if (!matrix.IsFinite) throw new ArgumentException("Transform elements must be finite.", nameof(matrix));
-        Mat4d inverse = matrix.InverseAffine();
-        NonlinearFrustumMap? frustum = _frustum?.WithSecondMap(matrix);
-        _matrix = matrix; _inverse = inverse; _frustum = frustum;
+        Mat4d matrix = map.Matrix, inverse = map.InverseMatrix;
+        _map = map; _matrix = matrix; _inverse = inverse; _frustum = map as NonlinearFrustumMap;
     }
 }

@@ -91,6 +91,6 @@ internal static class VelocityFieldTestSystems
         if (map == 1) { transform.PreScale(0.375); transform.PostTranslate(new(1.25, -2.5, 0.75)); }
         if (map == 2) { transform.PreScale(new Vec3d(0.7, 1.125, 1.375)); transform.PostRotate(0.21, Axis.Z); transform.PostShear(0.13, Axis.X, Axis.Y); transform.PostTranslate(new(-0.25, 0.75, 1.125)); }
         if (map == 3) { transform = Tedd.OpenVDB.Math.Transform.CreateFrustumTransform(new BBoxd(new Vec3d(-8, -6, -4), new Vec3d(8, 6, 12)), 0.65, 9, 0.75); transform.PostTranslate(new(0.5, -0.25, 1.25)); }
-        return transform;
+        return transform.IsLinear ? new Transform(transform.Matrix) : transform;
     }
 }

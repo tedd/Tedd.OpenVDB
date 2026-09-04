@@ -97,3 +97,40 @@ mesher.Extract(box);
 if (box.Tree.GetValue(Coord.Zero) >= 0 || mesher.Points.IsEmpty || mesher.PolygonPools.Count == 0)
     throw new InvalidOperationException("NativeAOT mesh conversion failed.");
 Console.WriteLine($"Mesh conversion: {box.ActiveVoxelCount:N0} distance samples, {mesher.Points.Length:N0} surface points.");
+
+// Query a region without expanding its uniform tiles.
+var regionFinder = new FindActiveValues<ushort>(blocks);
+if (regionFinder.CountActiveValues(chunk) != 32768 || !regionFinder.AnyActiveTiles(chunk))
+    throw new InvalidOperationException("Regional activity query lost uniform blocks.");
+var density = new Grid<double>();
+density[Coord.Zero] = 64;
+var lod = new MultiResGrid<double>(3, density);
+if (lod.GetTree(1)[Coord.Zero] != 8 || lod.GetTree(2)[Coord.Zero] != 1 || lod.CreateGrid(0.5f).IsEmpty)
+    throw new InvalidOperationException("Multiresolution restriction or fractional interpolation failed.");
+var field = new Grid<Vec3f>(new Vec3f(1, 0, 0));
+var transported = new VolumeAdvection<Vec3f>(field).Advect(density, 1, SamplingOrder.Point);
+if (transported.Tree.GetValue(new(1, 0, 0)) != 64 || density.Tree.GetValue(Coord.Zero) != 64)
+    throw new InvalidOperationException("Volume advection did not transport the density impulse.");
+field.VectorType = VectorType.ContravariantRelative;
+field.Tree.SetValueOn(Coord.Zero, new Vec3f(1, 2, 3));
+VectorTransformer.TransformVectors(field, Mat4d.CreateScale(2));
+if (field[Coord.Zero] != new Vec3f(2, 4, 6))
+    throw new InvalidOperationException("Typed vector transformation failed.");
+
+// Custom metadata factories use explicit codecs and remain available to NativeAOT.
+var registry = MetadataRegistry.CreateDefault();
+registry.RegisterType<int>("voxel_schema",
+    static value => { byte[] bytes = new byte[4]; System.Buffers.Binary.BinaryPrimitives.WriteInt32LittleEndian(bytes, value); return bytes; },
+    static bytes => System.Buffers.Binary.BinaryPrimitives.ReadInt32LittleEndian(bytes),
+    static value => value != 0,
+    static value => value.ToString(System.Globalization.CultureInfo.InvariantCulture), fixedSize: 4);
+var customMetadata = new MetaMap();
+customMetadata.InsertMeta("schema", registry.CreateMetadata("voxel_schema", 17));
+using var metadataStream = new MemoryStream();
+customMetadata.WriteMeta(metadataStream);
+metadataStream.Position = 0;
+var decodedMetadata = new MetaMap();
+decodedMetadata.ReadMeta(metadataStream, options: new() { MetadataRegistry = registry });
+if (decodedMetadata.MetaValue<int>("schema") != 17)
+    throw new InvalidOperationException("Custom metadata registration failed under NativeAOT.");
+Console.WriteLine($"Regional queries: {regionFinder.CountActiveValues(chunk):N0} blocks; LOD density {lod.GetTree(1)[Coord.Zero]}, {lod.GetTree(2)[Coord.Zero]}; transported density {transported.Tree.GetValue(new(1, 0, 0))}.");
