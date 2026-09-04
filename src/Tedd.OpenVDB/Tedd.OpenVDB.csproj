@@ -2,11 +2,25 @@
   <PropertyGroup>
     <PackageId>Tedd.OpenVDB</PackageId>
     <Version>0.1.0-preview.2</Version>
+    <Authors>tedd</Authors>
+    <Company>Tedd Hansen</Company>
     <Description>Managed OpenVDB sparse voxel data structures for .NET 11.</Description>
+    <PackageTags>openvdb;vdb;voxel;sparse;volume;3d;managed</PackageTags>
+    <PackageProjectUrl>https://github.com/tedd/Tedd.OpenVDB</PackageProjectUrl>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/tedd/Tedd.OpenVDB</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
     <IsPackable>true</IsPackable>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <!-- The port's public API is still being documented. -->
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <DebugType>portable</DebugType>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
   <ItemGroup>
     <None Include="../../README.md" Pack="true" PackagePath="/" />
