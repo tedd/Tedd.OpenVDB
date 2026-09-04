@@ -9,13 +9,13 @@ The requested full 1:1 port is **not complete**. This repository contains a mana
 | Standard tree | Tree4 5/4/3 hierarchy, tile/voxel states, sparse/dense fill, clip, topology operations, combine, three merge policies, background reset, leaf transfer, counts/bounds | Fixed dimensions, unmanaged values; complete configurable/specialized tree family absent |
 | Traversal and managers | Read enumeration, mutable stored-value handles with depth limits, accessor cache, leaf manager buffers, cached/dynamic node managers, scoped parallel callbacks and reductions | Complete iterator overloads and arbitrary concurrent mutation absent |
 | Masks | SIMD node masks, bit iteration/counts, restricted distinct MaskGrid API | MaskGrid currently uses Boolean backing arrays, not complete native bit-packed MaskTree storage/API |
-| Native archives | Format 225, Int32/Int64/Float/Double/Bool/Vec3i/Vec3s/Vec3d/Mask, heterogeneous grids, backward instances, metadata, affine/frustum maps, zlib/active masks/Blosc-LZ4, real half encoding | Other compressed Blosc codecs/bitshuffle, forward instances, legacy/custom/point formats, partial/delayed/mapped I/O absent |
-| Grid and metadata | Typed and heterogeneous grid interfaces, tree sharing/deep copy, name/class, immutable scalar/vector/matrix/opaque metadata | Full dynamic registry, every metadata/math type and grid convenience API absent |
-| Math | Coord/boxes, Vec2d/Vec3d/Vec3f/Vec3i/Vec4d, Mat3d/Mat4d, quaternions, affine/frustum/camera transforms, ray and DDA | Complete generic precision family, map API, decomposition, hierarchical traversal and solvers absent |
-| Numerical kernels | All native first/second finite-difference schemes, WENO5, Godunov norm, gradient/WENO/curvature stencils, scalar/vector index/world operators, eight grid differential/value operations | Complete solver and numerical utility families remain |
+| Native archives | Format 225, scalar/Bool/Vec3/Mask grids, heterogeneous archives, forward/backward instances, metadata, affine/frustum maps, active masks, zlib and all c-blosc codec IDs (BloscLZ/LZ4/Snappy/zlib/Zstd), byte/bitshuffle, half encoding | Dictionary/legacy Zstd, legacy/custom/point formats, partial/delayed/mapped I/O absent |
+| Grid and metadata | Typed and heterogeneous grids, tree sharing/deep copy, name/class, immutable scalar/Half/Vec2/Vec3/Vec4/Mat4/opaque metadata with native truth conversion and payloads | Full dynamic registry, MetaMap mutation/copy semantics and complete grid convenience API remain |
+| Math | Coord/boxes, native vector/matrix storage types, expanded double math, quaternions, affine/frustum/camera transforms, proximity, quantized unit vectors, ray/DDA and hierarchical traversal | Complete generic precision family and exact native map subclasses remain |
+| Numerical kernels | All native first/second finite differences, WENO5/Godunov, stencils, scalar/vector index/world operators, grid differential operations, float/double PCG with Jacobi/IC, sparse Poisson assembly/boundary conditions/solves | Remaining numerical utility/solver families remain |
 | Volume topology | Exact/tolerance/inactive/level-set pruning, signed flood fill, dilation/erosion with 6/18/26 neighbors and Ignore/Expand/Preserve tile policies | Complete tools family remains |
-| Level sets and composites | Float/Double sphere generation, mutating/copy CSG, scalar/vector arithmetic, active replacement/leaf transfer, interior/isosurface masks, fog conversion, active/SDF segmentation, area/volume/curvature measurement, reinitialization/tracking/resize and level-set filters | Surface rebuild/general evolution, general surface construction, meshing and simulation remain |
-| Sampling and filtering | Scalar/vector point/box/quadratic, staggered Vec3, world/dual-grid sampling; floating mean/Gaussian/median/offset filters, transformed alpha masks and adaptive tile refinement | Resampling and transform tools remain |
+| Level sets and composites | Sphere generation, CSG/composites, masks/fog/segmentation, measurements, tracking/filtering, triangle/quad mesh conversion, adaptive volume meshing with reference seams, rebuilding, edge intersections, box construction | General evolution, remaining surface generators, particles and simulation remain |
+| Sampling and filtering | Scalar/vector point/box/quadratic and staggered sampling, affine/mipmap/nonlinear resampling with level-set rebuild dispatch, mean/Gaussian/median/offset filters, transformed alpha masks, velocity fields and Runge-Kutta integration | Complete advection and overload families remain |
 | Dense and statistics | XYZ/ZYX dense memory, sparse conversion with tolerance, weighted extrema/mean/variance/histograms | Complete overload/parallel/reduction and value-conversion families remain |
 
 ## Remaining major work
@@ -23,7 +23,7 @@ The requested full 1:1 port is **not complete**. This repository contains a mana
 1. Finish tree configurability, specialized storage, iterators/managers, overloads and complete grid/metadata APIs.
 2. Finish archive compression/version/type families, partial reading and delayed/mapped storage.
 3. Complete generic math/maps, specialized stencils, remaining numerical operators and solvers.
-4. Port remaining volume tools: mesh conversion, level-set rebuilding/evolution, particles, advection, remaining segmentation/conversion APIs, ray tracing, resampling and diagnostics.
+4. Port remaining volume tools: regional active-value queries, general level-set evolution, particles, advection, remaining surface/segmentation/conversion APIs, rendering and diagnostics.
 5. Port point-data/index grids, attributes, groups, codecs and point tools.
 6. Translate the remaining applicable native tests and expand differential coverage for each added module.
 7. AX, NanoVDB, Python and host-product integrations remain separate unported upstream components. No parity with those components is claimed.
@@ -43,8 +43,19 @@ The requested full 1:1 port is **not complete**. This repository contains a mana
 - Leaf/static node managers and tree-wide value handles reject structural staleness. Node-local traversal validates direct node structure and attachment; unrelated sibling edits preserve those handles. Dynamic callbacks may modify their own descendants and use independent state in parallel. Existing live leaf references can become detached. Concurrent reads require an otherwise unmodified tree; each thread needs its own accessor.
 - Level-set tracking follows native spatial/Runge-Kutta schemes, trimming/background rules and filter CFL stages. Cancellation throws between safe stages; completed stages can persist. Transformed self-mask offset runs serially to preserve native leaf-order behavior without a data race.
 - Half interpolation promotes subtraction to float and narrows double intermediates through float before Half, matching the native Half constructor. Grid samplers capture tree/transform references; integer samples bypass interpolation, and dual-grid alignment is cached once.
+- Volume rays visit allocated leaves and active tiles; an inactive allocated leaf can produce a hit. Level-set rays interpolate active narrow-band values. Copies have independent query state, and source level-set grids must remain unchanged. Hits retains short spans that March rejects under the native ray-validity tolerance. Undefined coordinate overflow is not reproduced; degenerate flat-zero linear searches can return a native indeterminate NaN time.
+- PCG retains native float/double arithmetic, ordered reductions, convergence rules and four-entry incomplete-Cholesky factors. Managed bounds/alias validation and cancellation replace undefined indexing and native interrupters. Parallel independent scaling uses SIMD; dot-product reductions preserve native order.
 - Histogram bounds reject nonfinite/degenerate explicit ranges instead of reproducing undefined native bin-index conversion. Count overflow is checked.
 
 ## Evidence
 
 Native fixtures cover storage mutations, all merge policies, ordered iterators, dense conversion, filters, volume topology, level-set spheres, scalar/vector composites, math, finite differences, statistics and file interchange. They do not establish completeness of the whole upstream library. Reproduction scripts and exact limits are in `reference/`; current integrated results are in [VALIDATION.md](VALIDATION.md).
+
+
+## Further native behavior retained
+
+- Triangle/quad mesh conversion retains native float narrowing, exact polygon indices, signed-distance stages, band expansion and native width failures. Interior callbacks map to the native explicit-interrupter overload because the pinned convenience overload discards its callback arguments.
+- Native mesh expansion can leave some corner voxels inactive in the outermost band layer. The box helper transforms two opposite corners before constructing its index-space box. Edge intersections use float distances, include time zero and exclude time one.
+- Surface extraction supports native adaptive regions, optional masks, reference-surface seams, cache reuse and polygon/point flags. Rebuilding uses meshed float positions and native polygon order, disables conversion renormalization, and preserves resampling destination metadata.
+- Poisson assembly retains native collocated distance-two stencils without an extra quarter factor, staggered distance-one stencils, boundary-callback order and double solver arithmetic. Native failed-convergence results remain available to callers.
+- Quantized unit vectors retain the native lookup table, bit packing, normalization and sign encoding. Native half/vector/matrix metadata payloads and truth conversion are preserved.

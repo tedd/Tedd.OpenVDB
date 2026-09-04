@@ -43,7 +43,7 @@ if($fixture.upstreamCommit -ne $expectedCommit){throw 'Unexpected finite-differe
 Set-Content -LiteralPath $finiteFixturePath -Value $json
 [pscustomobject]@{ Cases=$fixture.cases.Count; Sha256=(Get-FileHash -LiteralPath $finiteFixturePath -Algorithm SHA256).Hash }
 
-foreach($operatorName in @('operators','grid-operators')) {
+foreach($operatorName in @('operators','grid-operators','pcg','poisson','quantized-unit-vector','velocity-fields')) {
     $operatorFixturePath=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot ("..\tests\Tedd.OpenVDB.Tests\Fixtures\openvdb-13.0.1-"+$operatorName+".json")))
     $operatorPreviousPath=$env:PATH
     try {

@@ -20,12 +20,15 @@ public sealed record VdbReadOptions
     public long MaxAllocatedBytes { get; init; } = 512L * 1024 * 1024;
     public int MaxNodes { get; init; } = 100_000;
     public int MaxGrids { get; init; } = 4096;
+    /// <summary>NativeOrder links once in descriptor order, matching native io::Stream. ResolveDependencies resolves every acyclic chain to its terminal tree.</summary>
+    public VdbInstanceResolution InstanceResolution { get; init; } = VdbInstanceResolution.NativeOrder;
     public int MaxRootEntries { get; init; } = 100_000;
     public int MaxMetadataItems { get; init; } = 4096;
     public int MaxStringBytes { get; init; } = 1024 * 1024;
     public int MaxMetadataBytes { get; init; } = 16 * 1024 * 1024;
     internal void Validate()
     {
+        if (!Enum.IsDefined(InstanceResolution)) throw new ArgumentOutOfRangeException(nameof(InstanceResolution));
         if (MaxBytes <= 0 || MaxAllocatedBytes <= 0 || MaxNodes <= 0 || MaxGrids <= 0 || MaxRootEntries <= 0 ||
             MaxMetadataItems <= 0 || MaxStringBytes <= 0 || MaxMetadataBytes <= 0)
             throw new ArgumentOutOfRangeException(nameof(VdbReadOptions), "Every read limit must be positive.");
@@ -35,8 +38,8 @@ public sealed record VdbReadOptions
 /// <summary>Standard OpenVDB format 225 interchange for scalar, Vec3 and topology-mask Tree4 grids.</summary>
 /// <remarks>
 /// No native runtime is required. Supports linear and nonlinear frustum transforms, typed and opaque
-/// metadata, heterogeneous archives, and instances whose parents precede them. Zlib, active-mask
-/// compression, Blosc LZ4/zlib byte-shuffle frames and floating-point scalar/vector half encoding are supported. Unsupported Blosc codecs/filters, grid types or
+/// metadata, heterogeneous archives, and forward or backward instances. Default chain linking follows native stream descriptor order; dependency resolution is optional. Cyclic or ambiguous references are rejected. Zlib, active-mask
+/// compression, Blosc LZ4/BloscLZ/Snappy/zlib/dictionary-free Zstd frames with byte/bitshuffle and floating-point scalar/vector half encoding are supported. Unsupported Blosc codecs/versions, grid types or
 /// legacy format versions are rejected explicitly.
 /// Temporary __delayedload metadata is consumed and discarded. Reading and writing require
 /// exclusive access to the stream, grid and tree. Seekable streams must start at position zero.
@@ -72,7 +75,7 @@ public static partial class VdbFile
         finally { if (!leaveOpen) stream.Dispose(); }
     }
 
-    private static Grid<T> ReadGrid<T>(Input input, Descriptor descriptor, IReadOnlyDictionary<string, IGrid> previous) where T : unmanaged
+    private static Grid<T> ReadGrid<T>(Input input, Descriptor descriptor) where T : unmanaged
     {
         bool instance = descriptor.Parent.Length != 0;
         VdbTree<T> tree;
@@ -83,11 +86,10 @@ public static partial class VdbFile
         Transform transform = ReadTransform(input);
         if (instance)
         {
-            if (!previous.TryGetValue(descriptor.Parent, out IGrid? parent))
-                throw new NotSupportedException("Instance parents must precede their instances in the archive.");
-            if ((parent is MaskGrid) != descriptor.Mask || (parent is MaskGrid maskParent ? maskParent.Storage : parent) is not Grid<T> typed || StorageHalfFlag(parent.Metadata) != input.Half)
-                throw new InvalidDataException("Instance parent scalar type or half-float encoding differs.");
-            tree = typed.Tree;
+            // Native readers create all grids before connecting their trees. An instance's
+            // initial empty tree matters when a chain is linked once in descriptor order.
+            input.Reserve(128);
+            tree = new VdbTree<T>();
         }
         else
         {
@@ -370,7 +372,15 @@ public static partial class VdbFile
                 "vec3d" when size == 24 => input.Vector(),
                 "vec3s" when size == 12 => input.Scalar<Vec3f>(),
                 "mat4d" when size == 128 => input.Matrix(),
-                "bool" or "int32" or "int64" or "float" or "double" or "vec3i" or "vec3s" or "vec3d" or "mat4d" => throw new InvalidDataException("Metadata size disagrees with its type."),
+                "mat4s" when size == 64 => input.FloatMatrix(),
+                "half" when size == 2 => BitConverter.Int16BitsToHalf((short)input.UInt16()),
+                "vec2i" when size == 8 => new Vec2i(input.Int32(), input.Int32()),
+                "vec2s" when size == 8 => new Vec2f(input.Scalar<float>(), input.Scalar<float>()),
+                "vec2d" when size == 16 => new Vec2d(input.Scalar<double>(), input.Scalar<double>()),
+                "vec4i" when size == 16 => new Vec4i(input.Int32(), input.Int32(), input.Int32(), input.Int32()),
+                "vec4s" when size == 16 => new Vec4f(input.Scalar<float>(), input.Scalar<float>(), input.Scalar<float>(), input.Scalar<float>()),
+                "vec4d" when size == 32 => new Vec4d(input.Scalar<double>(), input.Scalar<double>(), input.Scalar<double>(), input.Scalar<double>()),
+                "bool" or "int32" or "int64" or "float" or "double" or "vec3i" or "vec3s" or "vec3d" or "mat4d" or "mat4s" or "half" or "vec2i" or "vec2s" or "vec2d" or "vec4i" or "vec4s" or "vec4d" => throw new InvalidDataException("Metadata size disagrees with its type."),
                 _ => ReadOpaque(input, type, (int)size)
             };
             if (input.Position != end) throw new InvalidDataException("Metadata payload length mismatch.");
@@ -401,6 +411,14 @@ public static partial class VdbFile
                 case Vec3d v: output.Write(24u); WriteVector(output, v); break;
                 case Vec3f v: output.Write(12u); WriteScalar(output, v); break;
                 case Mat4d v: output.Write(128u); WriteMatrix(output, v); break;
+                case Mat4f v: output.Write(64u); for (int row = 0; row < 4; ++row) for (int column = 0; column < 4; ++column) output.Write(v[row, column]); break;
+                case Half v: output.Write(2u); output.Write(BitConverter.HalfToInt16Bits(v)); break;
+                case Vec2i v: output.Write(8u); output.Write(v.X); output.Write(v.Y); break;
+                case Vec2f v: output.Write(8u); output.Write(v.X); output.Write(v.Y); break;
+                case Vec2d v: output.Write(16u); output.Write(v.X); output.Write(v.Y); break;
+                case Vec4i v: output.Write(16u); output.Write(v.X); output.Write(v.Y); output.Write(v.Z); output.Write(v.W); break;
+                case Vec4f v: output.Write(16u); output.Write(v.X); output.Write(v.Y); output.Write(v.Z); output.Write(v.W); break;
+                case Vec4d v: output.Write(32u); output.Write(v.X); output.Write(v.Y); output.Write(v.Z); output.Write(v.W); break;
                 case OpaqueMetadata v: output.Write((uint)v.Data.Length); output.Write(v.Data); break;
                 default: throw new NotSupportedException("Unsupported metadata value.");
             }
@@ -468,6 +486,7 @@ public static partial class VdbFile
         }
         public byte Byte() { Span<byte> bytes = stackalloc byte[1]; Exact(bytes); return bytes[0]; }
         public bool Boolean() => Byte() switch { 0 => false, 1 => true, _ => throw new InvalidDataException("Boolean value is not zero or one.") };
+        public ushort UInt16() { Span<byte> bytes = stackalloc byte[2]; Exact(bytes); return BinaryPrimitives.ReadUInt16LittleEndian(bytes); }
         public uint UInt32() { Span<byte> bytes = stackalloc byte[4]; Exact(bytes); return BinaryPrimitives.ReadUInt32LittleEndian(bytes); }
         public int Int32() => unchecked((int)UInt32());
         public ulong UInt64() { Span<byte> bytes = stackalloc byte[8]; Exact(bytes); return BinaryPrimitives.ReadUInt64LittleEndian(bytes); }
@@ -505,6 +524,7 @@ public static partial class VdbFile
         }
         public Coord Coord() => new(Int32(), Int32(), Int32());
         public Vec3d Vector() => new(Scalar<double>(), Scalar<double>(), Scalar<double>());
+        public Mat4f FloatMatrix() { Span<float> values = stackalloc float[16]; for (int index = 0; index < 16; ++index) values[index] = Scalar<float>(); return Mat4f.FromSpan(values); }
         public Mat4d Matrix()
         {
             Span<double> values = stackalloc double[16];

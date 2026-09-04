@@ -14,6 +14,7 @@
     <ProjectReference Include="../../src/Tedd.OpenVDB/Tedd.OpenVDB.csproj" />
     <Using Include="Xunit" />
     <None Update="Fixtures/**/*.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Fixtures/**/*.json.gz" CopyToOutputDirectory="PreserveNewest" />
     <None Update="Fixtures/**/*.vdb" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

@@ -2,7 +2,7 @@
 
 Managed C# OpenVDB storage and volume algorithms for **.NET 11 Preview 7**. The former C++/CLI wrappers have been replaced. The library has no native runtime dependency.
 
-**The port is incomplete.** The standard `Tree4<T,5,4,3>` hierarchy, substantial tree/math/volume APIs, and interoperable format-225 archives are implemented. Configurable tree families, point grids, meshing, many level-set and simulation tools, legacy/delayed I/O, NanoVDB and AX remain. See [coverage and limitations](docs/PORT_STATUS.md) and the [upstream inventory](docs/UPSTREAM_INVENTORY.md).
+**The port is incomplete.** The standard `Tree4<T,5,4,3>` hierarchy, substantial tree/math/volume APIs, and interoperable format-225 archives are implemented. Configurable tree families, point grids, remaining level-set and simulation tools, legacy/delayed I/O, NanoVDB and AX remain. See [coverage and limitations](docs/PORT_STATUS.md) and the [upstream inventory](docs/UPSTREAM_INVENTORY.md).
 
 Reference: [OpenVDB 13.0.1](https://github.com/AcademySoftwareFoundation/openvdb/tree/f42248c35a9f7bb30641a8a74d9075ce7d1ddcaf), commit `f42248c35a9f7bb30641a8a74d9075ce7d1ddcaf`. Work is on `main`; the wrapper replacement was committed as `5eb1137`.
 
@@ -58,7 +58,7 @@ Tree APIs include sparse/dense fill, clipping, topology operations, merge polici
 
 ## Standard .vdb archives
 
-Format 225 supports Int32, Int64, Float, Double, Bool, Vec3i, Vec3s/Vec3f, Vec3d and restricted topology-mask grids. Archives support heterogeneous grids, shared-tree instances, file/grid metadata, opaque metadata, affine and nonlinear frustum maps, active-mask/zlib/Blosc-LZ4 compression, and real-valued half encoding.
+Format 225 supports Int32, Int64, Float, Double, Bool, Vec3i, Vec3s/Vec3f, Vec3d and restricted topology-mask grids. Archives support heterogeneous grids, shared-tree instances, scalar/Half/vector/matrix and opaque metadata, affine/frustum maps, active masks, zlib, all c-blosc compressor IDs, byte/bitshuffle and real-valued half encoding.
 
 ```csharp
 using Tedd.OpenVDB;
@@ -76,13 +76,15 @@ stream.Position = 0;
 VdbArchive copy = VdbFile.ReadArchive(stream);
 ```
 
-`Read<T>` and `Write<T>` remain single-grid conveniences. `ushort` supports in-memory material storage; standard registered archive types do not include a UInt16 grid. Compressed BloscLZ/Snappy/Zstd frames, bitshuffle, forward instance references, legacy versions, point/custom layouts and delayed loading remain unsupported. Native default Blosc LZ4 with byte shuffle and Blosc zlib reads are implemented. [Native I/O provenance](reference/IO_VERIFICATION.md) links the verified formats and profiles.
+Read<T> and Write<T> remain single-grid conveniences. UInt16 values support in-memory material storage; standard registered archive types do not include a UInt16 grid. BloscLZ, LZ4, Snappy, zlib and dictionary-free Zstd frames are decoded in managed code. The Blosc writer emits LZ4 with byte shuffle. Dictionary/legacy Zstd, legacy VDB versions, point/custom layouts and delayed loading remain unsupported. [Native I/O provenance](reference/IO_VERIFICATION.md) links the verified formats and profiles.
+
+Forward and backward instances use native descriptor-order connection by default. Set InstanceResolution = VdbInstanceResolution.ResolveDependencies to resolve complete acyclic instance chains. Cycles, missing parents, duplicate names and incompatible grid types are rejected.
 
 Read options limit bytes, estimated allocation, grids, nodes and metadata. Streams remain open unless `leaveOpen: false`. Use a temporary output file before replacing a saved archive: a stream failure can leave partial output.
 
 ## Algorithms and numerical types
 
-Implemented tools include exact/tolerance/inactive pruning, signed flood fill, 6/18/26-neighbor morphology with tile policies, level-set spheres, CSG, scalar/vector compositing, mean/Gaussian/median/offset filters with transformed masks, dense conversion, level-set interior/fog conversion and segmentation, surface measurements, level-set normalization/tracking/resize and filters, grid differential operators, and weighted statistics/histograms. Point/box/quadratic sampling supports scalar and vector fields, staggered Vec3 fields, world coordinates and dual-grid transforms. Math includes vectors, matrices, quaternions, frustum/camera maps, ray/DDA operations, finite differences, WENO/Godunov kernels and gradient/curvature/WENO stencils.
+Implemented tools include pruning, signed flood fill, morphology, level-set spheres/boxes, CSG/composites, filters with transformed masks, dense conversion, level-set masks/fog/segmentation, measurements, tracking/filtering, grid differential operators, sparse Poisson solves, hierarchical ray queries and statistics. Mesh conversion supports signed/unsigned fields, polygon indices, interior callbacks and lattice-edge intersections. Adaptive volume meshing supports masks and reference seams; rebuilding feeds transformed level-set resampling. Scalar/vector point, box, quadratic and staggered sampling support affine/mipmap and nonlinear grid resampling. Velocity fields and Runge-Kutta integration retain native precision rules. Math includes vectors/matrices/quaternions, frustum/camera maps, proximity, quantized unit vectors, rays/DDA, PCG, finite differences, WENO/Godunov kernels and stencils.
 
 Some native behaviors differ from their comments. In particular, CSG may leave unused nodes in its second input; CSG copy with unequal backgrounds depends on native thread partitioning. Managed copy matches serial native execution. The [CSG record](reference/CSG-CONFORMANCE.md) and [math record](reference/MATH_VERIFICATION.md) describe these boundaries.
 

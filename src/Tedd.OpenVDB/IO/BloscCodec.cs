@@ -27,9 +27,8 @@ internal static class BloscCodec
         }
         if (destination.IsEmpty) throw new InvalidDataException("An empty Blosc frame must use memcpy storage.");
         if (blockLength > length || blockLength > int.MaxValue) throw new InvalidDataException("Invalid Blosc block size.");
-        if ((flags & 4) != 0) throw new NotSupportedException("Blosc bit shuffle is unsupported.");
         int codec = flags >> 5;
-        if (codec is not (1 or 3)) throw new NotSupportedException($"Blosc compressor ID {codec} is unsupported; LZ4 and zlib are implemented.");
+        if (codec is not (0 or 1 or 2 or 3 or 4)) throw new NotSupportedException($"Blosc compressor ID {codec} is unsupported; BloscLZ, LZ4, Snappy, zlib and Zstd are implemented.");
         if (frame[1] != 1) throw new NotSupportedException("Unsupported Blosc compressor format version.");
         int blockSize = (int)blockLength;
         int count = 1 + (destination.Length - 1) / blockSize;
@@ -48,8 +47,9 @@ internal static class BloscCodec
         for (int index = 1; index < boundaries.Length; ++index)
             if (boundaries[index] == boundaries[index - 1]) throw new InvalidDataException("Duplicate Blosc block offset.");
         bool shuffle = (flags & 1) != 0 && typeSize > 1;
+        bool bitShuffle = !shuffle && (flags & 4) != 0;
         byte[]? temporary = null;
-        if (shuffle) { reserve(blockSize); temporary = new byte[blockSize]; }
+        if (shuffle || bitShuffle) { reserve(blockSize); temporary = new byte[blockSize]; }
         for (int index = 0, outputOffset = 0; index < count; ++index)
         {
             int size = System.Math.Min(blockSize, destination.Length - outputOffset);
@@ -57,7 +57,7 @@ internal static class BloscCodec
             int boundary = Array.BinarySearch(boundaries, sourceOffset);
             int end = boundary + 1 == boundaries.Length ? frame.Length : boundaries[boundary + 1];
             Span<byte> output = destination.Slice(outputOffset, size);
-            Span<byte> decoded = shuffle ? temporary.AsSpan(0, size) : output;
+            Span<byte> decoded = shuffle || bitShuffle ? temporary.AsSpan(0, size) : output;
             int splits = (flags & 16) == 0 && typeSize <= 16 && size / typeSize >= 128 && size == blockSize ? typeSize : 1;
             if (size % splits != 0) throw new InvalidDataException("Blosc split size does not divide the block.");
             int splitSize = size / splits;
@@ -69,12 +69,16 @@ internal static class BloscCodec
                 int compressedSize = (int)compressed;
                 Span<byte> target = decoded.Slice(split * splitSize, splitSize);
                 if (compressedSize == splitSize) frame.AsSpan(sourceOffset, compressedSize).CopyTo(target);
+                else if (codec == 0) BloscLzCodec.Decode(frame.AsSpan(sourceOffset, compressedSize), target);
                 else if (codec == 1) Lz4BlockCodec.Decode(frame.AsSpan(sourceOffset, compressedSize), target);
-                else VdbFile.DecompressZlib(frame, sourceOffset, compressedSize, target);
+                else if (codec == 2) SnappyBlockCodec.Decode(frame.AsSpan(sourceOffset, compressedSize), target);
+                else if (codec == 3) VdbFile.DecompressZlib(frame, sourceOffset, compressedSize, target);
+                else ZstdCodec.Decode(frame.AsSpan(sourceOffset, compressedSize), target, reserve);
                 sourceOffset += compressedSize;
             }
             if (sourceOffset != end) throw new InvalidDataException("Blosc block lengths overlap or leave unused bytes.");
             if (shuffle) Unshuffle(decoded, output, typeSize);
+            else if (bitShuffle) BitShuffleCodec.Unshuffle(decoded, output, typeSize);
             outputOffset += size;
         }
     }
