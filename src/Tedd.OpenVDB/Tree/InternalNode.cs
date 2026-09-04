@@ -9,7 +9,7 @@ namespace Tedd.OpenVDB.Tree;
 
 // The C++ value/child union is represented by an unmanaged value array and a sparse
 // child table. This keeps GC scanning proportional to allocated children, not tiles.
-internal sealed class InternalNode<T> where T : unmanaged
+internal sealed partial class InternalNode<T> where T : unmanaged
 {
     internal readonly Coord Origin;
     internal readonly int Level;
@@ -113,23 +113,23 @@ internal sealed class InternalNode<T> where T : unmanaged
         int ey = (box.Max.Y - Origin.Y) >> ChildLog2Dim;
         int ez = (box.Max.Z - Origin.Z) >> ChildLog2Dim;
         for (int x = sx; x <= ex; x++)
-        for (int y = sy; y <= ey; y++)
-        for (int z = sz; z <= ez; z++)
-        {
-            int offset = (x << (2 * Log2Dim)) | (y << Log2Dim) | z;
-            CoordBBox childBox = VdbTree<T>.NodeBounds(ChildOrigin(offset), ChildLog2Dim);
-            CoordBBox clipped = box.Intersection(childBox);
-            if (clipped.Min == childBox.Min && clipped.Max == childBox.Max)
-                SetTile(offset, value, active);
-            else
-            {
-                if (!Children.ContainsKey(offset) && Active.IsOn(offset) == active
-                    && ValueEquality<T>.Equals(Values[offset], value)) continue;
-                object child = TouchChild(offset);
-                if (child is LeafNode<T> leaf) leaf.Fill(clipped, value, active);
-                else ((InternalNode<T>)child).Fill(clipped, value, active);
-            }
-        }
+            for (int y = sy; y <= ey; y++)
+                for (int z = sz; z <= ez; z++)
+                {
+                    int offset = (x << (2 * Log2Dim)) | (y << Log2Dim) | z;
+                    CoordBBox childBox = VdbTree<T>.NodeBounds(ChildOrigin(offset), ChildLog2Dim);
+                    CoordBBox clipped = box.Intersection(childBox);
+                    if (clipped.Min == childBox.Min && clipped.Max == childBox.Max)
+                        SetTile(offset, value, active);
+                    else
+                    {
+                        if (!Children.ContainsKey(offset) && Active.IsOn(offset) == active
+                            && ValueEquality<T>.Equals(Values[offset], value)) continue;
+                        object child = TouchChild(offset);
+                        if (child is LeafNode<T> leaf) leaf.Fill(clipped, value, active);
+                        else ((InternalNode<T>)child).Fill(clipped, value, active);
+                    }
+                }
     }
 
     internal void SetActiveRegion(CoordBBox box, bool active)
@@ -141,26 +141,26 @@ internal sealed class InternalNode<T> where T : unmanaged
         int ey = (box.Max.Y - Origin.Y) >> ChildLog2Dim;
         int ez = (box.Max.Z - Origin.Z) >> ChildLog2Dim;
         for (int x = sx; x <= ex; x++)
-        for (int y = sy; y <= ey; y++)
-        for (int z = sz; z <= ez; z++)
-        {
-            int offset = (x << (2 * Log2Dim)) | (y << Log2Dim) | z;
-            CoordBBox bounds = VdbTree<T>.NodeBounds(ChildOrigin(offset), ChildLog2Dim);
-            CoordBBox clipped = box.Intersection(bounds);
-            bool hasChild = Children.TryGetValue(offset, out var child);
-            if (!hasChild)
-            {
-                if (Active.IsOn(offset) == active) continue;
-                if (clipped == bounds) { Active.Set(offset, active); continue; }
-                child = TouchChild(offset);
-            }
-            if (child is InternalNode<T> node) node.SetActiveRegion(clipped, active);
-            else
-            {
-                var leaf = (LeafNode<T>)child!;
-                foreach (Coord c in clipped) leaf.SetActiveState(c, active);
-            }
-        }
+            for (int y = sy; y <= ey; y++)
+                for (int z = sz; z <= ez; z++)
+                {
+                    int offset = (x << (2 * Log2Dim)) | (y << Log2Dim) | z;
+                    CoordBBox bounds = VdbTree<T>.NodeBounds(ChildOrigin(offset), ChildLog2Dim);
+                    CoordBBox clipped = box.Intersection(bounds);
+                    bool hasChild = Children.TryGetValue(offset, out var child);
+                    if (!hasChild)
+                    {
+                        if (Active.IsOn(offset) == active) continue;
+                        if (clipped == bounds) { Active.Set(offset, active); continue; }
+                        child = TouchChild(offset);
+                    }
+                    if (child is InternalNode<T> node) node.SetActiveRegion(clipped, active);
+                    else
+                    {
+                        var leaf = (LeafNode<T>)child!;
+                        foreach (Coord c in clipped) leaf.SetActiveState(c, active);
+                    }
+                }
     }
 
     internal static InternalNode<T> CopyTopology<TOther>(InternalNode<TOther> other, T value, bool allActive = false) where TOther : unmanaged

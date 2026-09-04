@@ -1,85 +1,48 @@
 # Port status and compatibility
 
-This repository is **not yet the requested complete 1:1 port**. It provides an executable,
-tested managed storage core. Unsupported components have no placeholder implementations
-and are not silently emulated by a native wrapper.
+The requested full 1:1 port is **not complete**. This repository contains a managed implementation with extensive independent native conformance fixtures, rather than a native wrapper or placeholder APIs. The latest upstream reference is OpenVDB 13.0.1, revision `f42248c35a9f7bb30641a8a74d9075ce7d1ddcaf`.
 
 ## Implemented surface
 
-| Upstream area | Managed implementation | Limits |
+| Area | Implemented | Remaining limits |
 |---|---|---|
-| `math/Coord.h` | Coord, inclusive CoordBBox, enumeration, alignment, overflow-aware volume | .NET exceptions replace undefined numeric casts/overflow in checked APIs |
-| `util/NodeMasks.h` | activity masks, Boolean operations, counts, bit iteration | runtime log2 dimensions 1–5 |
-| `tree/LeafNode.h` | values, independent activity, fill/clip, copy, exact/numeric-tolerance constants, topology | fixed log2 dimension 3; no out-of-core buffers |
-| `tree/InternalNode.h`, `RootNode.h`, `Tree.h` | Tree4 hierarchy, values/tiles, sparse fill, materialization, pruning, counts/bounds, dense transfers, clipping, enumeration | fixed standard 5/4/3 shape; `T : unmanaged`; internal-node representation adapted to managed GC |
-| `tree/ValueAccessor.h` | cached reads/writes with automatic structural invalidation | leaf cache; no native multi-level template variants or concurrent mutation |
-| Tree topology | union with preserveTiles, intersection, difference, structural comparison | native branch-deletion semantics retained |
-| Tree combination | sparse combine, copying combine, explicit activity callback | managed callbacks and transactional publication; no native node stealing |
-| `io/Archive`, `File`, descriptors, raw node serialization | format 225 single uncompressed Int32/Float/Double grid read/write; supported linear maps and metadata | no compression, half storage, multiple grids, instances, nonlinear maps, unknown/file-level metadata or delayed loading |
-| `Grid.h`, metadata | typed grid, name/class, immutable typed metadata, independent copy | limited typed metadata, no dynamic grid registry |
-| `math/Vec3.h`, `Mat4.h`, `Maps.h`, `Transform.h` | Vec3d, Mat4d, affine scale/rotation/shear/translation, inversion, batch transforms | only double vectors/matrices and affine maps |
-| `math/BBox.h`, `Ray.h` | BBoxd and Rayd intersections/transforms | double precision subset |
-| `math/DDA.h` | voxel/node DDA with source tie ordering | runtime log2 dimensions 0–12; no hierarchical level-set/volume DDA |
-| `tools/Interpolation.h` | point, trilinear box, quadratic samplers | scalar floating-point generic types |
-| `tools/Composite.h` | numeric min/max/sum/multiply and active replacement | no signed-distance CSG, vector composites or division |
+| Standard tree | Tree4 5/4/3 hierarchy, tile/voxel states, sparse/dense fill, clip, topology operations, combine, three merge policies, background reset, leaf transfer, counts/bounds | Fixed dimensions, unmanaged values; complete configurable/specialized tree family absent |
+| Traversal and managers | Read enumeration, mutable stored-value handles with depth limits, accessor cache, leaf manager with auxiliary buffers and parallel callbacks | Full native iterator/node-manager family and concurrent mutation absent |
+| Masks | SIMD node masks, bit iteration/counts, restricted distinct MaskGrid API | MaskGrid currently uses Boolean backing arrays, not complete native bit-packed MaskTree storage/API |
+| Native archives | Format 225, Int32/Int64/Float/Double/Bool/Vec3i/Vec3s/Vec3d/Mask, heterogeneous grids, backward instances, metadata, affine/frustum maps, zlib/active masks, real half encoding | Blosc, forward instances, legacy/custom/point formats, partial/delayed/mapped I/O absent |
+| Grid and metadata | Typed and heterogeneous grid interfaces, tree sharing/deep copy, name/class, immutable scalar/vector/matrix/opaque metadata | Full dynamic registry, every metadata/math type and grid convenience API absent |
+| Math | Coord/boxes, Vec2d/Vec3d/Vec3f/Vec3i/Vec4d, Mat3d/Mat4d, quaternions, affine/frustum/camera transforms, ray and DDA | Complete generic precision family, map API, decomposition, hierarchical traversal and solvers absent |
+| Numerical kernels | All native first/second finite-difference schemes, WENO5, Godunov norm, selected stencil layouts/caches | Full specialized stencil convenience and grid differential operators remain |
+| Volume topology | Exact/tolerance/inactive/level-set pruning, signed flood fill, dilation/erosion with 6/18/26 neighbors and Ignore/Expand/Preserve tile policies | Complete tools family remains |
+| Level sets and composites | Float/Double sphere generation, mutating/copy CSG, scalar/vector arithmetic, active replacement/leaf transfer | Rebuild/evolution, general surface construction, meshing and simulation remain |
+| Sampling and filtering | Scalar point/box/quadratic sampling; floating mean/Gaussian/median/offset filters, transformed alpha masks and adaptive tile refinement | Full vector/staggered sampling, resampling, level-set filter and transform tools remain |
+| Dense and statistics | XYZ/ZYX dense memory, sparse conversion with tolerance, weighted extrema/mean/variance/histograms | Complete overload/parallel/reduction and value-conversion families remain |
 
-The library is new code derived from the pinned upstream. The old C++/CLI wrappers
-are not used by the managed build, tests, package or samples.
+## Remaining major work
 
-## Required work before claiming a complete port
+1. Finish tree configurability, specialized storage, iterators/managers, overloads and complete grid/metadata APIs.
+2. Finish archive compression/version/type families, partial reading and delayed/mapped storage.
+3. Complete generic math/maps, specialized stencils, grid operators and solvers.
+4. Port remaining volume tools: mesh conversion, level-set rebuilding/evolution, particles, advection, segmentation, ray tracing, resampling and diagnostics.
+5. Port point-data/index grids, attributes, groups, codecs and point tools.
+6. Translate the remaining applicable native tests and expand differential coverage for each added module.
+7. AX, NanoVDB, Python and host-product integrations remain separate unported upstream components. No parity with those components is claimed.
 
-1. Complete the native `.vdb` codec family: compression, half storage, multiple grids,
-   instances, unknown/file-level metadata, nonlinear maps, legacy formats and delayed loading.
-   Expand native-generated cross-language coverage to every supported type and option.
-2. Configurable tree shapes; mask/bool/string/vector/specialized leaf types; full root,
-   internal, leaf, iterator, manager, merge, combine and tolerance API coverage.
-3. Full math family (vector/matrix types, quaternions, nonlinear/frustum maps,
-   stencils, finite differences, solvers and complete hierarchical traversal).
-4. The remaining volume tool algorithms, including level-set creation and evolution,
-   CSG, filtering, morphology, meshing, particles, ray tracing and resampling.
-5. Point grids, attributes, codecs, point tools and their substantial test suite.
-6. Decide and document the requested .NET mapping of AX, NanoVDB and the platform
-   integrations before claiming parity with the entire upstream repository.
-7. Port the remaining applicable upstream tests and add native differential/round-trip
-   coverage beyond the Int32 sparse-tree fixture family.
+## Managed contracts and deliberate differences
 
-## Deliberate managed differences
+- C# names, generic constraints and functional callbacks replace C++ templates and functors. Functional point modifiers invoke their callback once and publish after it succeeds; native functors may be evaluated at multiple hierarchy levels.
+- Unmanaged value arrays and sparse child dictionaries replace native value/pointer unions. Child and activity masks are disjoint. Managed references are never stored as raw pointers across GC safepoints.
+- Root structural emptiness is distinct from activity. An inactive leaf still makes a tree nonempty. `HasActiveVoxels` is the activity-only query.
+- Public bounds and sizes are validated. Inclusive coordinate iteration uses 64-bit counters. Counts throw on overflow; CoordBBox also exposes UInt128 volume. Undefined native casts and signed-overflow loops are not reproduced.
+- Exact core pruning retains NaN-valued nodes. Numeric uniformity queries reject NaN; native approximation may treat it as equal. Tools pruning uses the native approximate root-background predicate. Signed background reset follows native scalar/vector predicates, including their NaN behavior.
+- Dense import follows upstream's existing behavior: wholly inactive constant blocks are skipped rather than replacing existing blocks. Inherited values outside a partially imported leaf are preserved.
+- Mutable iterator `SetValue` preserves activity in the pinned implementation, despite upstream comments saying otherwise. Iterator `ModifyValue` activates leaf voxels but preserves tile activity. These rules have native tests.
+- CSG steals selected nodes; it does not guarantee an empty second tree. Copy variants with unequal backgrounds match deterministic serial native execution; native parallel partitioning can normalize inactive backgrounds differently.
+- Filters retain native X/Z/Y pass order and float averaging coefficients even for DoubleGrid. At the signed coordinate-domain edge, samples outside Int32 use background rather than invoke undefined native overflow.
+- Combine is transactional with respect to callback failure. Other mutable operations are not globally transactional. Callbacks must not mutate tree topology or concurrently modify input trees.
+- Leaf managers and live value handles reject structural staleness. Existing live leaf references can become detached. Concurrent reads require an otherwise unmodified tree; each thread needs its own accessor.
+- Histogram bounds reject nonfinite/degenerate explicit ranges instead of reproducing undefined native bin-index conversion. Count overflow is checked.
 
-* C# naming, generic constraints and callbacks replace C++ templates and functors.
-* Internal nodes store tile values contiguously and child references sparsely instead
-  of an overlapping C++ value/pointer union. Child and activity masks remain disjoint.
-* Exact pruning uses IEEE equality for floating-point values; NaN is not treated as a
-  uniform constant. Native approximate equality can treat NaN comparisons as uniform.
-  Numeric leaf tolerance queries are implemented; tree-wide tolerance pruning remains unported.
-* Public validation throws for invalid buffers/indices and undefined numeric casts.
-  CoordBBox supports exact `UInt128` full-domain volume; `ulong` volume/count APIs throw
-  on overflow rather than wrap. No finite allocation can materialize the entire domain.
-* Fill loops use 64-bit counters at signed coordinate endpoints. The native oracle's
-  `int.MaxValue` box-fill case did not terminate and was excluded from native fixtures;
-  managed endpoint behavior has independent tests. Native min/max point cases remain.
-* Tree counts and bounds are computed from the hierarchy. Iteration and aggregate
-  operations prioritize correctness; not every native parallel implementation is ported.
-* Combine publishes a new result after callback completion, then empties the second
-  tree; a throwing callback leaves both inputs intact. Callbacks must not mutate inputs.
-* `.vdb` compatibility is limited to the implemented format-225 subset. No C++ ABI
-  compatibility, Linux execution results, thread-safe mutation, or full API parity is claimed.
+## Evidence
 
-Tests distinguish source-derived cases, independent dense-reference models, and
-fixtures actually executed by native OpenVDB. See `reference/` for provenance.
-
-The voxel sample was successfully published and executed with .NET 11 NativeAOT on Windows x64. This validates that sample, not every generic type or library operation under AOT.
-
-
-
-## Validation of this checkpoint
-
-* 600 xUnit tests passed in the integrated Release run (the final target run may add
-  review cases; see VALIDATION.md for final totals).
-* Native sparse-tree oracle: 222 cases, 1,235 operation checkpoints, 99,434 coordinate
-  samples, reproduced from the pinned upstream build.
-* Native I/O oracle: seven upstream-written fixtures were read by the managed codec;
-  seven managed-written files were independently read by OpenVDB. Verification covers
-  every stored tile/voxel, value, active state, depth, topology, counts, metadata and
-  affine transform, including streaming output and exceptional floating-point values.
-* Invalid headers, lengths, offsets, masks, metadata, unsupported encodings, truncation,
-  resource limits and stream ownership have explicit tests.
+Native fixtures cover storage mutations, all merge policies, ordered iterators, dense conversion, filters, volume topology, level-set spheres, scalar/vector composites, math, finite differences, statistics and file interchange. They do not establish completeness of the whole upstream library. Reproduction scripts and exact limits are in `reference/`; current integrated results are in [VALIDATION.md](VALIDATION.md).

@@ -32,7 +32,11 @@ public sealed class NodeMaskTests
     }
 
     [Theory]
-    [InlineData(1)] [InlineData(2)] [InlineData(3)] [InlineData(4)] [InlineData(5)]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    [InlineData(4)]
+    [InlineData(5)]
     public void FullMaskAndComplementNeverExposeUnusedBits(int log2Dim)
     {
         var mask = new NodeMask(log2Dim, true);
@@ -56,7 +60,11 @@ public sealed class NodeMaskTests
     }
 
     [Theory]
-    [InlineData(1)] [InlineData(2)] [InlineData(3)] [InlineData(4)] [InlineData(5)]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    [InlineData(4)]
+    [InlineData(5)]
     public void EveryBitCanBeSetClearedAndToggledIndependently(int log2Dim)
     {
         var mask = new NodeMask(log2Dim);
@@ -79,7 +87,9 @@ public sealed class NodeMaskTests
     }
 
     [Theory]
-    [InlineData(3)] [InlineData(4)] [InlineData(5)]
+    [InlineData(3)]
+    [InlineData(4)]
+    [InlineData(5)]
     public void WordEdgesHaveLeastSignificantBitFirstLayout(int log2Dim)
     {
         var mask = new NodeMask(log2Dim);
@@ -99,7 +109,11 @@ public sealed class NodeMaskTests
     }
 
     [Theory]
-    [InlineData(1)] [InlineData(2)] [InlineData(3)] [InlineData(4)] [InlineData(5)]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    [InlineData(4)]
+    [InlineData(5)]
     public void OffSearchIsInclusiveAndBounded(int log2Dim)
     {
         var mask = new NodeMask(log2Dim, true);
@@ -117,7 +131,11 @@ public sealed class NodeMaskTests
     }
 
     [Theory]
-    [InlineData(1)] [InlineData(2)] [InlineData(3)] [InlineData(4)] [InlineData(5)]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    [InlineData(4)]
+    [InlineData(5)]
     public void FillSetAliasesAndBoundaryConveniencesPreserveCounts(int log2Dim)
     {
         var mask = new NodeMask(log2Dim);
@@ -142,7 +160,11 @@ public sealed class NodeMaskTests
     }
 
     [Theory]
-    [InlineData(1)] [InlineData(2)] [InlineData(3)] [InlineData(4)] [InlineData(5)]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    [InlineData(4)]
+    [InlineData(5)]
     public void BooleanOperationsMatchIndependentDenseModel(int log2Dim)
     {
         var random = new Random(0x51a7 + log2Dim);
@@ -184,7 +206,11 @@ public sealed class NodeMaskTests
     }
 
     [Theory]
-    [InlineData(1)] [InlineData(2)] [InlineData(3)] [InlineData(4)] [InlineData(5)]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    [InlineData(4)]
+    [InlineData(5)]
     public void SelfAliasingBooleanOperationsAreDefined(int log2Dim)
     {
         var mask = new NodeMask(log2Dim);
@@ -198,7 +224,11 @@ public sealed class NodeMaskTests
     }
 
     [Theory]
-    [InlineData(1)] [InlineData(2)] [InlineData(3)] [InlineData(4)] [InlineData(5)]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    [InlineData(4)]
+    [InlineData(5)]
     public void RandomMutationsMatchDenseReference(int log2Dim)
     {
         var random = new Random(2112 + log2Dim);
@@ -266,12 +296,18 @@ public sealed class NodeMaskTests
     }
 
     [Theory]
-    [InlineData(-1)] [InlineData(0)] [InlineData(6)] [InlineData(int.MaxValue)]
+    [InlineData(-1)]
+    [InlineData(0)]
+    [InlineData(6)]
+    [InlineData(int.MaxValue)]
     public void UnsupportedDimensionsAreRejected(int log2Dim) =>
         Assert.Throws<ArgumentOutOfRangeException>(() => new NodeMask(log2Dim));
 
     [Theory]
-    [InlineData(-1)] [InlineData(512)] [InlineData(int.MinValue)] [InlineData(int.MaxValue)]
+    [InlineData(-1)]
+    [InlineData(512)]
+    [InlineData(int.MinValue)]
+    [InlineData(int.MaxValue)]
     public void InvalidIndicesThrowWithoutChangingMask(int index)
     {
         var mask = new NodeMask(3);

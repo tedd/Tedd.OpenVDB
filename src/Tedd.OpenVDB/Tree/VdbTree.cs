@@ -24,7 +24,7 @@ public readonly record struct VoxelValue<T>(CoordBBox Bounds, T Value, bool IsAc
 /// 32³ upper tables, 16³ lower tables and 8³ leaves. Active state is independent
 /// of stored value. Reads may run concurrently only while the tree is not mutated.
 /// </summary>
-public sealed class VdbTree<T> where T : unmanaged
+public sealed partial class VdbTree<T> where T : unmanaged
 {
     internal readonly Dictionary<Coord, RootEntry> Entries = [];
     internal long TopologyVersion { get; private set; }
@@ -34,13 +34,24 @@ public sealed class VdbTree<T> where T : unmanaged
     public const int LowerLog2Dim = 4;
     public const int UpperLog2Dim = 5;
     public T Background { get; private set; }
+    /// <summary>True when the root contains only inactive background tiles, with no child nodes.</summary>
     public bool IsEmpty
     {
         get
         {
             foreach (RootEntry entry in Entries.Values)
-                if (entry.Child is null ? entry.Active : entry.Child.HasActiveValues()) return false;
+                if (entry.Child is not null || entry.Active || !ValueArithmetic<T>.ApproximatelyEqual(entry.Value, Background)) return false;
             return true;
+        }
+    }
+    /// <summary>True when any voxel or tile is active, independently of stored inactive topology.</summary>
+    public bool HasActiveVoxels
+    {
+        get
+        {
+            foreach (RootEntry entry in Entries.Values)
+                if (entry.Child is null ? entry.Active : entry.Child.HasActiveValues()) return true;
+            return false;
         }
     }
     public int RootEntryCount => Entries.Count;
@@ -116,7 +127,13 @@ public sealed class VdbTree<T> where T : unmanaged
     }
 
     /// <summary>Materializes a leaf while preserving the inherited tile value and state.</summary>
-    public LeafNode<T> TouchLeaf(Coord coordinate) => TouchUpper(coordinate).TouchLeaf(coordinate);
+    public LeafNode<T> TouchLeaf(Coord coordinate)
+    {
+        var existing = ProbeLeaf(coordinate);
+        if (existing is not null) return existing;
+        InvalidateAccessors();
+        return TouchUpper(coordinate).TouchLeaf(coordinate);
+    }
 
     public void SetValue(Coord coordinate, T value) => SetValueOn(coordinate, value);
     public void SetValueOn(Coord coordinate, T value) => Set(coordinate, value, true);
@@ -135,7 +152,7 @@ public sealed class VdbTree<T> where T : unmanaged
     public void SetValueOnly(Coord coordinate, T value)
     {
         // RootNode::setValueOnly creates an upper node even for an absent background write.
-        if (!Entries.ContainsKey(Align(coordinate, 12))) TouchUpper(coordinate);
+        if (!Entries.ContainsKey(Align(coordinate, 12))) { InvalidateAccessors(); TouchUpper(coordinate); }
         Probe(coordinate, out T oldValue, out var leaf, out _);
         if (leaf is null && ValueEquality<T>.Equals(oldValue, value)) return;
         (leaf ?? TouchLeaf(coordinate)).SetValueOnly(coordinate, value);
@@ -166,15 +183,15 @@ public sealed class VdbTree<T> where T : unmanaged
         Coord start = Align(box.Min, 12);
         // Int64 loop variables prevent wraparound at int.MaxValue.
         for (long x = start.X; x <= box.Max.X; x += 4096)
-        for (long y = start.Y; y <= box.Max.Y; y += 4096)
-        for (long z = start.Z; z <= box.Max.Z; z += 4096)
-        {
-            Coord key = new((int)x, (int)y, (int)z);
-            CoordBBox bounds = NodeBounds(key, 12);
-            CoordBBox clipped = box.Intersection(bounds);
-            if (clipped.Min == bounds.Min && clipped.Max == bounds.Max) Entries[key] = new(value, active);
-            else TouchUpper(key).Fill(clipped, value, active);
-        }
+            for (long y = start.Y; y <= box.Max.Y; y += 4096)
+                for (long z = start.Z; z <= box.Max.Z; z += 4096)
+                {
+                    Coord key = new((int)x, (int)y, (int)z);
+                    CoordBBox bounds = NodeBounds(key, 12);
+                    CoordBBox clipped = box.Intersection(bounds);
+                    if (clipped.Min == bounds.Min && clipped.Max == bounds.Max) Entries[key] = new(value, active);
+                    else TouchUpper(key).Fill(clipped, value, active);
+                }
     }
 
     /// <summary>Writes a z-contiguous dense box. The complete span length is checked before mutation.</summary>
@@ -212,20 +229,20 @@ public sealed class VdbTree<T> where T : unmanaged
         InvalidateAccessors();
         Coord start = Align(box.Min, 12);
         for (long x = start.X; x <= box.Max.X; x += 4096)
-        for (long y = start.Y; y <= box.Max.Y; y += 4096)
-        for (long z = start.Z; z <= box.Max.Z; z += 4096)
-        {
-            Coord key = new((int)x, (int)y, (int)z);
-            CoordBBox bounds = NodeBounds(key, 12);
-            CoordBBox clipped = box.Intersection(bounds);
-            if (!Entries.TryGetValue(key, out RootEntry entry)) entry = new(Background, false);
-            if (entry.Child is null)
-            {
-                if (entry.Active == active) continue;
-                if (clipped == bounds) { Entries[key] = new(entry.Value, active); continue; }
-            }
-            TouchUpper(key).SetActiveRegion(clipped, active);
-        }
+            for (long y = start.Y; y <= box.Max.Y; y += 4096)
+                for (long z = start.Z; z <= box.Max.Z; z += 4096)
+                {
+                    Coord key = new((int)x, (int)y, (int)z);
+                    CoordBBox bounds = NodeBounds(key, 12);
+                    CoordBBox clipped = box.Intersection(bounds);
+                    if (!Entries.TryGetValue(key, out RootEntry entry)) entry = new(Background, false);
+                    if (entry.Child is null)
+                    {
+                        if (entry.Active == active) continue;
+                        if (clipped == bounds) { Entries[key] = new(entry.Value, active); continue; }
+                    }
+                    TouchUpper(key).SetActiveRegion(clipped, active);
+                }
     }
 
     /// <summary>Unions active states and child topology, retaining this tree's values.</summary>
@@ -455,7 +472,7 @@ public sealed class VdbTree<T> where T : unmanaged
     public IEnumerable<(Coord Coordinate, T Value)> EnumerateActiveVoxels()
     {
         foreach (var value in EnumerateValues())
-        foreach (Coord coordinate in value.Bounds) yield return (coordinate, value.Value);
+            foreach (Coord coordinate in value.Bounds) yield return (coordinate, value.Value);
     }
 
     public IEnumerable<LeafNode<T>> EnumerateLeaves()

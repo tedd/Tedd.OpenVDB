@@ -44,8 +44,10 @@ public sealed class NodeMask : IEquatable<NodeMask>
 
     public bool this[int index]
     {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] get => IsOn(index);
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] set => Set(index, value);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => IsOn(index);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        set => Set(index, value);
     }
 
     public NodeMask DeepCopy() => new(this);

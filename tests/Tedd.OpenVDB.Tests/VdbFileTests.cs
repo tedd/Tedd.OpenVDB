@@ -138,7 +138,14 @@ public sealed class VdbFileTests
     }
 
     [Theory]
-    [InlineData(0)] [InlineData(7)] [InlineData(20)] [InlineData(56)] [InlineData(64)] [InlineData(120)] [InlineData(400)] [InlineData(822)]
+    [InlineData(0)]
+    [InlineData(7)]
+    [InlineData(20)]
+    [InlineData(56)]
+    [InlineData(64)]
+    [InlineData(120)]
+    [InlineData(400)]
+    [InlineData(822)]
     public void RejectsTruncatedNativeArchive(int length)
     {
         using var input = new MemoryStream(Fixture(scenario: "empty")[..length]);
@@ -192,7 +199,7 @@ public sealed class VdbFileTests
     [InlineData("mask-compression")]
     [InlineData("dimensions")]
     [InlineData("map")]
-    [InlineData("metadata-type")]
+
     public void RejectsUnsupportedLayoutsExplicitly(string unsupported)
     {
         byte[] bytes = Fixture(); Layout layout = ParseLayout(bytes);
@@ -201,8 +208,8 @@ public sealed class VdbFileTests
             case "format": Put32(bytes, 8, 224); break;
             case "multiple-grids": Put32(bytes, 61, 2); break;
             case "file-metadata": Put32(bytes, 57, 1); break;
-            case "compression": Put32(bytes, layout.Grid, 1); break;
-            case "mask-compression": Put32(bytes, layout.Grid, 2); break;
+            case "compression": Put32(bytes, layout.Grid, 4); break;
+            case "mask-compression": Put32(bytes, layout.Grid, 8); break;
             case "dimensions": bytes[layout.TypeStart + "Tree_int32_5_4_".Length] = (byte)'2'; break;
             case "map": bytes[layout.MapStart] = (byte)'X'; break;
             case "metadata-type": bytes[layout.FirstMetadataType] = (byte)'X'; break;
@@ -254,21 +261,21 @@ public sealed class VdbFileTests
         var grid = new Grid<T>(Value<T>(-7)) { Name = "oracle_" + scenario, GridClass = GridClass.FogVolume, Transform = new(Matrix) };
         grid.SetMetadata("answer", 42); grid.SetMetadata("enabled", true); grid.SetMetadata("epoch", 1234567890123L);
         grid.SetMetadata("float", 1.25f); grid.SetMetadata("double", 2.5); grid.SetMetadata("caption", "native UTF-8: æøå");
-        grid.SetMetadata("origin", new Coord(-1,2,-3)); grid.SetMetadata("direction", new Vec3d(1.25,-2.5,3.75)); grid.SetMetadata("matrix", Matrix);
+        grid.SetMetadata("origin", new Coord(-1, 2, -3)); grid.SetMetadata("direction", new Vec3d(1.25, -2.5, 3.75)); grid.SetMetadata("matrix", Matrix);
         if (scenario == "empty") return grid;
         var tree = grid.Tree;
-        tree.AddTile(3, new(-4096,-4096,-4096), Value<T>(3), true);
-        tree.AddTile(3, new(4096,0,0), Value<T>(13), false);
-        tree.AddTile(2, new(0,0,0), Value<T>(5), false);
-        tree.AddTile(1, new(128,0,0), Value<T>(7), true);
-        tree.SetValueOn(new(-1,0,1), Value<T>(11)); tree.SetValueOff(new(7,8,9), Value<T>(17));
-        tree.SetValueOn(new(int.MaxValue,int.MaxValue,int.MaxValue), Value<T>(23));
-        tree.SetValueOff(new(int.MinValue,int.MinValue,int.MinValue), Value<T>(29));
+        tree.AddTile(3, new(-4096, -4096, -4096), Value<T>(3), true);
+        tree.AddTile(3, new(4096, 0, 0), Value<T>(13), false);
+        tree.AddTile(2, new(0, 0, 0), Value<T>(5), false);
+        tree.AddTile(1, new(128, 0, 0), Value<T>(7), true);
+        tree.SetValueOn(new(-1, 0, 1), Value<T>(11)); tree.SetValueOff(new(7, 8, 9), Value<T>(17));
+        tree.SetValueOn(new(int.MaxValue, int.MaxValue, int.MaxValue), Value<T>(23));
+        tree.SetValueOff(new(int.MinValue, int.MinValue, int.MinValue), Value<T>(29));
         if (typeof(T) != typeof(int))
         {
-            tree.SetValueOn(new(1,2,3), Value<T>(1.25)); tree.SetValueOff(new(2,3,4), Value<T>(-0.0));
-            tree.SetValueOn(new(3,4,5), Value<T>(double.PositiveInfinity)); tree.SetValueOff(new(4,5,6), Value<T>(double.NegativeInfinity));
-            tree.SetValueOn(new(5,6,7), Value<T>(double.NaN));
+            tree.SetValueOn(new(1, 2, 3), Value<T>(1.25)); tree.SetValueOff(new(2, 3, 4), Value<T>(-0.0));
+            tree.SetValueOn(new(3, 4, 5), Value<T>(double.PositiveInfinity)); tree.SetValueOff(new(4, 5, 6), Value<T>(double.NegativeInfinity));
+            tree.SetValueOn(new(5, 6, 7), Value<T>(double.NaN));
         }
         return grid;
     }

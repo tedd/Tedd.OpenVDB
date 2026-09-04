@@ -9,7 +9,7 @@ public enum Axis { X, Y, Z }
 
 /// <summary>Double-precision row-major matrix using OpenVDB's row-vector convention.</summary>
 [StructLayout(LayoutKind.Sequential)]
-public readonly record struct Mat4d(
+public readonly partial record struct Mat4d(
     double M00, double M01, double M02, double M03,
     double M10, double M11, double M12, double M13,
     double M20, double M21, double M22, double M23,
@@ -24,8 +24,22 @@ public readonly record struct Mat4d(
             ArgumentOutOfRangeException.ThrowIfGreaterThan((uint)column, 3u, nameof(column));
             return (row * 4 + column) switch
             {
-                0 => M00, 1 => M01, 2 => M02, 3 => M03, 4 => M10, 5 => M11, 6 => M12, 7 => M13,
-                8 => M20, 9 => M21, 10 => M22, 11 => M23, 12 => M30, 13 => M31, 14 => M32, _ => M33
+                0 => M00,
+                1 => M01,
+                2 => M02,
+                3 => M03,
+                4 => M10,
+                5 => M11,
+                6 => M12,
+                7 => M13,
+                8 => M20,
+                9 => M21,
+                10 => M22,
+                11 => M23,
+                12 => M30,
+                13 => M31,
+                14 => M32,
+                _ => M33
             };
         }
     }
@@ -89,7 +103,7 @@ public readonly record struct Mat4d(
     {
         for (int row = 0; row < 4; ++row)
             for (int column = 0; column < 4; ++column)
-                if (!(System.Math.Abs(this[row, column] - other[row, column]) <= tolerance)) return false;
+                if (!MathComparison.IsApproxEqual(this[row, column], other[row, column], tolerance)) return false;
         return true;
     }
     public void CopyTo(Span<double> destination)

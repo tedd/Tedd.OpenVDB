@@ -10,30 +10,45 @@ namespace Tedd.OpenVDB;
 
 public enum GridClass { Unknown, LevelSet, FogVolume, Staggered }
 
-/// <summary>An immutable metadata value restricted to supported scalar and math value types.</summary>
+/// <summary>An immutable typed metadata value or opaque persistent payload. Native vec3i is stored as Coord and can also be retrieved as Vec3i.</summary>
 public sealed record MetadataValue
 {
     private readonly object _value;
     public MetadataValue(object value)
     {
         ArgumentNullException.ThrowIfNull(value);
-        if (value is not (bool or int or long or float or double or string or Coord or Vec3d or Mat4d))
+        if (value is not (bool or int or long or float or double or string or Coord or Vec3d or Vec3i or Vec3f or Mat4d or OpaqueMetadata))
             throw new ArgumentException("Metadata must be a supported immutable scalar, string, coordinate, vector or matrix.", nameof(value));
-        _value = value;
+        _value = value is Vec3i vector ? new Coord(vector.X, vector.Y, vector.Z) : value;
     }
     public object Value => _value;
     public string TypeName => _value switch
     {
-        bool => "bool", int => "int32", long => "int64", float => "float", double => "double", string => "string",
-        Coord => "vec3i", Vec3d => "vec3d", Mat4d => "mat4d", _ => throw new InvalidOperationException()
+        bool => "bool",
+        int => "int32",
+        long => "int64",
+        float => "float",
+        double => "double",
+        string => "string",
+        Coord => "vec3i",
+        Vec3f => "vec3s",
+        Vec3d => "vec3d",
+        Mat4d => "mat4d",
+        OpaqueMetadata opaque => opaque.TypeName,
+        _ => throw new InvalidOperationException()
     };
-    public TValue GetValue<TValue>() => _value is TValue typed ? typed : throw new InvalidCastException($"Metadata type {TypeName} cannot be read as {typeof(TValue).Name}.");
+    public TValue GetValue<TValue>()
+    {
+        if (_value is TValue typed) return typed;
+        if (_value is Coord coordinate && typeof(TValue) == typeof(Vec3i)) return (TValue)(object)new Vec3i(coordinate.X, coordinate.Y, coordinate.Z);
+        throw new InvalidCastException($"Metadata type {TypeName} cannot be read as {typeof(TValue).Name}.");
+    }
     public override string ToString() => _value is IFormattable formatted ? formatted.ToString(null, CultureInfo.InvariantCulture) : _value.ToString()!;
 }
 
-/// <summary>A typed sparse tree with an affine index/world transform and independent grid metadata.</summary>
+/// <summary>A typed sparse tree with an index/world transform and independent grid metadata.</summary>
 /// <remarks>The tree supplied to the constructor is shared. DeepCopy clones the tree, transform and metadata map.</remarks>
-public sealed class Grid<T> where T : unmanaged
+public sealed class Grid<T> : IGrid where T : unmanaged
 {
     public const string NameMetadataKey = "name";
     public const string ClassMetadataKey = "class";
@@ -49,6 +64,7 @@ public sealed class Grid<T> where T : unmanaged
     }
     public VdbTree<T> Tree { get; }
     public T Background => Tree.Background;
+    public Type ValueType => typeof(T);
     public bool IsEmpty => Tree.IsEmpty;
     public ulong ActiveVoxelCount => Tree.ActiveVoxelCount;
     public IReadOnlyDictionary<string, MetadataValue> Metadata => _metadataView;
@@ -69,12 +85,18 @@ public sealed class Grid<T> where T : unmanaged
     }
     public static string GridClassToString(GridClass gridClass) => gridClass switch
     {
-        GridClass.Unknown => "unknown", GridClass.LevelSet => "level set", GridClass.FogVolume => "fog volume", GridClass.Staggered => "staggered",
+        GridClass.Unknown => "unknown",
+        GridClass.LevelSet => "level set",
+        GridClass.FogVolume => "fog volume",
+        GridClass.Staggered => "staggered",
         _ => "unknown"
     };
     public static GridClass ParseGridClass(string text) => text.Trim().ToLowerInvariant() switch
     {
-        "level set" => GridClass.LevelSet, "fog volume" => GridClass.FogVolume, "staggered" => GridClass.Staggered, _ => GridClass.Unknown
+        "level set" => GridClass.LevelSet,
+        "fog volume" => GridClass.FogVolume,
+        "staggered" => GridClass.Staggered,
+        _ => GridClass.Unknown
     };
     public void SetMetadata(string name, object value) => SetMetadata(name, new MetadataValue(value));
     public void SetMetadata(string name, MetadataValue value)
@@ -88,6 +110,7 @@ public sealed class Grid<T> where T : unmanaged
     public bool TryGetMetadata<TValue>(string name, out TValue value)
     {
         if (_metadata.TryGetValue(name, out var metadata) && metadata.Value is TValue typed) { value = typed; return true; }
+        if (metadata?.Value is Coord coordinate && typeof(TValue) == typeof(Vec3i)) { value = (TValue)(object)new Vec3i(coordinate.X, coordinate.Y, coordinate.Z); return true; }
         value = default!; return false;
     }
     public T this[Coord coordinate] { get => Tree.GetValue(coordinate); set => Tree.SetValueOn(coordinate, value); }

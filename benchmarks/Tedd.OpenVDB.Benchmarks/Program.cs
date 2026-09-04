@@ -47,7 +47,7 @@ Measure("mask.xor.32768bits", 20000, () =>
 });
 Measure("fill.uniform.4096cubed", 1000, () =>
 {
-    var box = new CoordBBox(default, new(4095,4095,4095));
+    var box = new CoordBBox(default, new(4095, 4095, 4095));
     for (int i = 0; i < 1000; i++)
     {
         var volume = new VdbTree<ushort>();
@@ -83,7 +83,7 @@ void Measure(string name, int operations, Action action)
         samples[i] = ((end - start) * (1_000_000_000.0 / Stopwatch.Frequency) / operations,
             GC.GetAllocatedBytesForCurrentThread() - allocated);
     }
-    Array.Sort(samples, (a,b) => a.ns.CompareTo(b.ns));
+    Array.Sort(samples, (a, b) => a.ns.CompareTo(b.ns));
     var median = samples[samples.Length / 2];
     results.Add(new { name, operations, nanosecondsPerOperation = median.ns, allocatedBytes = median.allocated });
 }

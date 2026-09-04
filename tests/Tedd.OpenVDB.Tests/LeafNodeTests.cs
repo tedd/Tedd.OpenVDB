@@ -10,9 +10,16 @@ namespace Tedd.OpenVDB.Tests;
 public sealed class LeafNodeTests
 {
     [Theory]
-    [InlineData(0, 0)] [InlineData(1, 0)] [InlineData(7, 0)] [InlineData(8, 8)]
-    [InlineData(9, 8)] [InlineData(-1, -8)] [InlineData(-7, -8)] [InlineData(-8, -8)]
-    [InlineData(-9, -16)] [InlineData(int.MinValue, int.MinValue)]
+    [InlineData(0, 0)]
+    [InlineData(1, 0)]
+    [InlineData(7, 0)]
+    [InlineData(8, 8)]
+    [InlineData(9, 8)]
+    [InlineData(-1, -8)]
+    [InlineData(-7, -8)]
+    [InlineData(-8, -8)]
+    [InlineData(-9, -16)]
+    [InlineData(int.MinValue, int.MinValue)]
     [InlineData(int.MaxValue, int.MaxValue - 7)]
     public void OriginAlignmentUsesFloorDivisionAcrossSignedCoordinateDomain(int coordinate, int expected)
     {
@@ -30,8 +37,11 @@ public sealed class LeafNodeTests
     }
 
     [Theory]
-    [InlineData(0, 0, 0)] [InlineData(-1, -9, 17)] [InlineData(93, -82, 71)]
-    [InlineData(int.MinValue, int.MaxValue, -1)] [InlineData(int.MaxValue, int.MinValue, 0)]
+    [InlineData(0, 0, 0)]
+    [InlineData(-1, -9, 17)]
+    [InlineData(93, -82, 71)]
+    [InlineData(int.MinValue, int.MaxValue, -1)]
+    [InlineData(int.MaxValue, int.MinValue, 0)]
     public void EveryOffsetRoundTripsInZThenYThenXOrder(int x, int y, int z)
     {
         var leaf = new LeafNode<int>(new Coord(x, y, z));
@@ -112,7 +122,8 @@ public sealed class LeafNodeTests
     }
 
     [Theory]
-    [InlineData(0, 0, 0)] [InlineData(-9, 17, -1)]
+    [InlineData(0, 0, 0)]
+    [InlineData(-9, 17, -1)]
     [InlineData(int.MinValue, int.MinValue, int.MinValue)]
     [InlineData(int.MaxValue, int.MaxValue, int.MaxValue)]
     public void PartialFillClipsInclusiveBoundsWithoutIntegerOverflow(int x, int y, int z)
@@ -345,7 +356,10 @@ public sealed class LeafNodeTests
     }
 
     [Theory]
-    [InlineData(-1)] [InlineData(512)] [InlineData(int.MinValue)] [InlineData(int.MaxValue)]
+    [InlineData(-1)]
+    [InlineData(512)]
+    [InlineData(int.MinValue)]
+    [InlineData(int.MaxValue)]
     public void InvalidOffsetsThrowBeforeMutation(int offset)
     {
         var leaf = new LeafNode<int>(default, 11, true);
@@ -364,7 +378,9 @@ public sealed class LeafNodeTests
     }
 
     [Theory]
-    [InlineData(113)] [InlineData(4721)] [InlineData(872719)]
+    [InlineData(113)]
+    [InlineData(4721)]
+    [InlineData(872719)]
     public void RandomVoxelMutationsAndBoxFillsMatchDenseReference(int seed)
     {
         var random = new Random(seed);
@@ -464,7 +480,10 @@ public sealed class NumericLeafTests
     }
 
     [Theory]
-    [InlineData(-1)] [InlineData(double.NaN)] [InlineData(double.PositiveInfinity)] [InlineData(double.NegativeInfinity)]
+    [InlineData(-1)]
+    [InlineData(double.NaN)]
+    [InlineData(double.PositiveInfinity)]
+    [InlineData(double.NegativeInfinity)]
     public void InvalidTolerancesAreRejected(double tolerance)
     {
         var leaf = new LeafNode<double>(default);

@@ -8,10 +8,10 @@ namespace Tedd.OpenVDB.Tests;
 public class VdbFileReviewTests
 {
     [Theory]
-    [InlineData(true)]
+
     [InlineData(1)]
     [InlineData("true")]
-    public void WriterRejectsHalfFloatMetadataBeforeEmittingAnyBytes(object flag)
+    public void WriterRejectsNonBooleanHalfFloatMetadataBeforeEmittingAnyBytes(object flag)
     {
         var grid = new Grid<float>();
         grid.SetMetadata("is_saved_as_half_float", flag);
@@ -29,7 +29,7 @@ public class VdbFileReviewTests
         Locations locations = Locate(bytes);
         int payload = locations.Metadata["is_saved_as_half_float"].Payload;
         bytes[payload] = 1;
-        Assert.Throws<NotSupportedException>(() => VdbFile.Read<float>(new MemoryStream(bytes)));
+        Assert.Throws<InvalidDataException>(() => VdbFile.Read<float>(new MemoryStream(bytes)));
     }
     [Fact]
     public void EveryTruncatedPrefixOfAnEmptyGridFails()
