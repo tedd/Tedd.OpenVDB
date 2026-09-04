@@ -9,23 +9,26 @@ The requested full 1:1 port is **not complete**. This repository contains a mana
 | Standard tree | Tree4 5/4/3 hierarchy, tile/voxel states, sparse/dense fill, clip, topology operations, combine, three merge policies, background reset, leaf transfer, counts/bounds | Fixed dimensions, unmanaged values; complete configurable/specialized tree family absent |
 | Traversal and managers | Read enumeration, mutable stored-value handles with depth limits, accessor cache, leaf manager buffers, cached/dynamic node managers, scoped parallel callbacks and reductions | Complete iterator overloads and arbitrary concurrent mutation absent |
 | Masks | SIMD node masks, bit iteration/counts, restricted distinct MaskGrid API | MaskGrid currently uses Boolean backing arrays, not complete native bit-packed MaskTree storage/API |
-| Native archives | Format 225, scalar/Bool/Vec3/Mask grids, heterogeneous archives, forward/backward instances, metadata, affine/frustum maps, active masks, zlib and all c-blosc codec IDs (BloscLZ/LZ4/Snappy/zlib/Zstd), byte/bitshuffle, half encoding | Dictionary/legacy Zstd, legacy/custom/point formats, partial/delayed/mapped I/O absent |
+| Native archives | Format 225, scalar/Bool/Vec3/Mask grids, heterogeneous archives, forward/backward instances, metadata, affine/frustum maps, active masks, zlib and all c-blosc codec IDs (BloscLZ/LZ4/Snappy/zlib/Zstd), byte/bitshuffle, half encoding, indexed grid/metadata selection, world-region clipping and leaf-payload skipping | Dictionary/legacy Zstd, legacy/custom/point formats, delayed/mapped storage absent; selected/regional reads skip excluded leaf payloads but still allocate topology |
 | Grid and metadata | Typed and heterogeneous grids, tree sharing/deep copy, name/class, immutable scalar/Half/Vec2/Vec3/Vec4/Mat4/opaque metadata, registered unmanaged custom codecs, MetaMap mutation/copy semantics and vector-space metadata | Arbitrary reference-valued custom metadata and remaining grid convenience APIs remain |
 | Math | Coord/boxes, native vector/matrix storage types, expanded double math, quaternions, native affine/scale/translation/unitary map identities, frustum/camera transforms, proximity, quantized unit vectors, ray/DDA and hierarchical traversal | Complete generic precision family and remaining advanced math utilities remain |
 | Numerical kernels | All native first/second finite differences, WENO5/Godunov, stencils, scalar/vector index/world operators, grid differential operations, float/double PCG with Jacobi/IC, sparse Poisson assembly/boundary conditions/solves | Remaining numerical utility/solver families remain |
 | Volume topology | Exact/tolerance/inactive/level-set pruning, signed flood fill, dilation/erosion with 6/18/26 neighbors and Ignore/Expand/Preserve tile policies | Complete tools family remains |
-| Level sets and composites | Sphere generation, CSG/composites, masks/fog/segmentation, measurements, tracking/filtering, triangle/quad mesh conversion, adaptive volume meshing with reference seams, rebuilding, edge intersections, box construction, Platonic solids, topology-to-level-set conversion, level-set advection, morphing and fracture | Remaining surface generators, particles and simulation remain |
+| Level sets and composites | Sphere generation, CSG/composites, masks/fog/segmentation, measurements, tracking/filtering, triangle/quad mesh conversion, adaptive volume meshing with reference seams, rebuilding, edge intersections, box construction, Platonic solids, topology-to-level-set conversion, level-set advection, morphing and fracture | Remaining surface generators and simulation remain |
 | Sampling and filtering | Scalar/vector point/box/quadratic and staggered sampling, affine/mipmap/nonlinear resampling with level-set rebuild dispatch, mean/Gaussian/median/offset filters, transformed alpha masks, velocity fields and Runge-Kutta integration, scalar/vector volume advection with correction limiters | Remaining overload and value-specialization families remain |
 | Dense, queries and statistics | XYZ/ZYX dense memory, sparse conversion, cached regional activity queries, scalar/vector extrema, weighted mean/variance/histograms | Native memory-usage reporting, complete overload/parallel/reduction and value-conversion families remain |
 | Multiresolution | Float/double LOD trees, weighted/injection restriction, prolongation, fractional grids and sampling, native copy/steal and metadata semantics | Configurable tree and other value specializations remain |
+| Particle tools | Particle/point partitioning, variable/fixed spheres and trails, attribute propagation, native finalize rules, uniform/dense/nonuniform scattering, cloned MT19937 and native MSVC distributions | ParticleAtlas, specialized point grids and remaining point tools remain |
+| Value callbacks and diagnostics | Foreach/transform/accumulate, four activation modifiers, diagnostic scalar/vector checks, gradient/divergence checks and ordered level-set/fog validation | Managed scheduling differs from TBB; three ill-formed native diagnostic templates have documented corrections |
+| Point attributes | Uniform/expanded arrays, typed codecs, constant/variable strides, read/write handles, raw copying, scoped factories, group bit handles and raw/Blosc standalone streams | AttributeSet/string descriptors, PointDataGrid integration and paged/delayed buffers remain |
 
 ## Remaining major work
 
 1. Finish tree configurability, specialized storage, iterators/managers, overloads and complete grid/metadata APIs.
-2. Finish archive compression/version/type families, partial reading and delayed/mapped storage.
+2. Finish archive compression/version/type families and delayed/mapped storage.
 3. Complete generic math/maps, specialized stencils, remaining numerical operators and solvers.
-4. Port remaining volume tools: particles, remaining surface/segmentation/conversion APIs, rendering and diagnostics.
-5. Port point-data/index grids, attributes, groups, codecs and point tools.
+4. Port remaining volume tools: remaining surface/segmentation/conversion APIs, rendering and remaining tool overloads.
+5. Complete point-data/index grids, attribute descriptors/string support, paged attributes and remaining point tools.
 6. Translate the remaining applicable native tests and expand differential coverage for each added module.
 7. AX, NanoVDB, Python and host-product integrations remain separate unported upstream components. No parity with those components is claimed.
 
@@ -65,3 +68,13 @@ Native fixtures cover storage mutations, all merge policies, ordered iterators, 
 - Multiresolution restriction/prolongation preserve native summation and fractional float coefficients. Integer grid views share trees, while fractional-grid factories copy. Materialization has explicit voxel/leaf budgets.
 - Vector transformation uses native covariant/contravariant and local/world metadata, visits all stored values, and preserves the implicit root background. Integer casts outside the defined range throw.
 - Native transform map identity and serialized derived caches are retained. Copies and pre/post operations follow native map simplification and specialization rules. Precision-sensitive velocity boundary fixtures compare specialized maps directly.
+- Native trail rasterization can stop advancing with a zero minimum radius; managed trails
+  reject nonadvancing steps rather than hang. Partitioning preserves source order and
+  native affine half-voxel rounding.
+- Native diagnostics contain ill-formed divergence, clear and vector-WENO templates.
+  Corrected managed paths have explicit compile-failure evidence and independent tests.
+- Value callbacks preserve native operation sharing/copying and zero-background split
+  output trees. Managed parallel partitioning and reduction order are explicit.
+- Point attributes preserve encoded bytes and uniform/stride semantics. NativeEquals
+  exposes the native strided-tail omission; StorageEquals checks all entries. Streaming
+  attribute read handles release their data deterministically on Dispose.

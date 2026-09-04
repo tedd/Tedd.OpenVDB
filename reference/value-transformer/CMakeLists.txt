@@ -1,0 +1,13 @@
+cmake_minimum_required(VERSION 3.28)
+project(TeddOpenVdbValueTransformerReference LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+add_executable(vdb-value-transformer-reference ../value-transformer-oracle.cpp)
+target_include_directories(vdb-value-transformer-reference PRIVATE "${OPENVDB_SOURCE_DIR}/openvdb" "${OPENVDB_SOURCE_DIR}/ext/imath" "${OPENVDB_BUILD_DIR}/openvdb/openvdb" "${OPENVDB_BUILD_DIR}/openvdb/openvdb/openvdb" "${TBB_ROOT}/include")
+target_compile_definitions(vdb-value-transformer-reference PRIVATE OPENVDB_STATICLIB _USE_MATH_DEFINES NOMINMAX)
+target_link_libraries(vdb-value-transformer-reference PRIVATE "${OPENVDB_BUILD_DIR}/openvdb/openvdb/Release/libopenvdb.lib" "${TBB_ROOT}/lib/intel64/vc14/tbb12.lib")
+set_property(TARGET vdb-value-transformer-reference PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
+if(MSVC)
+  target_compile_options(vdb-value-transformer-reference PRIVATE /bigobj)
+endif()

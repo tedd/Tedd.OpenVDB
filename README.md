@@ -98,3 +98,24 @@ Some native behaviors differ from their comments. In particular, CSG may leave u
 The hierarchy uses 8³ leaves, 16³ lower tables and 32³ upper tables. Contiguous unmanaged value arrays and sparse child-reference tables reduce GC reference scanning. Mask operations use SIMD with scalar fallback, popcount and trailing-zero enumeration. Span transfers, local array references and completely initialized `GC.AllocateUninitializedArray` buffers support JIT optimization. Leaf-buffer swaps reuse arrays and retain managed references safely across compacting collections.
 
 No speedup over .NET 10 or native OpenVDB is asserted without controlled measurement. The included benchmark is a throughput/allocation smoke test; see [performance notes](docs/PERFORMANCE.md).
+
+
+## Selected reads and point attributes
+
+VdbFile.OpenRead indexes seekable archive descriptors without loading all grid payloads.
+Use ReadGridMetadata(name), ReadGrid<T>(name), or ReadGrid<T>(name, worldBounds). Regional
+reads skip nonoverlapping leaf value payloads and then clip the selected tree. Topology
+and retained leaf arrays are still allocated eagerly. Dispose releases reader caches;
+returned grids remain usable.
+
+The Points namespace provides TypedAttributeArray<T,TCodec>, constant/variable strides,
+AttributeHandle and AttributeWriteHandle, scoped factories and group bit handles.
+Null, Truncate, fixed-point position/unit, unit-vector and group codecs use unmanaged
+encoded storage. AttributeStreams reads and writes standalone native raw/Blosc buffers.
+These components are foundations for point grids; complete PointDataGrid support is
+still in progress.
+
+ValueTransformer supplies iterator callbacks, output-tree transforms, reductions and
+minimum/maximum/sum/product activation. Particle rasterization, point partitioning,
+three point-scatter algorithms and diagnostic checks have native differential fixtures.
+Per-family contracts, native defects and deliberate adaptations are documented in reference/.

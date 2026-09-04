@@ -67,7 +67,11 @@ public readonly partial record struct Mat4d
     public Mat4d Inverse(double tolerance = 0)
     {
         ArgumentOutOfRangeException.ThrowIfNegative(tolerance);
-        double detA = Determinant3x3;
+        // Mat4::inverse uses expanded triple products rather than the grouped Mat3 determinant.
+        // Their rounding difference can change cell selection at an exact half-voxel boundary.
+        double m0011 = M00 * M11, m0012 = M00 * M12, m0110 = M01 * M10;
+        double m0210 = M02 * M10, m0120 = M01 * M20, m0220 = M02 * M20;
+        double detA = m0011 * M22 - m0012 * M21 - m0110 * M22 + m0210 * M21 + m0120 * M12 - m0220 * M11;
         bool perspective = !IsAffine;
         double determinant = perspective ? Determinant : detA;
         if (MathComparison.IsApproxZero(determinant, tolerance)) throw new ArithmeticException("Inversion of singular 4x4 matrix.");
@@ -76,7 +80,11 @@ public readonly partial record struct Mat4d
             if (!InvertByElimination(out Mat4d result, tolerance)) throw new ArithmeticException("Inversion of singular 4x4 matrix.");
             return result;
         }
-        Mat3d inverse = GetMat3().Adjoint() * (1 / detA);
+        double reciprocal = 1 / detA;
+        Mat3d inverse = new(
+            reciprocal * (M11 * M22 - M12 * M21), reciprocal * (-M01 * M22 + M02 * M21), reciprocal * (M01 * M12 - M02 * M11),
+            reciprocal * (-M10 * M22 + M12 * M20), reciprocal * (M00 * M22 - m0220), reciprocal * (m0210 - m0012),
+            reciprocal * (M10 * M21 - M11 * M20), reciprocal * (m0120 - M00 * M21), reciprocal * (m0011 - m0110));
         if (!perspective)
         {
             Vec3d translation = -(Translation * inverse);

@@ -172,4 +172,13 @@ public sealed class VdbMapTests
         using var disposed = new MemoryStream(wire); new Transform().Read(disposed, leaveOpen: false); Assert.False(disposed.CanRead);
         using var written = new MemoryStream(); new Transform().Write(written, leaveOpen: false); Assert.False(written.CanWrite);
     }
+    [Fact]
+    public void ExpandedAffineInverseDeterminantPreservesNativeHalfVoxelBoundary()
+    {
+        // Native particles-oracle.cpp transform(1), partitionPoints()[97].
+        var transform = Transform.CreateLinearTransform(.75);
+        transform.PostTranslate(new(.25, -.375, .125)); transform.PostRotate(.2, Axis.Z);
+        Assert.Equal("AffineMap", transform.MapType);
+        Assert.Equal(1, transform.WorldToIndexCellCentered(new Vec3d(.5)).Z);
+    }
 }
