@@ -1,0 +1,4 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType><IsPackable>false</IsPackable><ServerGarbageCollection>true</ServerGarbageCollection></PropertyGroup>
+  <ItemGroup><ProjectReference Include="../../src/Tedd.OpenVDB/Tedd.OpenVDB.csproj" /></ItemGroup>
+</Project>

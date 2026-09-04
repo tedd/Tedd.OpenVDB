@@ -1,0 +1,4 @@
+# Native reference build
+/build*/
+/dependencies/
+/*.zip

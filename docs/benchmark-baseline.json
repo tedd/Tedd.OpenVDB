@@ -1,0 +1,44 @@
+{
+  "runtime": ".NET 11.0.0-preview.7.26381.103",
+  "architecture": "X64",
+  "serverGc": true,
+  "processorCount": 32,
+  "vectorAccelerated": true,
+  "vectorBytes": 32,
+  "tieredPgo": "runtime default",
+  "generatedUtc": "2026-09-04T14:12:26.3909365+00:00",
+  "note": "Five warmups, seven measurements; median. Stopwatch microbenchmark; no cross-runtime speedup claims.",
+  "results": [
+    {
+      "name": "tree.read.coherent",
+      "operations": 1000000,
+      "nanosecondsPerOperation": 37.4972,
+      "allocatedBytes": 0
+    },
+    {
+      "name": "accessor.read.coherent",
+      "operations": 1000000,
+      "nanosecondsPerOperation": 8.6461,
+      "allocatedBytes": 0
+    },
+    {
+      "name": "accessor.write.coherent",
+      "operations": 1000000,
+      "nanosecondsPerOperation": 14.0571,
+      "allocatedBytes": 0
+    },
+    {
+      "name": "mask.xor.32768bits",
+      "operations": 20000,
+      "nanosecondsPerOperation": 469.745,
+      "allocatedBytes": 0
+    },
+    {
+      "name": "fill.uniform.4096cubed",
+      "operations": 1000,
+      "nanosecondsPerOperation": 704.1,
+      "allocatedBytes": 328000
+    }
+  ],
+  "sink": 68719476736
+}
