@@ -11,13 +11,13 @@ namespace Tedd.OpenVDB;
 public enum GridClass { Unknown, LevelSet, FogVolume, Staggered }
 
 /// <summary>An immutable typed metadata value or opaque persistent payload. Native vec3i is stored as Coord and can also be retrieved as Vec3i.</summary>
-public sealed record MetadataValue
+public sealed partial record MetadataValue
 {
     private readonly object _value;
     public MetadataValue(object value)
     {
         ArgumentNullException.ThrowIfNull(value);
-        if (value is not (bool or int or long or float or double or string or Coord or Vec3d or Vec3i or Vec3f or Mat4d or OpaqueMetadata))
+        if (value is not (bool or int or long or float or double or string or Coord or Vec3d or Vec3i or Vec3f or Mat4d or Mat4f or Half or Vec2i or Vec2f or Vec2d or Vec4i or Vec4f or Vec4d or OpaqueMetadata))
             throw new ArgumentException("Metadata must be a supported immutable scalar, string, coordinate, vector or matrix.", nameof(value));
         _value = value is Vec3i vector ? new Coord(vector.X, vector.Y, vector.Z) : value;
     }
@@ -34,6 +34,14 @@ public sealed record MetadataValue
         Vec3f => "vec3s",
         Vec3d => "vec3d",
         Mat4d => "mat4d",
+        Mat4f => "mat4s",
+        Half => "half",
+        Vec2i => "vec2i",
+        Vec2f => "vec2s",
+        Vec2d => "vec2d",
+        Vec4i => "vec4i",
+        Vec4f => "vec4s",
+        Vec4d => "vec4d",
         OpaqueMetadata opaque => opaque.TypeName,
         _ => throw new InvalidOperationException()
     };
@@ -43,7 +51,7 @@ public sealed record MetadataValue
         if (_value is Coord coordinate && typeof(TValue) == typeof(Vec3i)) return (TValue)(object)new Vec3i(coordinate.X, coordinate.Y, coordinate.Z);
         throw new InvalidCastException($"Metadata type {TypeName} cannot be read as {typeof(TValue).Name}.");
     }
-    public override string ToString() => _value is IFormattable formatted ? formatted.ToString(null, CultureInfo.InvariantCulture) : _value.ToString()!;
+    public override string ToString() => FormatNative(_value);
 }
 
 /// <summary>A typed sparse tree with an index/world transform and independent grid metadata.</summary>

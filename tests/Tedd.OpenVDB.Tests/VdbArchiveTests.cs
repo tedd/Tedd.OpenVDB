@@ -160,8 +160,7 @@ public sealed class VdbArchiveTests
             case "missing-parent": bytes[instance.Parent] = (byte)'X'; break;
         }
         using var input = new MemoryStream(bytes);
-        if (mutation == "missing-parent") Assert.Throws<NotSupportedException>(() => VdbFile.ReadArchive(input));
-        else Assert.Throws<InvalidDataException>(() => VdbFile.ReadArchive(input));
+        Assert.Throws<InvalidDataException>(() => VdbFile.ReadArchive(input));
     }
 
     [Theory, InlineData("taper-zero"), InlineData("taper-nan"), InlineData("depth-negative"), InlineData("bounds-empty"), InlineData("bounds-infinite"), InlineData("matrix-nan"), InlineData("matrix-singular")]

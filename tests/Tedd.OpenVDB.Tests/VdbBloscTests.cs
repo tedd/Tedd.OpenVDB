@@ -83,13 +83,10 @@ public sealed class VdbBloscTests
     [InlineData("memcpy")]
     [InlineData("noise")]
     [InlineData("zlib")]
+    [InlineData("bitshuffle")]
+    [InlineData("blosclz")]
+    [InlineData("zstd")]
     public void NativeBloscFrameVariantsDecode(string name) => Compare(Load(PathFor("expected-frame-" + name)), Load(PathFor("frame-" + name)));
-
-    [Theory, InlineData("bitshuffle"), InlineData("blosclz"), InlineData("zstd")]
-    public void UnsupportedNativeBloscCodecsOrFiltersAreExplicit(string name)
-    {
-        using var input = File.OpenRead(PathFor("frame-" + name)); Assert.Throws<NotSupportedException>(() => VdbFile.Read<float>(input));
-    }
 
     [Fact]
     public void WriterActuallyCompressesRepetitiveValuesAndPreservesRawNoise()

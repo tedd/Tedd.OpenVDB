@@ -80,3 +80,20 @@ var measurement = new LevelSetMeasure<float>(sphere);
 if (gradient.ActiveVoxelCount != sphere.ActiveVoxelCount || !double.IsFinite(measurement.Area()) || measurement.Volume() <= 0)
     throw new InvalidOperationException("Level-set analysis failed.");
 Console.WriteLine($"Managers and sampling: {allocatedNodes} nodes; level-set area {measurement.Area():F3}, volume {measurement.Volume():F3}.");
+
+// Sparse volume intervals skip empty leaves; surface intersection refines a signed-distance crossing.
+var volumeRays = new VolumeRayIntersector<int>(loaded);
+if (!volumeRays.SetIndexRay(new Rayd(new(-20, -3.5, -3.5), Vec3d.UnitX)) || !volumeRays.March(out double entry, out double exit) || exit <= entry)
+    throw new InvalidOperationException("Sparse-volume ray missed occupied blocks.");
+var surfaceRays = new LevelSetRayIntersector<float>(sphere, iterations: 2);
+if (!surfaceRays.IntersectsWorld(new Rayd(new(-20, 0.125, 0.375), Vec3d.UnitX), out var surfacePoint, out var surfaceNormal, out double surfaceTime) || !surfacePoint.IsFinite || !surfaceNormal.IsFinite)
+    throw new InvalidOperationException("Level-set ray did not produce a finite surface hit.");
+Console.WriteLine($"Ray queries: occupied interval [{entry:F3}, {exit:F3}], surface distance {surfaceTime:F3}.");
+
+// Exercise both geometry directions with compiled float/double generic kernels.
+var box = MeshToVolume.CreateLevelSetBox<double>(new BBoxd(new Vec3d(-2), new Vec3d(2)), new Transform());
+var mesher = new VolumeToMesh(adaptivity: 0.1);
+mesher.Extract(box);
+if (box.Tree.GetValue(Coord.Zero) >= 0 || mesher.Points.IsEmpty || mesher.PolygonPools.Count == 0)
+    throw new InvalidOperationException("NativeAOT mesh conversion failed.");
+Console.WriteLine($"Mesh conversion: {box.ActiveVoxelCount:N0} distance samples, {mesher.Points.Length:N0} surface points.");

@@ -144,6 +144,22 @@ int main(int argc,char** argv) {
             frameFixture(directory,"bitshuffle","lz4",2,4,2048,BLOSC_FORWARD_COMPAT_SPLIT,9);
             frameFixture(directory,"blosclz","blosclz",1,4,2048,BLOSC_FORWARD_COMPAT_SPLIT,9);
             frameFixture(directory,"zstd","zstd",1,4,2048,BLOSC_FORWARD_COMPAT_SPLIT,9);
+        } else if(argc==3&&std::string(argv[1])=="generate-codecs") {
+            fs::path directory(argv[2]);fs::create_directories(directory);
+            for(const char* codec:{"blosclz","snappy"})for(int filter:{0,1,2})for(int profile=0;profile<4;++profile) {
+                const int type=profile==2?3:profile==3?1:4;
+                const int block=profile==0?2048:profile==1?256:profile==2?511:128;
+                const int split=profile==0?BLOSC_ALWAYS_SPLIT:BLOSC_NEVER_SPLIT;
+                frameFixture(directory,std::string(codec)+"-"+std::to_string(filter)+"-"+std::to_string(profile),codec,filter,type,block,split,9);
+            }
+        } else if(argc==3&&std::string(argv[1])=="generate-zstd") {
+            fs::path directory(argv[2]);fs::create_directories(directory);
+            for(int filter:{0,1,2})for(int profile=0;profile<4;++profile) {
+                const int type=profile==2?3:profile==3?1:4;
+                const int block=profile==0?2048:profile==1?256:profile==2?511:128;
+                const int split=profile==0?BLOSC_ALWAYS_SPLIT:BLOSC_NEVER_SPLIT;
+                frameFixture(directory,"zstd-"+std::to_string(filter)+"-"+std::to_string(profile),"zstd",filter,type,block,split,9);
+            }
         } else if(argc==5&&std::string(argv[1])=="verify") {
             std::string type(argv[4]);
             if(type=="int32")typeVerify<openvdb::Int32Grid>(argv[2],argv[3]);else if(type=="float")typeVerify<openvdb::FloatGrid>(argv[2],argv[3]);else if(type=="double")typeVerify<openvdb::DoubleGrid>(argv[2],argv[3]);

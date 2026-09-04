@@ -25,3 +25,28 @@ target_compile_definitions(grid-operators-reference PRIVATE OPENVDB_STATICLIB _U
 target_link_libraries(grid-operators-reference PRIVATE "${OPENVDB_BUILD_DIR}/openvdb/openvdb/Release/libopenvdb.lib" "${TBB_ROOT}/lib/intel64/vc14/tbb12.lib")
 set_property(TARGET grid-operators-reference PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 target_compile_options(grid-operators-reference PRIVATE $<$<CXX_COMPILER_ID:MSVC>:/bigobj>)
+
+add_executable(pcg-reference ../pcg-oracle.cpp)
+target_include_directories(pcg-reference PRIVATE "${OPENVDB_SOURCE_DIR}/openvdb" "${OPENVDB_SOURCE_DIR}/ext/imath" "${OPENVDB_BUILD_DIR}/openvdb/openvdb" "${OPENVDB_BUILD_DIR}/openvdb/openvdb/openvdb" "${TBB_ROOT}/include")
+target_compile_definitions(pcg-reference PRIVATE OPENVDB_STATICLIB _USE_MATH_DEFINES NOMINMAX)
+target_link_libraries(pcg-reference PRIVATE "${OPENVDB_BUILD_DIR}/openvdb/openvdb/Release/libopenvdb.lib" "${TBB_ROOT}/lib/intel64/vc14/tbb12.lib")
+set_property(TARGET pcg-reference PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
+add_executable(poisson-reference ../poisson-oracle.cpp)
+target_include_directories(poisson-reference PRIVATE "${OPENVDB_SOURCE_DIR}/openvdb" "${OPENVDB_SOURCE_DIR}/ext/imath" "${OPENVDB_BUILD_DIR}/openvdb/openvdb" "${OPENVDB_BUILD_DIR}/openvdb/openvdb/openvdb" "${TBB_ROOT}/include")
+target_compile_definitions(poisson-reference PRIVATE OPENVDB_STATICLIB _USE_MATH_DEFINES NOMINMAX)
+target_link_libraries(poisson-reference PRIVATE "${OPENVDB_BUILD_DIR}/openvdb/openvdb/Release/libopenvdb.lib" "${TBB_ROOT}/lib/intel64/vc14/tbb12.lib")
+set_property(TARGET poisson-reference PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+target_compile_options(poisson-reference PRIVATE $<$<CXX_COMPILER_ID:MSVC>:/bigobj>)
+
+add_executable(quantized-unit-vector-reference ../quantized-unit-vector-oracle.cpp)
+target_include_directories(quantized-unit-vector-reference PRIVATE "${OPENVDB_SOURCE_DIR}/openvdb" "${OPENVDB_SOURCE_DIR}/ext/imath" "${OPENVDB_BUILD_DIR}/openvdb/openvdb" "${OPENVDB_BUILD_DIR}/openvdb/openvdb/openvdb" "${TBB_ROOT}/include")
+target_compile_definitions(quantized-unit-vector-reference PRIVATE OPENVDB_STATICLIB _USE_MATH_DEFINES NOMINMAX)
+target_link_libraries(quantized-unit-vector-reference PRIVATE "${OPENVDB_BUILD_DIR}/openvdb/openvdb/Release/libopenvdb.lib" "${TBB_ROOT}/lib/intel64/vc14/tbb12.lib")
+set_property(TARGET quantized-unit-vector-reference PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
+add_executable(velocity-fields-reference ../velocity-fields-oracle.cpp)
+target_include_directories(velocity-fields-reference PRIVATE "${OPENVDB_SOURCE_DIR}/openvdb" "${OPENVDB_SOURCE_DIR}/ext/imath" "${OPENVDB_BUILD_DIR}/openvdb/openvdb" "${OPENVDB_BUILD_DIR}/openvdb/openvdb/openvdb" "${TBB_ROOT}/include")
+target_compile_definitions(velocity-fields-reference PRIVATE OPENVDB_STATICLIB _USE_MATH_DEFINES NOMINMAX)
+target_link_libraries(velocity-fields-reference PRIVATE "${OPENVDB_BUILD_DIR}/openvdb/openvdb/Release/libopenvdb.lib" "${TBB_ROOT}/lib/intel64/vc14/tbb12.lib")
+set_property(TARGET velocity-fields-reference PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")

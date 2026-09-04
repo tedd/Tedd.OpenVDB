@@ -21,7 +21,7 @@ public sealed class OpaqueMetadata : IEquatable<OpaqueMetadata>
     public OpaqueMetadata(string typeName, ReadOnlySpan<byte> data)
     {
         ArgumentException.ThrowIfNullOrEmpty(typeName);
-        if (typeName is "bool" or "int32" or "int64" or "float" or "double" or "string" or "vec3i" or "vec3s" or "vec3d" or "mat4d" or "__delayedload")
+        if (typeName is "bool" or "int32" or "int64" or "float" or "double" or "string" or "vec3i" or "vec3s" or "vec3d" or "mat4d" or "mat4s" or "half" or "vec2i" or "vec2s" or "vec2d" or "vec4i" or "vec4s" or "vec4d" or "__delayedload")
             throw new ArgumentException("Recognized metadata types require their typed representation.", nameof(typeName));
         TypeName = typeName; _data = data.ToArray();
     }

@@ -1,56 +1,73 @@
 # Validation record
 
 Date: 2026-09-04. Platform: Windows x64. SDK: 11.0.100-preview.7.26381.103.
-Upstream OpenVDB: `f42248c35a9f7bb30641a8a74d9075ce7d1ddcaf` (13.0.1).
-Original wrapper HEAD: `f05f82318811b97e1591395df10979c6cacb5886`.
+Upstream OpenVDB: f42248c35a9f7bb30641a8a74d9075ce7d1ddcaf (13.0.1).
+Original wrapper HEAD: f05f82318811b97e1591395df10979c6cacb5886.
 
-The managed replacement is on `main`. Commit `5eb1137` replaced the old wrappers; work continues directly on main. Original Git history remains available.
+The managed replacement is on main. Commit 5eb1137 replaced the wrappers; development continues directly on main. Original Git history remains available.
 
-## Integrated checkpoint: 0.1.0-preview.3
+## Integrated checkpoint: 0.1.0-preview.4
 
 | Validation | Result |
 |---|---|
-| Release | 4,742 passed; 0 failed; 0 skipped |
-| Debug | 4,742 passed; 0 failed; 0 skipped |
-| Release, hardware intrinsics disabled | 4,742 passed; 0 failed; 0 skipped |
+| Release | 9,909 passed; 0 failed; 0 skipped |
+| Debug | 9,909 passed; 0 failed; 0 skipped |
+| Release, hardware intrinsics disabled | 9,909 passed; 0 failed; 0 skipped |
 | Windows x64 NativeAOT sample | Published and executed successfully |
-| NuGet package | Generated locally; no publication |
+| NuGet package and symbols | Generated locally; no publication |
+| Native fixture manifest | 371 files; 155,904,771 bytes; hashes verified |
 
-The initial replacement passed 600 tests; checkpoint `a3f1bca` passed 3,056. This checkpoint passes 4,742 and adds native comparisons for merge/leaf transfer, ordered iterators, dense conversion, filters, topology, level sets, CSG, vector composites, math, finite differences, statistics and archives. Review regressions cover Half and narrow-integer promotion, vector background predicates/medians, node-local sibling invalidation, invalid histogram scales, mask-tile inheritance and transformed shared-tree filter masks.
+Release took 44 seconds, Debug 95 seconds and scalar Release 34 seconds on this run. These are local validation durations, not performance benchmarks. Separate artifact directories prevented concurrent builds from overwriting test assemblies.
 
-Commands used:
+The earlier checkpoints passed 600 tests (initial replacement), 3,056 (a3f1bca) and 4,742 (589aa33, preview.3). This checkpoint adds native archive instances and compressor coverage, metadata, numerical solvers, ray traversal, geometry conversion, surface meshing/rebuilding and velocity integration.
 
-```powershell
-dotnet test Tedd.OpenVDB.slnx -c Release --logger 'trx;LogFileName=preview3-release.trx' --results-directory artifacts/test-results
+## Reproduction
+
+Run from the repository root with the pinned SDK:
+
+~~~powershell
+dotnet test Tedd.OpenVDB.slnx -c Release --artifacts-path artifacts/preview4-release --logger 'trx;LogFileName=preview4-release.trx' --results-directory artifacts/test-results
+dotnet test tests/Tedd.OpenVDB.Tests/Tedd.OpenVDB.Tests.csproj -c Debug --artifacts-path artifacts/preview4-debug --logger 'trx;LogFileName=preview4-debug.trx' --results-directory artifacts/test-results
 $previousIntrinsic = $env:DOTNET_EnableHWIntrinsic
 try {
     $env:DOTNET_EnableHWIntrinsic = '0'
-    dotnet test Tedd.OpenVDB.slnx -c Release --no-build --logger 'trx;LogFileName=preview3-scalar.trx' --results-directory artifacts/test-results
+    dotnet test tests/Tedd.OpenVDB.Tests/Tedd.OpenVDB.Tests.csproj -c Release --artifacts-path artifacts/preview4-release --no-build --logger 'trx;LogFileName=preview4-scalar.trx' --results-directory artifacts/test-results
 } finally { $env:DOTNET_EnableHWIntrinsic = $previousIntrinsic }
-dotnet test tests/Tedd.OpenVDB.Tests/Tedd.OpenVDB.Tests.csproj -c Debug --artifacts-path artifacts/debug-work --logger 'trx;LogFileName=preview3-debug.trx' --results-directory artifacts/test-results
-dotnet publish samples/VoxelBlocks -c Release -r win-x64 -p:PublishAot=true --artifacts-path artifacts/aot-work -o artifacts/native-sample
-./artifacts/native-sample/VoxelBlocks.exe
-dotnet pack src/Tedd.OpenVDB -c Release -o artifacts/packages
-```
+dotnet publish samples/VoxelBlocks -c Release -r win-x64 -p:PublishAot=true --artifacts-path artifacts/preview4-aot -o artifacts/native-sample-preview4
+./artifacts/native-sample-preview4/VoxelBlocks.exe
+./reference/Update-FixtureManifest.ps1 -Verify
+~~~
 
-The NativeAOT executable verifies voxel editing, dense transfer, pruning, Int32 standard-VDB roundtrip and a Blosc-compressed heterogeneous seven-grid archive, node-manager reductions, vector/Half sampling, grid gradients and level-set measurement. The archive exercises shared tree identity, Int64 values above 2^53, Vec3f, Boolean active-false values, MaskGrid, half encoding and a CSG level set. Output: 128,293 archive bytes and 1,543 level-set samples; four allocated nodes; level-set area 228.983 and volume 325.483. This establishes AOT compatibility for the exercised instantiations, not every possible unmanaged value type.
+The NativeAOT executable checks voxel editing/dense transfer/pruning, a standard Int32 VDB roundtrip, a Blosc-compressed seven-grid archive with tree instances/Int64/Vec3/Bool/Mask/half fields, node-manager reductions, vector/Half sampling, gradient/level-set measurement, hierarchical volume and surface ray queries, double mesh conversion and adaptive surface meshing.
 
-## Native evidence
+Observed output includes 128,293 compressed archive bytes, 1,543 level-set samples, four allocated nodes, level-set area 228.983 and volume 325.483, occupied ray interval [12, 20], surface distance 16.063, and a converted box with 637 distance samples and 86 surface points. This establishes AOT compatibility for exercised instantiations, not every possible unmanaged value type.
 
-The committed fixture manifest records 175 files and 81,248,063 bytes with SHA-256 hashes. Reproduction scripts, exact comparisons and numerical tolerances are documented in `reference/`:
+## New native evidence
 
-- Original tree: 222 scenarios, 1,235 mutation checkpoints, 99,434 value/activity/depth samples.
-- Advanced tree: 243 cases and 122,472 samples; dense: 40 cases and 20,160 samples; ordered iterators: 120 cases; statistics: 110 cases.
-- Filters: 48 Float/Double cases and 58,560 samples; review: 104 background cases and 12 Half-filter cases with 3,840 exact samples.
-- Volume tools: 93 cases and 318,427 samples; level-set spheres: 16 cases and 219,000 samples.
-- Scalar/CSG/leaf-transfer composites: 667 cases and 1,069,270 samples; vector composites: 200 cases with 1,000 grid outputs.
-- Math: 276 initial cases; finite differences/stencils: 100 cases; convenience/differential operators: 144 cases; full grid operators: 320 cases, checked in managed serial and parallel execution.
-- Node managers: 288 cases with complete per-node ordered value hashes; node-local invalidation: 24 independent regressions.
-- Sampling: 51 profiles with 40 positions each, four result vectors and activity per position, including 8/16-bit integers and exact Half rounding.
-- Level-set analysis: 154 utility/segmentation cases with 225,822 exact samples plus six Float/Double measurement cases.
-- Level-set tracking/filtering: 155 native cases and 160,735 samples plus 43 independent tests.
-- Native/managed bidirectional files: seven initial files, 20 compression profiles, eight seven-grid archives, and 32 extended-grid profiles. Mask inheritance adds 24 native-generated cases. Blosc adds 52 bidirectional archive profiles and 11 custom native frames with canonical uncompressed counterparts.
+Every family retains pinned C++ generators and reproducible fixtures. The fixture manifest includes raw JSON, native VDB files and gzip-compressed exact JSON. The library and managed tests require no native runtime dependency.
 
-Independent managed tests cover randomized storage operations, malformed archives and allocation limits, signed-coordinate endpoints, callback failure, aliasing, compacting GC, stale managers/handles, parallel reads and allocation-free hot paths. Fixture comparisons do not establish completeness of the whole upstream library.
+| Family | Evidence |
+|---|---|
+| PCG and Poisson | 588 native PCG profiles, 162 native Poisson profiles; 827 managed tests |
+| Quantized unit vectors | All 65,536 decodes/sign flips and 8,192 encodings; 397 tests |
+| Proximity | 678 native segment/triangle cases plus ten analytic tests |
+| Hierarchical rays | 198 native profiles, 5,499 rays; 227 tests |
+| Resampling | 234 native profiles, 361,764 sampled coordinates; 269 tests |
+| Adaptive volume meshing | 586 native profiles including masks/reference seams; 608 tests |
+| Level-set rebuilding | 104 native profiles with exact stored values/activity; 122 tests |
+| Mesh distance/helper/edge conversion | 322 native profiles plus 31 independent tests |
+| Velocity fields and integration | 64 native profiles, 34,560 RK results; 83 tests |
+| Archive instances | 179 new tests; 64 managed files independently read by native OpenVDB |
+| BloscLZ/Snappy/bitshuffle | 758 native raw/frame/filter cases and 24 native archives; 24 managed exports verified native |
+| Zstd | 478 native streams and 12 native archives; 12 managed exports verified native |
+| Builtin metadata | 68 native payload/type/truth/text cases; three managed archives verified native |
 
-CI is configured for Windows/Linux; no Linux or remote CI execution is claimed. The local `benchmark-baseline.json` records initial allocation/throughput measurements, without a controlled cross-runtime/native speedup claim. The full upstream library and native suite remain incomplete; [PORT_STATUS.md](PORT_STATUS.md) records remaining work and managed behavior differences.
+Full per-family scope, hashes, scalar tolerances, mutation semantics and reproduction commands are documented in reference/. Historical fixtures also cover storage mutations, merge/leaf transfer, iterators, dense conversion, filters, topology, level sets, composites, numerical math, finite differences, statistics and archives.
+
+Independent tests cover analytic geometry, randomized storage, malformed/over-budget input, signed-coordinate boundaries, callback failure, copy/aliasing, compacting GC, accessor/manager staleness, parallel reads and allocation-free hot paths. Native equivalence preserves several documented upstream quirks, including mesh outer-band coverage, callback-overload forwarding, Poisson stencils and scalar rounding.
+
+## Limits
+
+The full OpenVDB port and complete native test suite remain unfinished. Generic precision/map families, configurable/specialized trees, point grids, remaining tools and legacy/delayed I/O still require work. Optimized native scale-map subclasses can select different cells at exact floating-point boundaries than the managed generic affine representation; velocity fixtures explicitly compare native AffineMap, and separate specialist-map evidence records the remaining gap.
+
+CI is configured for Windows/Linux; no Linux or remote CI execution is claimed. No remote push or NuGet publication was performed. The existing benchmark records local allocation/throughput observations without a controlled cross-runtime or native speedup claim. See PORT_STATUS.md and UPSTREAM_INVENTORY.md for the remaining implementation boundary.

@@ -86,3 +86,43 @@ if(OPENVDB_BLOSC_BUILD_DIR AND BLOSC_LIBRARY AND BLOSC_INCLUDE_DIR AND ZLIB_LIBR
     "${BLOSC_LIBRARY}" "${ZLIB_LIBRARY}" "${TBB_ROOT}/lib/intel64/vc14/tbb12.lib")
   set_property(TARGET vdb-blosc-reference PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()
+
+if(OPENVDB_ZLIB_BUILD_DIR AND ZLIB_LIBRARY)
+  add_executable(vdb-instance-reference instance-oracle.cpp)
+  target_include_directories(vdb-instance-reference PRIVATE
+    "${OPENVDB_SOURCE_DIR}/openvdb" "${OPENVDB_SOURCE_DIR}/ext/imath"
+    "${OPENVDB_ZLIB_BUILD_DIR}/openvdb/openvdb" "${OPENVDB_ZLIB_BUILD_DIR}/openvdb/openvdb/openvdb" "${TBB_ROOT}/include")
+  target_compile_definitions(vdb-instance-reference PRIVATE OPENVDB_STATICLIB _USE_MATH_DEFINES NOMINMAX)
+  target_compile_options(vdb-instance-reference PRIVATE /bigobj)
+  target_link_libraries(vdb-instance-reference PRIVATE "${OPENVDB_ZLIB_BUILD_DIR}/openvdb/openvdb/Release/libopenvdb.lib"
+    "${ZLIB_LIBRARY}" "${TBB_ROOT}/lib/intel64/vc14/tbb12.lib")
+  set_property(TARGET vdb-instance-reference PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()
+
+if(BLOSC_LIBRARY AND BLOSC_INCLUDE_DIR AND SNAPPY_LIBRARY AND SNAPPY_INCLUDE_DIR AND ZLIB_LIBRARY)
+  add_executable(vdb-codec-reference codec-oracle.cpp)
+  target_include_directories(vdb-codec-reference PRIVATE "${BLOSC_INCLUDE_DIR}" "${SNAPPY_INCLUDE_DIR}")
+  target_compile_definitions(vdb-codec-reference PRIVATE NOMINMAX)
+  target_link_libraries(vdb-codec-reference PRIVATE "${BLOSC_LIBRARY}" "${SNAPPY_LIBRARY}" "${ZLIB_LIBRARY}" bcrypt)
+  set_property(TARGET vdb-codec-reference PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+  if(TARGET vdb-blosc-reference)
+    target_link_libraries(vdb-blosc-reference PRIVATE "${SNAPPY_LIBRARY}")
+  endif()
+endif()
+
+if(TARGET vdb-codec-reference)
+  add_executable(vdb-zstd-reference zstd-oracle.cpp)
+  target_include_directories(vdb-zstd-reference PRIVATE "${BLOSC_INCLUDE_DIR}" "${SNAPPY_INCLUDE_DIR}" "${BLOSC_INCLUDE_DIR}/../internal-complibs/zstd-1.5.6")
+  target_compile_definitions(vdb-zstd-reference PRIVATE NOMINMAX)
+  target_link_libraries(vdb-zstd-reference PRIVATE "${BLOSC_LIBRARY}" "${SNAPPY_LIBRARY}" "${ZLIB_LIBRARY}" bcrypt)
+  set_property(TARGET vdb-zstd-reference PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()
+
+if(TARGET vdb-blosc-reference)
+  add_executable(vdb-metadata-reference metadata-oracle.cpp)
+  target_include_directories(vdb-metadata-reference PRIVATE "${OPENVDB_SOURCE_DIR}/openvdb" "${OPENVDB_SOURCE_DIR}/ext/imath" "${OPENVDB_BLOSC_BUILD_DIR}/openvdb/openvdb" "${OPENVDB_BLOSC_BUILD_DIR}/openvdb/openvdb/openvdb" "${TBB_ROOT}/include")
+  target_compile_definitions(vdb-metadata-reference PRIVATE OPENVDB_STATICLIB NOMINMAX)
+  target_compile_options(vdb-metadata-reference PRIVATE /bigobj)
+  target_link_libraries(vdb-metadata-reference PRIVATE "${OPENVDB_BLOSC_BUILD_DIR}/openvdb/openvdb/Release/libopenvdb.lib" "${BLOSC_LIBRARY}" "${SNAPPY_LIBRARY}" "${ZLIB_LIBRARY}" "${TBB_ROOT}/lib/intel64/vc14/tbb12.lib")
+  set_property(TARGET vdb-metadata-reference PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()

@@ -29,6 +29,15 @@ public sealed class VdbArchive
     public IReadOnlyDictionary<string, MetadataValue> Metadata { get; }
 }
 
+/// <summary>How archive instance chains are connected after all grids have been read.</summary>
+public enum VdbInstanceResolution
+{
+    /// <summary>One pass in file descriptor order, matching OpenVDB io::Stream. A reference to a not-yet-connected instance can retain its initial empty tree.</summary>
+    NativeOrder,
+    /// <summary>Managed extension: resolve every acyclic dependency chain to its terminal non-instance tree, independently of descriptor order.</summary>
+    ResolveDependencies
+}
+
 public static partial class VdbFile
 {
     private sealed record Descriptor(string Name, string Parent, bool Half, bool Offsets, long BlockPosition, long EndPosition, bool Mask);
@@ -75,7 +84,10 @@ public static partial class VdbFile
             if (count > options.MaxGrids) throw new InvalidDataException("Grid count limit exceeded.");
             input.Reserve((long)count * 256);
             var grids = new List<IGrid>(count);
-            var named = new Dictionary<string, IGrid>(StringComparer.Ordinal);
+            // Retained descriptors and bounded graph arrays, in addition to the grid budget.
+            input.Reserve(256L + (long)count * 96);
+            var descriptors = new Descriptor[count];
+            var named = new Dictionary<string, int>(StringComparer.Ordinal);
             for (int index = 0; index < count; ++index)
             {
                 input.Limit = long.MaxValue;
@@ -98,20 +110,21 @@ public static partial class VdbFile
                 var descriptor = new Descriptor(name, parent, half, offsets, blockPosition, endPosition, treeType == "Tree_mask_5_4_3");
                 IGrid grid = treeType switch
                 {
-                    "Tree_int32_5_4_3" => ReadGrid<int>(input, descriptor, named),
-                    "Tree_float_5_4_3" => ReadGrid<float>(input, descriptor, named),
-                    "Tree_double_5_4_3" => ReadGrid<double>(input, descriptor, named),
-                    "Tree_int64_5_4_3" => ReadGrid<long>(input, descriptor, named),
-                    "Tree_bool_5_4_3" => ReadGrid<bool>(input, descriptor, named),
-                    "Tree_vec3i_5_4_3" => ReadGrid<Vec3i>(input, descriptor, named),
-                    "Tree_vec3s_5_4_3" => ReadGrid<Vec3f>(input, descriptor, named),
-                    "Tree_vec3d_5_4_3" => ReadGrid<Vec3d>(input, descriptor, named),
-                    "Tree_mask_5_4_3" => new MaskGrid(ReadGrid<bool>(input, descriptor, named)),
+                    "Tree_int32_5_4_3" => ReadGrid<int>(input, descriptor),
+                    "Tree_float_5_4_3" => ReadGrid<float>(input, descriptor),
+                    "Tree_double_5_4_3" => ReadGrid<double>(input, descriptor),
+                    "Tree_int64_5_4_3" => ReadGrid<long>(input, descriptor),
+                    "Tree_bool_5_4_3" => ReadGrid<bool>(input, descriptor),
+                    "Tree_vec3i_5_4_3" => ReadGrid<Vec3i>(input, descriptor),
+                    "Tree_vec3s_5_4_3" => ReadGrid<Vec3f>(input, descriptor),
+                    "Tree_vec3d_5_4_3" => ReadGrid<Vec3d>(input, descriptor),
+                    "Tree_mask_5_4_3" => new MaskGrid(ReadGrid<bool>(input, descriptor)),
                     _ => throw new NotSupportedException($"Grid type '{treeType}' is unsupported.")
                 };
-                grids.Add(grid); named.Add(name, grid);
+                grids.Add(grid); descriptors[index] = descriptor; named.Add(name, index);
             }
             if (stream.CanSeek && input.Position != stream.Length) throw new InvalidDataException("Unexpected bytes after the VDB archive.");
+            ConnectInstances(grids, descriptors, named, options.InstanceResolution);
             return new VdbArchive(grids, metadata);
         }
         catch (EndOfStreamException exception) { throw new InvalidDataException("Truncated VDB input.", exception); }
@@ -119,6 +132,58 @@ public static partial class VdbFile
         finally { if (!leaveOpen) stream.Dispose(); }
     }
 
+    private static void ConnectInstances(List<IGrid> grids, Descriptor[] descriptors, Dictionary<string, int> named, VdbInstanceResolution resolution)
+    {
+        int count = grids.Count;
+        var parents = new int[count]; var roots = new int[count]; var states = new byte[count];
+        for (int index = 0; index < count; ++index)
+        {
+            string parent = descriptors[index].Parent;
+            if (parent.Length == 0) { parents[index] = -1; continue; }
+            if (!named.TryGetValue(parent, out int parentIndex)) throw new InvalidDataException($"Missing instance parent '{parent}'.");
+            if (grids[index].GetType() != grids[parentIndex].GetType()) throw new InvalidDataException("Instance parent grid type differs.");
+            // Half flags describe serialization of each grid. Instances contain no value
+            // buffers, and native Grid::setTree permits their flag to differ from the parent.
+            parents[index] = parentIndex;
+        }
+        // Validate every component before assigning any shared tree. This iterative walk
+        // is linear in grid count and cannot overflow the call stack on a hostile chain.
+        for (int start = 0; start < count; ++start)
+        {
+            if (states[start] == 2) continue;
+            int cursor = start;
+            while (states[cursor] == 0)
+            {
+                states[cursor] = 1;
+                if (parents[cursor] < 0) { roots[cursor] = cursor; states[cursor] = 2; break; }
+                cursor = parents[cursor];
+            }
+            if (states[cursor] == 1) throw new InvalidDataException("Cyclic instance references.");
+            int root = roots[cursor]; cursor = start;
+            while (states[cursor] == 1)
+            {
+                roots[cursor] = root; states[cursor] = 2; cursor = parents[cursor];
+            }
+        }
+        for (int index = 0; index < count; ++index)
+        {
+            if (parents[index] < 0) continue;
+            IGrid target = grids[index], source = grids[resolution == VdbInstanceResolution.NativeOrder ? parents[index] : roots[index]];
+            switch (target)
+            {
+                case Grid<int> grid: grid.SetTree(((Grid<int>)source).Tree); break;
+                case Grid<float> grid: grid.SetTree(((Grid<float>)source).Tree); break;
+                case Grid<double> grid: grid.SetTree(((Grid<double>)source).Tree); break;
+                case Grid<long> grid: grid.SetTree(((Grid<long>)source).Tree); break;
+                case Grid<bool> grid: grid.SetTree(((Grid<bool>)source).Tree); break;
+                case Grid<Vec3i> grid: grid.SetTree(((Grid<Vec3i>)source).Tree); break;
+                case Grid<Vec3f> grid: grid.SetTree(((Grid<Vec3f>)source).Tree); break;
+                case Grid<Vec3d> grid: grid.SetTree(((Grid<Vec3d>)source).Tree); break;
+                case MaskGrid grid: grid.Storage.SetTree(((MaskGrid)source).Storage.Tree); break;
+                default: throw new NotSupportedException("Unsupported instance grid type.");
+            }
+        }
+    }
     /// <summary>Write an archive. Shared trees are instanced by default when their half-precision flags agree.</summary>
     public static void WriteArchive(Stream stream, VdbArchive archive, bool leaveOpen = true, VdbWriteOptions? options = null)
     {
