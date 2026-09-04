@@ -25,3 +25,15 @@ Coverage includes all four tile levels, signed 8/128/4096 boundaries, min/max in
 An attempted native `fill()` with an inclusive maximum coordinate of `int.MaxValue` did not terminate and was stopped. `RootNode.h` advances its signed `int` loop indices with `tileMax + 1`; this endpoint overflows. This native case is excluded from generated fixtures; min/max point writes and minimum-coordinate fills remain. Managed endpoint-safe fill behavior requires independent tests and is an intentional deviation from this observed upstream defect.
 
 Passing these fixtures establishes the listed observations, not completeness of OpenVDB, exhaustive equivalence, concurrent mutation safety, native `.vdb` interchange, or equivalence for every scalar and vector type.
+
+## Additional native reference families
+
+The original tree oracle above is supplemented by independently executed source implementations:
+
+- [Advanced storage, filtering, dense conversion, iterators and statistics](ADVANCED_VERIFICATION.md).
+- [CSG and compositing, including serial-copy background behavior](CSG-CONFORMANCE.md).
+- [Math, frusta, camera maps, finite differences and stencils](MATH_VERIFICATION.md).
+- [Standard archive interoperability](IO_VERIFICATION.md), [compression/half profiles](COMPRESSION_VERIFICATION.md), [heterogeneous archives](ARCHIVE_VERIFICATION.md), and [extended grid types](GRID_TYPES_VERIFICATION.md).
+- `Build-VolumeToolsReference.ps1` generates pruning, flood-fill, morphology, sphere and scalar/vector composite fixtures.
+
+All managed conformance tests consume committed fixtures; native builds are only needed to reproduce or extend those fixtures. The native and managed reference generators are deliberately separate.

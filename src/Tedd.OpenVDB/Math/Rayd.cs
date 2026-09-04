@@ -86,6 +86,7 @@ public readonly record struct Rayd
     /// <summary>Transforms a ray with unit direction, normalizing its image and scaling both parameter bounds.</summary>
     public Rayd IndexToWorld(Transform transform)
     {
+        if (!transform.IsLinear) throw new ArgumentException("A ray transform must be linear.", nameof(transform));
         RequireUnitDirection();
         Vec3d direction = transform.ApplyJacobian(Direction);
         double length = direction.Length;
@@ -93,6 +94,7 @@ public readonly record struct Rayd
     }
     public Rayd WorldToIndex(Transform transform)
     {
+        if (!transform.IsLinear) throw new ArgumentException("A ray transform must be linear.", nameof(transform));
         RequireUnitDirection();
         Vec3d direction = transform.ApplyInverseJacobian(Direction);
         double length = direction.Length;

@@ -4,7 +4,8 @@
 using System.Numerics;
 using Tedd.OpenVDB.Tree;
 namespace Tedd.OpenVDB.Tools;
-public static class Composite
+
+public static partial class Composite
 {
     public static void CompSum<T>(VdbTree<T> a, VdbTree<T> b) where T : unmanaged, INumber<T>
         => a.Combine(b, static (T x, T y) => x + y);
@@ -21,6 +22,7 @@ public static class Composite
         ArgumentNullException.ThrowIfNull(a);
         ArgumentNullException.ThrowIfNull(b);
         if (ReferenceEquals(a, b)) return;
+        a.TopologyUnion(b);
         foreach (var value in b.EnumerateValues()) a.Fill(value.Bounds, value.Value, true);
     }
 }

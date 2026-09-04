@@ -14,7 +14,7 @@ namespace Tedd.OpenVDB.Tree;
 /// coordinate select the voxel. The enclosing tree routes coordinates to the correct leaf.
 /// Instances are mutable and are not thread-safe.
 /// </remarks>
-public sealed class LeafNode<T> where T : unmanaged
+public sealed partial class LeafNode<T> where T : unmanaged
 {
     public const int Log2Dim = 3;
     public const int Dim = 1 << Log2Dim;
@@ -24,7 +24,7 @@ public sealed class LeafNode<T> where T : unmanaged
     public const int NumValues = Size;
     public const int NumVoxels = Size;
 
-    private readonly T[] _values;
+    private T[] _values;
     private readonly NodeMask _valueMask;
 
     public LeafNode(Coord origin, T value = default, bool active = false)
@@ -294,6 +294,8 @@ public static class NumericLeafOperations
     {
         if (ValueEquality<T>.Equals(left, right)) return true;
         if (T.IsNaN(left) || T.IsNaN(right)) return false;
+        // C++ half subtraction promotes both operands to float.
+        if (typeof(T) == typeof(Half)) return MathF.Abs(float.CreateChecked(left) - float.CreateChecked(right)) <= float.CreateChecked(tolerance);
         try
         {
             var difference = left > right ? checked(left - right) : checked(right - left);

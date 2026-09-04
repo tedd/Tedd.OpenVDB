@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 namespace Tedd.OpenVDB.Math;
 
 [StructLayout(LayoutKind.Sequential)]
-public readonly record struct Vec3d(double X, double Y, double Z)
+public readonly partial record struct Vec3d(double X, double Y, double Z)
 {
     public Vec3d(double xyz) : this(xyz, xyz, xyz) { }
     public static Vec3d Zero => default;
@@ -35,8 +35,8 @@ public readonly record struct Vec3d(double X, double Y, double Z)
     public static double Dot(Vec3d a, Vec3d b) => a.Dot(b);
     public Vec3d Cross(Vec3d other) => new(Y * other.Z - Z * other.Y, Z * other.X - X * other.Z, X * other.Y - Y * other.X);
     public static Vec3d Cross(Vec3d a, Vec3d b) => a.Cross(b);
-    public static Vec3d Min(Vec3d a, Vec3d b) => new(System.Math.Min(a.X, b.X), System.Math.Min(a.Y, b.Y), System.Math.Min(a.Z, b.Z));
-    public static Vec3d Max(Vec3d a, Vec3d b) => new(System.Math.Max(a.X, b.X), System.Math.Max(a.Y, b.Y), System.Math.Max(a.Z, b.Z));
+    public static Vec3d Min(Vec3d a, Vec3d b) => new(b.X < a.X ? b.X : a.X, b.Y < a.Y ? b.Y : a.Y, b.Z < a.Z ? b.Z : a.Z);
+    public static Vec3d Max(Vec3d a, Vec3d b) => new(a.X < b.X ? b.X : a.X, a.Y < b.Y ? b.Y : a.Y, a.Z < b.Z ? b.Z : a.Z);
     public Vec3d Abs() => new(System.Math.Abs(X), System.Math.Abs(Y), System.Math.Abs(Z));
     public Vec3d Exp() => new(System.Math.Exp(X), System.Math.Exp(Y), System.Math.Exp(Z));
     public Vec3d Log() => new(System.Math.Log(X), System.Math.Log(Y), System.Math.Log(Z));
@@ -49,24 +49,24 @@ public readonly record struct Vec3d(double X, double Y, double Z)
         if (x > y) (x, y) = (y, x);
         return new(x, y, z);
     }
-    public bool ApproxEquals(Vec3d other, double tolerance = 1e-8) =>
-        System.Math.Abs(X - other.X) <= tolerance && System.Math.Abs(Y - other.Y) <= tolerance && System.Math.Abs(Z - other.Z) <= tolerance;
+    public bool ApproxEquals(Vec3d other, double tolerance = 1e-7) =>
+        MathComparison.IsRelOrApproxEqual(X, other.X, tolerance, tolerance) && MathComparison.IsRelOrApproxEqual(Y, other.Y, tolerance, tolerance) && MathComparison.IsRelOrApproxEqual(Z, other.Z, tolerance, tolerance);
     public Vec3d Unit(double epsilon = 0) => Unit(out _, epsilon);
     public Vec3d Unit(out double length, double epsilon = 0)
     {
         length = Length;
-        if (length <= epsilon) throw new ArithmeticException("Normalizing null 3-vector.");
+        if (MathComparison.IsApproxZero(length, epsilon)) throw new ArithmeticException("Normalizing null 3-vector.");
         return this / length;
     }
     public bool TryNormalize(out Vec3d normalized, double epsilon = 1e-7)
     {
         double length = Length;
-        if (length <= epsilon) { normalized = this; return false; }
+        if (MathComparison.IsApproxZero(length, epsilon)) { normalized = this; return false; }
         normalized = this * (1 / length); return true;
     }
-    public Vec3d UnitSafe() => LengthSquared > 1e-15 ? this / Length : UnitX;
-    public double Component(Vec3d onto, double epsilon = 1e-7) => onto.Length <= epsilon ? 0 : Dot(onto) / onto.Length;
-    public Vec3d Projection(Vec3d onto, double epsilon = 1e-7) => onto.LengthSquared <= epsilon ? Zero : onto * (Dot(onto) / onto.LengthSquared);
+    public Vec3d UnitSafe() => MathComparison.IsApproxZero(LengthSquared) ? UnitX : this / Length;
+    public double Component(Vec3d onto, double epsilon = 1e-7) => MathComparison.IsApproxZero(onto.Length, epsilon) ? 0 : Dot(onto) / onto.Length;
+    public Vec3d Projection(Vec3d onto, double epsilon = 1e-7) => MathComparison.IsApproxZero(onto.LengthSquared, epsilon) ? Zero : onto * (Dot(onto) / onto.LengthSquared);
     /// <summary>Returns a unit perpendicular to this nonzero vector.</summary>
     public Vec3d ArbitraryPerpendicular() => System.Math.Abs(X) >= System.Math.Abs(Y)
         ? new Vec3d(-Z, 0, X) / System.Math.Sqrt(X * X + Z * Z)

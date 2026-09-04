@@ -21,9 +21,15 @@ public sealed class InterpolationTests
     }
 
     [Theory]
-    [InlineData(-1.5, -2)] [InlineData(-1.49, -1)] [InlineData(-0.5, -1)]
-    [InlineData(-0.49, 0)] [InlineData(0, 0)] [InlineData(0.49, 0)]
-    [InlineData(0.5, 1)] [InlineData(1.49, 1)] [InlineData(1.5, 2)]
+    [InlineData(-1.5, -2)]
+    [InlineData(-1.49, -1)]
+    [InlineData(-0.5, -1)]
+    [InlineData(-0.49, 0)]
+    [InlineData(0, 0)]
+    [InlineData(0.49, 0)]
+    [InlineData(0.5, 1)]
+    [InlineData(1.49, 1)]
+    [InlineData(1.5, 2)]
     public void PointSamplerRoundsMidpointsAwayFromZero(double position, int expected)
     {
         var tree = new VdbTree<int>(-999);
@@ -50,7 +56,9 @@ public sealed class InterpolationTests
     }
 
     [Theory]
-    [InlineData(-9, -1, 7)] [InlineData(7, 127, 4095)] [InlineData(-4097, -129, -9)]
+    [InlineData(-9, -1, 7)]
+    [InlineData(7, 127, 4095)]
+    [InlineData(-4097, -129, -9)]
     public void BoxSamplerMatchesIndependentEightCornerWeightsAcrossNodeBoundaries(int x, int y, int z)
     {
         var tree = new VdbTree<double>();
@@ -259,8 +267,11 @@ public sealed class InterpolationTests
     }
 
     [Theory]
-    [InlineData(double.NaN, 0, 0)] [InlineData(0, double.PositiveInfinity, 0)] [InlineData(0, 0, double.NegativeInfinity)]
-    [InlineData(double.MaxValue, 0, 0)] [InlineData(double.MinValue, 0, 0)]
+    [InlineData(double.NaN, 0, 0)]
+    [InlineData(0, double.PositiveInfinity, 0)]
+    [InlineData(0, 0, double.NegativeInfinity)]
+    [InlineData(double.MaxValue, 0, 0)]
+    [InlineData(double.MinValue, 0, 0)]
     public void InvalidSamplingCoordinatesAreRejected(double x, double y, double z)
     {
         var tree = new VdbTree<double>();

@@ -8,7 +8,9 @@ namespace Tedd.OpenVDB.Tests;
 public sealed class DdaTests
 {
     [Theory]
-    [InlineData(0)] [InlineData(1)] [InlineData(2)]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(2)]
     public void PositiveAxisTraversalHasInclusiveEndTime(int axis)
     {
         var direction = axis switch { 0 => Vec3d.UnitX, 1 => Vec3d.UnitY, _ => Vec3d.UnitZ };
@@ -29,7 +31,9 @@ public sealed class DdaTests
     }
 
     [Theory]
-    [InlineData(0)] [InlineData(1)] [InlineData(2)]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(2)]
     public void NegativeAxisTraversalStartsAtFloorAndCrossesAtCorrectTimes(int axis)
     {
         var direction = axis switch { 0 => -Vec3d.UnitX, 1 => -Vec3d.UnitY, _ => -Vec3d.UnitZ };
@@ -76,7 +80,10 @@ public sealed class DdaTests
     }
 
     [Theory]
-    [InlineData(0)] [InlineData(3)] [InlineData(7)] [InlineData(12)]
+    [InlineData(0)]
+    [InlineData(3)]
+    [InlineData(7)]
+    [InlineData(12)]
     public void NodeTraversalAlignsNegativeOriginsAndUsesNodeDimensions(int log2Dim)
     {
         var dimension = 1 << log2Dim;

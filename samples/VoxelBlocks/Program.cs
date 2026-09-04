@@ -1,3 +1,6 @@
+using Tedd.OpenVDB;
+using Tedd.OpenVDB.IO;
+using Tedd.OpenVDB.Tools;
 using Tedd.OpenVDB.Math;
 using Tedd.OpenVDB.Tree;
 
@@ -18,14 +21,48 @@ edit.SetValueOn(new(-15, -16, -16), 1);
 blocks.Prune(); // Collapse uniform leaves; cached accessors invalidate automatically.
 Console.WriteLine($"Restored chunk: {blocks.ActiveVoxelCount:N0} blocks, {blocks.LeafCount} leaves.");
 
-// Native .vdb interchange currently supports Int32/Float/Double grids.
+// Standard .vdb interchange supports scalar, vector, Boolean and topology-mask grids.
 var persisted = new Tedd.OpenVDB.Grid<int> { Name = "block-demo" };
-persisted.Tree.AddTile(1, new(-1,-1,-1), 3, true);
-persisted.Tree.SetValueOff(new(-2,-2,-2), 0);
+persisted.Tree.AddTile(1, new(-1, -1, -1), 3, true);
+persisted.Tree.SetValueOff(new(-2, -2, -2), 0);
 using var stream = new MemoryStream();
 Tedd.OpenVDB.IO.VdbFile.Write(stream, persisted);
 stream.Position = 0;
 var loaded = Tedd.OpenVDB.IO.VdbFile.Read<int>(stream);
-if (!loaded.Tree.HasSameTopology(persisted.Tree) || loaded.Tree.GetValue(new(-2,-2,-2)) != 0)
+if (!loaded.Tree.HasSameTopology(persisted.Tree) || loaded.Tree.GetValue(new(-2, -2, -2)) != 0)
     throw new InvalidOperationException("VDB roundtrip changed voxel data.");
 Console.WriteLine($"VDB roundtrip: {loaded.ActiveVoxelCount:N0} blocks, {stream.Length:N0} bytes, grid '{loaded.Name}'.");
+
+
+// Persist mixed voxel-game data in one compressed archive, preserving shared tree identity.
+var identifiers = new Grid<long> { Name = "entity-ids" };
+identifiers.Tree.SetValueOn(new(1, 2, 3), 9_007_199_254_740_993L);
+var velocity = new Grid<Vec3f> { Name = "velocity" };
+velocity.Tree.SetValueOn(new(1, 2, 3), new(1.5f, -2.25f, 3));
+var flags = new Grid<bool> { Name = "flags" };
+flags.Tree.SetValueOn(new(1, 2, 3), false); // Independent Boolean value and active state.
+var occupancy = new MaskGrid { Name = "occupancy" };
+occupancy.SetValueOn(new(1, 2, 3));
+var sphere = LevelSetSphere.Create<float>(4, Vec3d.Zero, 1, 3);
+sphere.Name = "terrain-distance";
+sphere.SetMetadata("is_saved_as_half_float", true);
+var secondSphere = LevelSetSphere.Create<float>(3, new(3, 0, 0), 1, 3);
+Composite.CsgUnion(sphere, secondSphere);
+var alias = new Grid<int>(persisted.Tree) { Name = "block-instance" };
+var archive = new VdbArchive([persisted, alias, identifiers, velocity, flags, occupancy, sphere],
+    new Dictionary<string, MetadataValue> { ["save-version"] = new(1) });
+using var compressed = new MemoryStream();
+VdbFile.WriteArchive(compressed, archive, options: new() { Compression = VdbCompression.Zlib | VdbCompression.ActiveMask });
+compressed.Position = 0;
+var restored = VdbFile.ReadArchive(compressed);
+if (restored.Grids.Count != 7 ||
+    !ReferenceEquals(((Grid<int>)restored.Grids[0]).Tree, ((Grid<int>)restored.Grids[1]).Tree) ||
+    ((Grid<long>)restored.Grids[2]).Tree.GetValue(new(1, 2, 3)) != 9_007_199_254_740_993L ||
+    ((Grid<Vec3f>)restored.Grids[3]).Tree.GetValue(new(1, 2, 3)) != new Vec3f(1.5f, -2.25f, 3) ||
+    ((Grid<bool>)restored.Grids[4]).Tree.GetValue(new(1, 2, 3)) ||
+    !((Grid<bool>)restored.Grids[4]).Tree.IsValueOn(new(1, 2, 3)) ||
+    !((MaskGrid)restored.Grids[5]).GetValue(new(1, 2, 3)) ||
+    restored.Grids[6].ActiveVoxelCount != sphere.ActiveVoxelCount)
+    throw new InvalidOperationException("Compressed archive changed stored voxel data.");
+var statistics = Statistics.Compute(((Grid<float>)restored.Grids[6]).Tree);
+Console.WriteLine($"Compressed archive: {restored.Grids.Count} grids, {compressed.Length:N0} bytes, {statistics.Count:N0} level-set samples.");

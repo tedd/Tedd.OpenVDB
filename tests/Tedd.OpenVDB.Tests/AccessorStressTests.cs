@@ -203,33 +203,33 @@ public sealed class AccessorStressTests
                 case 2: a.SetValueOnly(coordinate, value); values[offset] = value; break;
                 case 3: b.SetActiveState(coordinate, active); activity[offset] = active; break;
                 case 4:
-                {
-                    var min = new Coord(random.Next(12), random.Next(12), random.Next(12));
-                    var max = new Coord(min.X + random.Next(5), min.Y + random.Next(5), min.Z + random.Next(5));
-                    var box = new CoordBBox(min, max);
-                    tree.Fill(box, value, active);
-                    foreach (var point in box) { values[Offset(point)] = value; activity[Offset(point)] = active; }
-                    break;
-                }
+                    {
+                        var min = new Coord(random.Next(12), random.Next(12), random.Next(12));
+                        var max = new Coord(min.X + random.Next(5), min.Y + random.Next(5), min.Z + random.Next(5));
+                        var box = new CoordBBox(min, max);
+                        tree.Fill(box, value, active);
+                        foreach (var point in box) { values[Offset(point)] = value; activity[Offset(point)] = active; }
+                        break;
+                    }
                 case 5:
-                {
-                    tree.AddTile(1, coordinate, value, active);
-                    var origin = new Coord(coordinate.X & ~7, coordinate.Y & ~7, coordinate.Z & ~7);
-                    var box = new CoordBBox(origin, new Coord(origin.X + 7, origin.Y + 7, origin.Z + 7));
-                    foreach (var point in box) { values[Offset(point)] = value; activity[Offset(point)] = active; }
-                    break;
-                }
+                    {
+                        tree.AddTile(1, coordinate, value, active);
+                        var origin = new Coord(coordinate.X & ~7, coordinate.Y & ~7, coordinate.Z & ~7);
+                        var box = new CoordBBox(origin, new Coord(origin.X + 7, origin.Y + 7, origin.Z + 7));
+                        foreach (var point in box) { values[Offset(point)] = value; activity[Offset(point)] = active; }
+                        break;
+                    }
                 case 6: tree.Prune(); break;
                 case 7: tree.Clear(); Array.Fill(values, background); Array.Fill(activity, false); break;
                 case 8: tree.SetValueOnly(coordinate, value); values[offset] = value; break;
                 default:
-                {
-                    var min = new Coord(random.Next(12), random.Next(12), random.Next(12));
-                    var box = new CoordBBox(min, new Coord(min.X + 3, min.Y + 3, min.Z + 3));
-                    tree.SetActiveState(box, active);
-                    foreach (var point in box) activity[Offset(point)] = active;
-                    break;
-                }
+                    {
+                        var min = new Coord(random.Next(12), random.Next(12), random.Next(12));
+                        var box = new CoordBBox(min, new Coord(min.X + 3, min.Y + 3, min.Z + 3));
+                        tree.SetActiveState(box, active);
+                        foreach (var point in box) activity[Offset(point)] = active;
+                        break;
+                    }
             }
             if (step == 175 || step == 350)
             {

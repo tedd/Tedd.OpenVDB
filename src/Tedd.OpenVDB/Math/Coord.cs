@@ -17,7 +17,9 @@ public readonly record struct Coord(int X, int Y, int Z) : IComparable<Coord>
     public int this[int axis] => axis switch { 0 => X, 1 => Y, 2 => Z, _ => throw new ArgumentOutOfRangeException(nameof(axis)) };
     public Coord WithComponent(int axis, int value) => axis switch
     {
-        0 => this with { X = value }, 1 => this with { Y = value }, 2 => this with { Z = value },
+        0 => this with { X = value },
+        1 => this with { Y = value },
+        2 => this with { Z = value },
         _ => throw new ArgumentOutOfRangeException(nameof(axis))
     };
     public int CompareTo(Coord other)
