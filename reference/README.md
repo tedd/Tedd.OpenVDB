@@ -37,3 +37,5 @@ The original tree oracle above is supplemented by independently executed source 
 - `Build-VolumeToolsReference.ps1` generates pruning, flood-fill, morphology, sphere and scalar/vector composite fixtures.
 
 All managed conformance tests consume committed fixtures; native builds are only needed to reproduce or extend those fixtures. The native and managed reference generators are deliberately separate.
+
+Additional conformance records: [Blosc](BLOSC_VERIFICATION.md), [node managers](NODE_MANAGER_VERIFICATION.md), [sampling](SAMPLING_VERIFICATION.md), [level-set analysis](LEVELSET-ANALYSIS-CONFORMANCE.md), and [level-set tracking/filtering](LEVELSET-TRACKING-CONFORMANCE.md).

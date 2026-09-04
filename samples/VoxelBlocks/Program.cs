@@ -52,7 +52,7 @@ var alias = new Grid<int>(persisted.Tree) { Name = "block-instance" };
 var archive = new VdbArchive([persisted, alias, identifiers, velocity, flags, occupancy, sphere],
     new Dictionary<string, MetadataValue> { ["save-version"] = new(1) });
 using var compressed = new MemoryStream();
-VdbFile.WriteArchive(compressed, archive, options: new() { Compression = VdbCompression.Zlib | VdbCompression.ActiveMask });
+VdbFile.WriteArchive(compressed, archive, options: new() { Compression = VdbCompression.Blosc | VdbCompression.ActiveMask });
 compressed.Position = 0;
 var restored = VdbFile.ReadArchive(compressed);
 if (restored.Grids.Count != 7 ||
@@ -66,3 +66,17 @@ if (restored.Grids.Count != 7 ||
     throw new InvalidOperationException("Compressed archive changed stored voxel data.");
 var statistics = Statistics.Compute(((Grid<float>)restored.Grids[6]).Tree);
 Console.WriteLine($"Compressed archive: {restored.Grids.Count} grids, {compressed.Length:N0} bytes, {statistics.Count:N0} level-set samples.");
+
+// Exercise manager reductions, typed sampling and differential tools in NativeAOT as well.
+var manager = new NodeManager<int>(loaded.Tree);
+long allocatedNodes = manager.ReduceBottomUp(() => 0L, (count, node, index) => count + 1, (a, b) => a + b, parallel: true);
+if (allocatedNodes != loaded.Tree.NodeCount().Sum()) throw new InvalidOperationException("Node-manager reduction lost nodes.");
+var vectorSampler = new GridSampler<Vec3f>(velocity.Tree.GetAccessor(), velocity.Transform);
+if (vectorSampler.IndexSample(new Vec3d(1, 2, 3)) != new Vec3f(1.5f, -2.25f, 3)) throw new InvalidOperationException("Vector sampling changed a voxel.");
+var halfSampler = new GridSampler<Half>(new VdbTree<Half>((Half)1.5f), new Transform(), SamplingOrder.Quadratic);
+if (halfSampler.IndexSample(new Vec3d(0.25, 0.5, 0.75)) != (Half)1.5f) throw new InvalidOperationException("Half sampling changed a constant field.");
+var gradient = GridOperators.Gradient(sphere, options: new() { Threaded = false });
+var measurement = new LevelSetMeasure<float>(sphere);
+if (gradient.ActiveVoxelCount != sphere.ActiveVoxelCount || !double.IsFinite(measurement.Area()) || measurement.Volume() <= 0)
+    throw new InvalidOperationException("Level-set analysis failed.");
+Console.WriteLine($"Managers and sampling: {allocatedNodes} nodes; level-set area {measurement.Area():F3}, volume {measurement.Volume():F3}.");

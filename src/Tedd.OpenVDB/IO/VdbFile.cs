@@ -36,7 +36,7 @@ public sealed record VdbReadOptions
 /// <remarks>
 /// No native runtime is required. Supports linear and nonlinear frustum transforms, typed and opaque
 /// metadata, heterogeneous archives, and instances whose parents precede them. Zlib, active-mask
-/// compression and floating-point scalar/vector half encoding are supported. Blosc and unsupported grid types or
+/// compression, Blosc LZ4/zlib byte-shuffle frames and floating-point scalar/vector half encoding are supported. Unsupported Blosc codecs/filters, grid types or
 /// legacy format versions are rejected explicitly.
 /// Temporary __delayedload metadata is consumed and discarded. Reading and writing require
 /// exclusive access to the stream, grid and tree. Seekable streams must start at position zero.
@@ -209,14 +209,14 @@ public static partial class VdbFile
         {
             input.Reserve(128); // Dictionary slot and leaf-traversal reference allowance.
             Coord childOrigin = node.ChildOrigin(index);
-            if (level == 2) node.Children.Add(index, ReadInternal<T>(input, 1, childOrigin, leaves, background));
+            if (level == 2) node.AddChild(index, ReadInternal<T>(input, 1, childOrigin, leaves, background));
             else
             {
                 input.Node(2048L + 2L * LeafNode<T>.Size * Unsafe.SizeOf<T>() + 256);
                 var leaf = new LeafNode<T>(childOrigin);
                 NodeMask mask = ReadMask(input, 3);
                 foreach (int on in mask.OnIndices) leaf.SetValueOn(on);
-                node.Children.Add(index, leaf); leaves.Add(leaf);
+                node.AddChild(index, leaf); leaves.Add(leaf);
             }
         }
         return node;

@@ -136,7 +136,7 @@ public sealed class VdbCompressionTests
     }
 
     [Theory]
-    [InlineData(4u)]
+    [InlineData(16u)]
     [InlineData(8u)]
     [InlineData(uint.MaxValue)]
     public void RejectsUnsupportedCompressionBeforeWriting(uint flags)

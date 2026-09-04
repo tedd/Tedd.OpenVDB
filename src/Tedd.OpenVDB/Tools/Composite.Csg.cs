@@ -126,7 +126,7 @@ public static partial class Composite
             {
                 b.SetTile(offset, otherBackground, false);
                 ResetCsgBackground<T>(child, otherBackground, background);
-                a.Children[offset] = child; a.Active.SetOff(offset);
+                a.SetChild(offset, child); a.Active.SetOff(offset);
             }
             else if (a.Children.ContainsKey(offset)) recurse.Add(offset);
         }
@@ -185,7 +185,7 @@ public static partial class Composite
             {
                 b.SetTile(offset, otherBackground, false);
                 ResetCsgBackground<T>(child, otherBackground, background); NegateCsgNode<T>(child);
-                a.Children[offset] = child; a.Active.SetOff(offset);
+                a.SetChild(offset, child); a.Active.SetOff(offset);
             }
             else if (a.Children.ContainsKey(offset)) recurse.Add(offset);
         }

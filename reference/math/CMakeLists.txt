@@ -12,3 +12,16 @@ target_include_directories(finite-difference-reference PRIVATE "${OPENVDB_SOURCE
 target_compile_definitions(finite-difference-reference PRIVATE OPENVDB_STATICLIB _USE_MATH_DEFINES NOMINMAX)
 target_link_libraries(finite-difference-reference PRIVATE "${OPENVDB_BUILD_DIR}/openvdb/openvdb/Release/libopenvdb.lib" "${TBB_ROOT}/lib/intel64/vc14/tbb12.lib")
 set_property(TARGET finite-difference-reference PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
+add_executable(operators-reference ../operators-oracle.cpp)
+target_include_directories(operators-reference PRIVATE "${OPENVDB_SOURCE_DIR}/openvdb" "${OPENVDB_SOURCE_DIR}/ext/imath" "${OPENVDB_BUILD_DIR}/openvdb/openvdb" "${OPENVDB_BUILD_DIR}/openvdb/openvdb/openvdb" "${TBB_ROOT}/include")
+target_compile_definitions(operators-reference PRIVATE OPENVDB_STATICLIB _USE_MATH_DEFINES NOMINMAX)
+target_link_libraries(operators-reference PRIVATE "${OPENVDB_BUILD_DIR}/openvdb/openvdb/Release/libopenvdb.lib" "${TBB_ROOT}/lib/intel64/vc14/tbb12.lib")
+set_property(TARGET operators-reference PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
+add_executable(grid-operators-reference ../grid-operators-oracle.cpp)
+target_include_directories(grid-operators-reference PRIVATE "${OPENVDB_SOURCE_DIR}/openvdb" "${OPENVDB_SOURCE_DIR}/ext/imath" "${OPENVDB_BUILD_DIR}/openvdb/openvdb" "${OPENVDB_BUILD_DIR}/openvdb/openvdb/openvdb" "${TBB_ROOT}/include")
+target_compile_definitions(grid-operators-reference PRIVATE OPENVDB_STATICLIB _USE_MATH_DEFINES NOMINMAX)
+target_link_libraries(grid-operators-reference PRIVATE "${OPENVDB_BUILD_DIR}/openvdb/openvdb/Release/libopenvdb.lib" "${TBB_ROOT}/lib/intel64/vc14/tbb12.lib")
+set_property(TARGET grid-operators-reference PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+target_compile_options(grid-operators-reference PRIVATE $<$<CXX_COMPILER_ID:MSVC>:/bigobj>)

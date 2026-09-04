@@ -52,13 +52,13 @@ blocks.Prune();
 
 Activity and value are independent. `SetValueOff(c)` retains the value; `SetValueOff(c, 0)` also writes air. `IsEmpty` follows native structural emptiness; use `HasActiveVoxels` to ask whether anything is active. Signed coordinates and inclusive boxes support the full Int32 domain.
 
-Tree APIs include sparse/dense fill, clipping, topology operations, merge policies, node transfer, background replacement, mutable value traversal with depth limits, and `LeafManager<T>` auxiliary buffers. Keep one accessor per worker and synchronize writes externally. Structural changes invalidate accessors, managers and mutable value handles. Direct leaf references remain managed objects but may be detached by structural edits.
+Tree APIs include sparse/dense fill, clipping, topology operations, merge policies, node transfer, background replacement, mutable value traversal with depth limits, `LeafManager<T>` auxiliary buffers, allocated-node traversal, cached `NodeManager<T>` reductions and filtered `DynamicNodeManager<T>` traversal. Keep one accessor per worker and synchronize writes externally. Structural changes invalidate accessor caches, static managers and tree-wide mutable value handles. Node-local handles track their direct table and remain valid across sibling edits; dynamic parallel callbacks must stay within their own subtree. Direct leaf references remain managed objects but may be detached by structural edits.
 
 `EnumerateValues` visits a tile once. `EnumerateActiveVoxels` expands tiles. `VoxelizeActiveTiles(maximumNewLeaves)` supports an explicit preflight allocation limit. Dense grids support both XYZ and ZYX layouts.
 
 ## Standard .vdb archives
 
-Format 225 supports Int32, Int64, Float, Double, Bool, Vec3i, Vec3s/Vec3f, Vec3d and restricted topology-mask grids. Archives support heterogeneous grids, shared-tree instances, file/grid metadata, opaque metadata, affine and nonlinear frustum maps, active-mask/zlib compression, and real-valued half encoding.
+Format 225 supports Int32, Int64, Float, Double, Bool, Vec3i, Vec3s/Vec3f, Vec3d and restricted topology-mask grids. Archives support heterogeneous grids, shared-tree instances, file/grid metadata, opaque metadata, affine and nonlinear frustum maps, active-mask/zlib/Blosc-LZ4 compression, and real-valued half encoding.
 
 ```csharp
 using Tedd.OpenVDB;
@@ -76,13 +76,13 @@ stream.Position = 0;
 VdbArchive copy = VdbFile.ReadArchive(stream);
 ```
 
-`Read<T>` and `Write<T>` remain single-grid conveniences. `ushort` supports in-memory material storage; standard registered archive types do not include a UInt16 grid. Blosc, forward instance references, legacy versions, point/custom layouts and delayed loading remain unsupported at this checkpoint. [Native I/O provenance](reference/IO_VERIFICATION.md) links the verified formats and profiles.
+`Read<T>` and `Write<T>` remain single-grid conveniences. `ushort` supports in-memory material storage; standard registered archive types do not include a UInt16 grid. Compressed BloscLZ/Snappy/Zstd frames, bitshuffle, forward instance references, legacy versions, point/custom layouts and delayed loading remain unsupported. Native default Blosc LZ4 with byte shuffle and Blosc zlib reads are implemented. [Native I/O provenance](reference/IO_VERIFICATION.md) links the verified formats and profiles.
 
 Read options limit bytes, estimated allocation, grids, nodes and metadata. Streams remain open unless `leaveOpen: false`. Use a temporary output file before replacing a saved archive: a stream failure can leave partial output.
 
 ## Algorithms and numerical types
 
-Implemented tools include exact/tolerance/inactive pruning, signed flood fill, 6/18/26-neighbor morphology with tile policies, level-set spheres, CSG, scalar/vector compositing, mean/Gaussian/median/offset filters with transformed masks, dense conversion, and weighted statistics/histograms. Math includes vectors, matrices, quaternions, frustum/camera maps, ray/DDA operations, finite differences, WENO/Godunov kernels and selected stencils.
+Implemented tools include exact/tolerance/inactive pruning, signed flood fill, 6/18/26-neighbor morphology with tile policies, level-set spheres, CSG, scalar/vector compositing, mean/Gaussian/median/offset filters with transformed masks, dense conversion, level-set interior/fog conversion and segmentation, surface measurements, level-set normalization/tracking/resize and filters, grid differential operators, and weighted statistics/histograms. Point/box/quadratic sampling supports scalar and vector fields, staggered Vec3 fields, world coordinates and dual-grid transforms. Math includes vectors, matrices, quaternions, frustum/camera maps, ray/DDA operations, finite differences, WENO/Godunov kernels and gradient/curvature/WENO stencils.
 
 Some native behaviors differ from their comments. In particular, CSG may leave unused nodes in its second input; CSG copy with unequal backgrounds depends on native thread partitioning. Managed copy matches serial native execution. The [CSG record](reference/CSG-CONFORMANCE.md) and [math record](reference/MATH_VERIFICATION.md) describe these boundaries.
 

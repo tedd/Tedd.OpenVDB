@@ -62,7 +62,14 @@ public sealed class Grid<T> : IGrid where T : unmanaged
         Tree = tree;
         _metadataView = new(_metadata);
     }
-    public VdbTree<T> Tree { get; }
+    public VdbTree<T> Tree { get; private set; }
+    /// <summary>Replaces the shared tree reference; metadata and transform are retained.</summary>
+    /// <remarks>Existing accessors and other grids continue to reference the previous tree.</remarks>
+    public void SetTree(VdbTree<T> tree)
+    {
+        ArgumentNullException.ThrowIfNull(tree);
+        Tree = tree;
+    }
     public T Background => Tree.Background;
     public Type ValueType => typeof(T);
     public bool IsEmpty => Tree.IsEmpty;

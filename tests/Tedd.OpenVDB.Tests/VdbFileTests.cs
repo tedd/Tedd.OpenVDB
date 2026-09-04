@@ -208,7 +208,7 @@ public sealed class VdbFileTests
             case "format": Put32(bytes, 8, 224); break;
             case "multiple-grids": Put32(bytes, 61, 2); break;
             case "file-metadata": Put32(bytes, 57, 1); break;
-            case "compression": Put32(bytes, layout.Grid, 4); break;
+            case "compression": Put32(bytes, layout.Grid, 16); break;
             case "mask-compression": Put32(bytes, layout.Grid, 8); break;
             case "dimensions": bytes[layout.TypeStart + "Tree_int32_5_4_".Length] = (byte)'2'; break;
             case "map": bytes[layout.MapStart] = (byte)'X'; break;

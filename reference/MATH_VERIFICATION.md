@@ -25,3 +25,53 @@ The first-derivative oracle calls native accessor overloads, so native sample or
 Frustum construction rejects nonfinite/degenerate parameters. Coordinate-based stencil sampling rejects neighborhoods outside signed 32-bit coordinates before changing a stencil snapshot. Stencil reads require initialization; local stencil changes do not write to the grid. The median implementation uses managed sorting rather than native nth_element; finite-data order statistics agree.
 
 This milestone does not claim full math API parity. Remaining work includes named Grad/Weno/Curvature stencil convenience operations, grid-wide differential operators, other specialized map classes, matrix decomposition/Euler APIs, and the remaining vector numeric specializations. Finite-difference numerical parity is verified for float and double.
+
+
+## Differential and grid operators
+
+The operators oracle directly instantiates the pinned native GradStencil, WenoStencil,
+CurvatureStencil, Operators.h scalar kernels and vector derivatives. Its 144 cases
+cover float/double precision, constant and polynomial fields, random neighborhoods,
+tiny gradients and NaN, all fourteen scalar first-difference schemes, five biased
+gradient schemes, three second-difference orders, affine maps and nonlinear frustums.
+The managed test also exercises accessor and cached-stencil overloads.
+
+The grid-operators oracle invokes native tools::gradient, laplacian, meanCurvature,
+cpt, divergence, curl, magnitude and normalize. Its 320 cases cover both scalar/vector
+precisions, affine/frustum maps, sparse leaves, active tiles, inactive neighbors,
+staggered grids, empty and inactive-only root entries, with and without masks.
+Tests compare every stored active output value, active counts, leaf counts,
+backgrounds, inactive probes, value depths and output metadata, in sequential
+and parallel managed execution.
+
+Reproduction uses reference/Build-MathReference.ps1 with the same pinned source,
+static OpenVDB and TBB paths documented above. The grid executable needs MSVC /bigobj
+because it instantiates the upstream grid operator map/type combinations.
+Neither oracle is a managed runtime dependency.
+
+Native distinctions deliberately retained:
+- Grad/Weno convenience stencils cache uniform dx and select the forward derivative
+  when velocity is zero; general biased operators select the backward derivative.
+- WenoStencil's non-SIMD Godunov step uses double intermediates, even for float grids.
+- CurvatureStencil has its own nineteen-point buffer order, distinct from DensePt.
+- The generic affine CPT index-space branch applies the inverse point map, including
+  its translation, to the displacement. The world-space CPT follows the native
+  world-position-minus-displacement formula.
+- Native closest-point grid operations retain active tiles and evaluate a tile only
+  at its origin. This may produce an equal output vector throughout that tile.
+- Native Laplacian and mean-curvature scalar grids carry covariant vector metadata.
+- General managed transforms represent AffineMap or NonlinearFrustumMap. Native
+  specialized scale/translation map arithmetic is not a distinct managed map type.
+
+Convenience operators assume a uniform voxel scale and retain IEEE behavior for
+explicit zero/nonfinite dx; callers needing arbitrary maps should use the general
+operators. Scalar gradient results use Vec3d storage with components rounded to the
+input precision. Float/double whole-grid outputs retain Vec3f/Vec3d precision.
+Vector accessor derivatives additionally permit componentwise WENO, built from
+the verified native scalar kernels; upstream D1Vec WENO templates do not compile,
+so direct native vector conformance covers the ten other first-difference schemes.
+
+Remaining API gaps include vector-valued cached stencil overloads, separate native
+specialized linear-map types, generic vector/scalar type conversion traits, and
+the native interrupter/class wrappers. GridOperatorOptions provides .NET cancellation,
+parallel execution and an explicit leaf-densification budget instead of TBB types.

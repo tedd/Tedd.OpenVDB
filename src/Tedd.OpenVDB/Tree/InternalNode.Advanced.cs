@@ -50,8 +50,8 @@ internal sealed partial class InternalNode<T> where T : unmanaged
                 {
                     bool wasActive = Active.IsOn(offset);
                     T value = Values[offset];
-                    other.Children.Remove(offset);
-                    Children[offset] = source;
+                    other.RemoveChild(offset);
+                    SetChild(offset, source);
                     Active.SetOff(offset);
                     ResetChild(source, otherBackground, background, otherNegative, negative);
                     if (policy == MergePolicy.ActiveStatesAndNodes && wasActive)
@@ -80,7 +80,7 @@ internal sealed partial class InternalNode<T> where T : unmanaged
     internal void AddLeaf(LeafNode<T> leaf)
     {
         int offset = Offset(leaf.Origin);
-        if (Level == 1) { Children[offset] = leaf; Active.SetOff(offset); }
+        if (Level == 1) { SetChild(offset, leaf); Active.SetOff(offset); }
         else ((InternalNode<T>)TouchChild(offset)).AddLeaf(leaf);
     }
     internal LeafNode<T>? StealLeaf(Coord coordinate, T value, bool active)
