@@ -45,6 +45,7 @@ public abstract class AttributeArray
     public abstract bool StorageEquals(AttributeArray? other);
     public abstract ReadOnlySpan<byte> GetStorageBytes();
     internal abstract Span<byte> MutableStorageBytes();
+    internal abstract void LoadSerializedStorage(byte[] storage, bool uniform, AttributeFlags flags);
     private bool Flag(AttributeFlags flag) => (Flags & flag) != 0;
     private void SetFlag(AttributeFlags flag, bool value) => Flags = value ? Flags | flag : Flags & ~flag;
     /// <summary>Copies encoded stride blocks; codecs are not converted. Source and destination must have compatible storage.</summary>
@@ -199,7 +200,7 @@ public class TypedAttributeArray<T, TCodec> : AttributeArray<T> where T : unmana
     }
     public override ReadOnlySpan<byte> GetStorageBytes() => _storage;
     internal override Span<byte> MutableStorageBytes() => _storage;
-    internal void LoadSerializedStorage(byte[] storage, bool uniform, AttributeFlags flags)
+    internal override void LoadSerializedStorage(byte[] storage, bool uniform, AttributeFlags flags)
     {
         if (storage.Length != (long)(uniform ? 1 : DataSize) * TCodec.StorageSize) throw new InvalidDataException("Encoded attribute storage has the wrong length.");
         if (typeof(T) == typeof(bool) && typeof(TCodec) == typeof(NullCodec<bool>))

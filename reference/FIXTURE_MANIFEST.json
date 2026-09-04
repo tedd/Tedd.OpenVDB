@@ -782,6 +782,16 @@
       "sha256": "62df59abc8079218bb4909d17c556ea0b80256decf482d56938a5ad7f7b646c8"
     },
     {
+      "path": "tests/Tedd.OpenVDB.Tests/Fixtures/file-lifecycle/native-file-lifecycle.json",
+      "bytes": 476,
+      "sha256": "4445725fd3e238b410efaaa51ad02f8a14d4471176d491339709958a68c0f35a"
+    },
+    {
+      "path": "tests/Tedd.OpenVDB.Tests/Fixtures/file-lifecycle/native-file-lifecycle.vdb",
+      "bytes": 159267,
+      "sha256": "1d5f3deff2cfc40acbfb31f7a23dd9c8d01d6eebaed22532c7c1622ef126b970"
+    },
+    {
       "path": "tests/Tedd.OpenVDB.Tests/Fixtures/file-partial/native-partial-0.vdb",
       "bytes": 2035831,
       "sha256": "594e1deec6b853351460aae94e8ebb6de1b699715c30b312a6006d679fdd7282"
@@ -1657,6 +1667,11 @@
       "sha256": "21b83a082c7edd3f064172cea97973ba5b6cd43bcf4b63dba794f4e4fe23ccf3"
     },
     {
+      "path": "tests/Tedd.OpenVDB.Tests/Fixtures/openvdb-13.0.1-attribute-set.json.gz",
+      "bytes": 4642,
+      "sha256": "12c234cbb6aea49bc3f8125d2cb1f3e24906e7a3f78ec76675b1dcb5ba4906d5"
+    },
+    {
       "path": "tests/Tedd.OpenVDB.Tests/Fixtures/openvdb-13.0.1-attribute-stream.json.gz",
       "bytes": 1038957,
       "sha256": "251136b3aef3a5f8f276e7c18f148b741a5116c780998026282869bf6ab39686"
@@ -1802,6 +1817,16 @@
       "sha256": "2056a46ac83cb10d0ef8d3dbe196e250eb9b55cbe9e290adca079e11aca57bb8"
     },
     {
+      "path": "tests/Tedd.OpenVDB.Tests/Fixtures/openvdb-13.0.1-paged-stream.json.gz",
+      "bytes": 445209,
+      "sha256": "cd37cd4d1d787b0c8115f05b1d80880387e4c23baa2b7a85fbb2a2735f8bc0ed"
+    },
+    {
+      "path": "tests/Tedd.OpenVDB.Tests/Fixtures/openvdb-13.0.1-particle-atlas.json.gz",
+      "bytes": 46345,
+      "sha256": "9db6cde7ba564e978dc1b1fbe576453037107366cd54b580436b953fc4218a1e"
+    },
+    {
       "path": "tests/Tedd.OpenVDB.Tests/Fixtures/openvdb-13.0.1-particles.json.gz",
       "bytes": 6375707,
       "sha256": "55a3426e6da3d158b741fc7c21922309cc2a85b879635b25f7936b1e4c274b62"
@@ -1810,6 +1835,11 @@
       "path": "tests/Tedd.OpenVDB.Tests/Fixtures/openvdb-13.0.1-pcg.json",
       "bytes": 3072724,
       "sha256": "061b0824d56519915db4c3ab00be654361583dafcf82789a87dd4c48b2ecc0e2"
+    },
+    {
+      "path": "tests/Tedd.OpenVDB.Tests/Fixtures/openvdb-13.0.1-point-data-grid.json.gz",
+      "bytes": 7230,
+      "sha256": "c7c163f48ac663bd8c3c6aeeb14b5d34a6e0cb0a946909dfcc0cdc685960eec0"
     },
     {
       "path": "tests/Tedd.OpenVDB.Tests/Fixtures/openvdb-13.0.1-point-scatter.json.gz",
@@ -1832,6 +1862,11 @@
       "sha256": "2e116e512f11ae2e7ff62932e1364ac899d77d70e2eba324948b9e0d23a8b350"
     },
     {
+      "path": "tests/Tedd.OpenVDB.Tests/Fixtures/openvdb-13.0.1-ray-tracer.json",
+      "bytes": 114271,
+      "sha256": "91d348420c7d40d7afbbed17a9b07d69d5d138d5e0855a9a99bfac43f099ef1b"
+    },
+    {
       "path": "tests/Tedd.OpenVDB.Tests/Fixtures/openvdb-13.0.1-rays.json",
       "bytes": 1386478,
       "sha256": "cddb9b98977b307c3fb999cf176a2197fb52d36e0c5bf9f4bf3a85a62a8af62d"
@@ -1850,6 +1885,11 @@
       "path": "tests/Tedd.OpenVDB.Tests/Fixtures/openvdb-13.0.1-statistics.json",
       "bytes": 50082,
       "sha256": "2f5df6adc651c5d003027184375f2ffd15a1a3b78ed2aa4f6f0ea588a139dcaa"
+    },
+    {
+      "path": "tests/Tedd.OpenVDB.Tests/Fixtures/openvdb-13.0.1-string-attributes.json.gz",
+      "bytes": 1269,
+      "sha256": "2d81f88a2f1f91d6539aee51291be11366debe637bd74b8b9dbd7bf8cb3f0bf3"
     },
     {
       "path": "tests/Tedd.OpenVDB.Tests/Fixtures/openvdb-13.0.1-value-transformer.json.gz",

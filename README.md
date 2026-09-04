@@ -2,7 +2,7 @@
 
 Managed C# OpenVDB storage and volume algorithms for **.NET 11 Preview 7**. The former C++/CLI wrappers have been replaced. The library has no native runtime dependency.
 
-**The port is incomplete.** The standard `Tree4<T,5,4,3>` hierarchy, substantial tree/math/volume APIs, and interoperable format-225 archives are implemented. Configurable tree families, point grids, remaining level-set and simulation tools, legacy/delayed I/O, NanoVDB and AX remain. See [coverage and limitations](docs/PORT_STATUS.md) and the [upstream inventory](docs/UPSTREAM_INVENTORY.md).
+**The port is incomplete.** The standard `Tree4<T,5,4,3>` hierarchy, substantial tree/math/volume APIs, and interoperable format-225 archives are implemented. Configurable tree families, remaining point, level-set and simulation tools, legacy/delayed I/O, NanoVDB and AX remain. See [coverage and limitations](docs/PORT_STATUS.md) and the [upstream inventory](docs/UPSTREAM_INVENTORY.md).
 
 Reference: [OpenVDB 13.0.1](https://github.com/AcademySoftwareFoundation/openvdb/tree/f42248c35a9f7bb30641a8a74d9075ce7d1ddcaf), commit `f42248c35a9f7bb30641a8a74d9075ce7d1ddcaf`. Work is on `main`; the wrapper replacement was committed as `5eb1137`.
 
@@ -89,7 +89,7 @@ Read options limit bytes, estimated allocation, grids, nodes and metadata. Strea
 
 ## Algorithms and numerical types
 
-Implemented tools include pruning, signed flood fill, morphology, level-set spheres/boxes/Platonic solids, topology-to-level-set conversion, CSG/composites, filters with transformed masks, dense conversion, level-set masks/fog/segmentation, measurements, tracking/filtering, grid differential operators, sparse Poisson solves, hierarchical ray and regional-activity queries, scalar/vector extrema and statistics. Mesh conversion supports signed/unsigned fields, polygon indices, interior callbacks and lattice-edge intersections. Adaptive volume meshing supports masks and reference seams; rebuilding feeds transformed level-set resampling. Scalar/vector point, box, quadratic and staggered sampling support affine/mipmap and nonlinear grid resampling. Velocity fields, Runge-Kutta integration, level-set and volume advection, morphing and fracture retain native precision rules. Multiresolution grids provide weighted/injection restriction, prolongation and fractional LOD sampling. Vector transformations respect covariant/contravariant and local/world-space metadata. Math includes vectors/matrices/quaternions, specialized affine/scale/translation/unitary and frustum/camera maps, proximity, quantized unit vectors, rays/DDA, PCG, finite differences, WENO/Godunov kernels and stencils.
+Implemented tools include pruning, signed flood fill, morphology, level-set spheres/boxes/Platonic solids, topology-to-level-set conversion, CSG/composites, filters with transformed masks, dense conversion, level-set masks/fog/segmentation, measurements, tracking/filtering, grid differential operators, sparse Poisson solves, hierarchical ray and regional-activity queries, scalar/vector extrema and statistics. Mesh conversion supports signed/unsigned fields, polygon indices, interior callbacks and lattice-edge intersections. Adaptive volume meshing supports masks and reference seams; rebuilding feeds transformed level-set resampling. Scalar/vector point, box, quadratic and staggered sampling support affine/mipmap and nonlinear grid resampling. Velocity fields, Runge-Kutta integration, level-set and volume advection, morphing and fracture retain native precision rules. Multiresolution grids provide weighted/injection restriction, prolongation and fractional LOD sampling. Vector transformations respect covariant/contravariant and local/world-space metadata. Math includes vectors/matrices/quaternions, specialized affine/scale/translation/unitary and frustum/camera maps, proximity, quantized unit vectors, rays/DDA, PCG, finite differences, WENO/Godunov kernels and stencils. CPU preview rendering includes films, perspective/orthographic cameras, shaders, level-set ray tracing and volume integration.
 
 Some native behaviors differ from their comments. In particular, CSG may leave unused nodes in its second input; CSG copy with unequal backgrounds depends on native thread partitioning. Managed copy matches serial native execution. The [CSG record](reference/CSG-CONFORMANCE.md) and [math record](reference/MATH_VERIFICATION.md) describe these boundaries.
 
@@ -112,8 +112,7 @@ The Points namespace provides TypedAttributeArray<T,TCodec>, constant/variable s
 AttributeHandle and AttributeWriteHandle, scoped factories and group bit handles.
 Null, Truncate, fixed-point position/unit, unit-vector and group codecs use unmanaged
 encoded storage. AttributeStreams reads and writes standalone native raw/Blosc buffers.
-These components are foundations for point grids; complete PointDataGrid support is
-still in progress.
+These components are foundations for point grids; PointDataGrid, point-index grids, particle atlases, string attributes and native paged point-buffer framing are implemented; PointDataGrid archive integration and the remaining point algorithms are still in progress.
 
 ValueTransformer supplies iterator callbacks, output-tree transforms, reductions and
 minimum/maximum/sum/product activation. Particle rasterization, point partitioning,

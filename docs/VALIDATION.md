@@ -6,6 +6,37 @@ Original wrapper HEAD: f05f82318811b97e1591395df10979c6cacb5886.
 
 The managed replacement is on main. Commit 5eb1137 replaced the wrappers; development continues directly on main. Original Git history remains available.
 
+## Integrated checkpoint: 0.1.0-preview.7
+
+| Validation | Result |
+|---|---|
+| Release | 20,990 passed; 0 failed; 0 skipped |
+| Debug | 20,990 passed; 0 failed; 0 skipped |
+| Release, hardware intrinsics disabled | 20,990 passed; 0 failed; 0 skipped |
+| Windows x64 NativeAOT sample | Published and executed successfully |
+| NuGet package and symbols | Generated locally; no publication |
+| Native fixture manifest | 417 files; 195,864,993 bytes; hashes verified |
+
+Release took 75 seconds, Debug took 150 seconds, and scalar Release took 77 seconds.
+These are local validation durations, not performance benchmarks.
+
+This checkpoint adds 566 tests. It adds native-conformant VdbFile lifecycle/copy
+behavior; AttributeDescriptor and AttributeSet ownership/streaming; StringMetaCache
+and string attributes; PointIndexGrid, PointIndexIterator and ParticleAtlas; native
+paged point streams; PointDataGrid leaf composition; and CPU preview cameras, shaders,
+ray tracing and volume rendering. Paged Blosc/LZ4 encoding uses reusable pooled
+workspaces and has zero warmed managed allocation in the one-mebibyte size/data
+profiles.
+
+Native fixture evidence includes 144 AttributeSet profiles, 25 string-attribute
+profiles, 144 point-index/atlas profiles, 25 paged-stream profiles, 12 PointDataGrid
+profiles and 45 ray-tracer profiles. Every generated managed paged stream was read by
+native OpenVDB. The AOT sample additionally exercises PointDataGrid, paged storage and
+level-set preview rendering.
+
+The remaining PointStatistics and point-mutation implementations are preserved as
+untracked .pending work after an agent usage-limit interruption. They are not part of
+this checkpoint or its compatibility claims.
 ## Integrated checkpoint: 0.1.0-preview.6
 
 | Validation | Result |

@@ -14,13 +14,13 @@ The requested full 1:1 port is **not complete**. This repository contains a mana
 | Math | Coord/boxes, native vector/matrix storage types, expanded double math, quaternions, native affine/scale/translation/unitary map identities, frustum/camera transforms, proximity, quantized unit vectors, ray/DDA and hierarchical traversal | Complete generic precision family and remaining advanced math utilities remain |
 | Numerical kernels | All native first/second finite differences, WENO5/Godunov, stencils, scalar/vector index/world operators, grid differential operations, float/double PCG with Jacobi/IC, sparse Poisson assembly/boundary conditions/solves | Remaining numerical utility/solver families remain |
 | Volume topology | Exact/tolerance/inactive/level-set pruning, signed flood fill, dilation/erosion with 6/18/26 neighbors and Ignore/Expand/Preserve tile policies | Complete tools family remains |
-| Level sets and composites | Sphere generation, CSG/composites, masks/fog/segmentation, measurements, tracking/filtering, triangle/quad mesh conversion, adaptive volume meshing with reference seams, rebuilding, edge intersections, box construction, Platonic solids, topology-to-level-set conversion, level-set advection, morphing and fracture | Remaining surface generators and simulation remain |
+| Level sets and composites | Sphere generation, CSG/composites, masks/fog/segmentation, measurements, tracking/filtering, CPU preview ray tracing/volume rendering, triangle/quad mesh conversion, adaptive volume meshing with reference seams, rebuilding, edge intersections, box construction, Platonic solids, topology-to-level-set conversion, level-set advection, morphing and fracture | Remaining surface generators and simulation remain |
 | Sampling and filtering | Scalar/vector point/box/quadratic and staggered sampling, affine/mipmap/nonlinear resampling with level-set rebuild dispatch, mean/Gaussian/median/offset filters, transformed alpha masks, velocity fields and Runge-Kutta integration, scalar/vector volume advection with correction limiters | Remaining overload and value-specialization families remain |
 | Dense, queries and statistics | XYZ/ZYX dense memory, sparse conversion, cached regional activity queries, scalar/vector extrema, weighted mean/variance/histograms | Native memory-usage reporting, complete overload/parallel/reduction and value-conversion families remain |
 | Multiresolution | Float/double LOD trees, weighted/injection restriction, prolongation, fractional grids and sampling, native copy/steal and metadata semantics | Configurable tree and other value specializations remain |
-| Particle tools | Particle/point partitioning, variable/fixed spheres and trails, attribute propagation, native finalize rules, uniform/dense/nonuniform scattering, cloned MT19937 and native MSVC distributions | ParticleAtlas, specialized point grids and remaining point tools remain |
+| Particle tools | Particle/point partitioning, ParticleAtlas, PointIndexGrid, variable/fixed spheres and trails, attribute propagation, native finalize rules, uniform/dense/nonuniform scattering, cloned MT19937 and native MSVC distributions | Remaining point mutation, transfer, sampling and rasterization tools remain |
 | Value callbacks and diagnostics | Foreach/transform/accumulate, four activation modifiers, diagnostic scalar/vector checks, gradient/divergence checks and ordered level-set/fog validation | Managed scheduling differs from TBB; three ill-formed native diagnostic templates have documented corrections |
-| Point attributes | Uniform/expanded arrays, typed codecs, constant/variable strides, read/write handles, raw copying, scoped factories, group bit handles and raw/Blosc standalone streams | AttributeSet/string descriptors, PointDataGrid integration and paged/delayed buffers remain |
+| Point attributes | AttributeDescriptor/AttributeSet, uniform/expanded arrays, typed and string codecs, constant/variable strides, read/write/group handles, scoped factories, raw/Blosc streams, native paged buffers, PointIndexGrid and in-memory PointDataGrid/leaf composition | PointDataGrid archive integration, mapped/delayed pages, 64-bit/custom-dimension point trees and remaining bulk point tools remain |
 
 ## Remaining major work
 
@@ -28,7 +28,7 @@ The requested full 1:1 port is **not complete**. This repository contains a mana
 2. Finish archive compression/version/type families and delayed/mapped storage.
 3. Complete generic math/maps, specialized stencils, remaining numerical operators and solvers.
 4. Port remaining volume tools: remaining surface/segmentation/conversion APIs, rendering and remaining tool overloads.
-5. Complete point-data/index grids, attribute descriptors/string support, paged attributes and remaining point tools.
+5. Complete PointDataGrid archive integration, mapped/delayed attributes, custom point-tree families and remaining point tools.
 6. Translate the remaining applicable native tests and expand differential coverage for each added module.
 7. AX, NanoVDB, Python and host-product integrations remain separate unported upstream components. No parity with those components is claimed.
 

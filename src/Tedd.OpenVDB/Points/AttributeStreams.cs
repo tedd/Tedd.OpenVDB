@@ -102,8 +102,7 @@ public static class AttributeStreams
         if (compression == 0) storage = payload;
         else
         {
-            if (payload.Length < 16) throw new InvalidDataException("Truncated attribute Blosc header.");
-            uint decodedLength = BinaryPrimitives.ReadUInt32LittleEndian(payload.AsSpan(4));
+            uint decodedLength = checked((uint)BloscCodec.ValidateFrame(payload));
             bool padded = decodedLength == 128 && expected <= 128;
             if ((!padded && decodedLength != expected) || decodedLength > options.MaximumStorageBytes || decodedLength > Array.MaxLength) throw new InvalidDataException("Attribute Blosc frame size does not match its shape or budget.");
             Reserve(decodedLength); var decoded = new byte[(int)decodedLength]; BloscCodec.Decode(payload, decoded, Reserve);
@@ -112,6 +111,49 @@ public static class AttributeStreams
         }
         Reserve(width);
         var array = new TypedAttributeArray<T, TCodec>(metadata.Size, metadata.StrideOrTotalSize, metadata.HasConstantStride, maximumStorageBytes: options.MaximumStorageBytes);
+        array.LoadSerializedStorage(storage, metadata.IsUniform, metadata.Flags & ~AttributeFlags.PartialRead);
+        return array;
+    }
+    /// <summary>Reads buffers using a runtime descriptor type and a scoped factory registry.</summary>
+    public static AttributeArray ReadBuffers(Stream stream, AttributeType type, AttributeArrayRegistry registry, AttributeStreamMetadata metadata, AttributeReadOptions? options = null)
+    {
+        ArgumentNullException.ThrowIfNull(stream); ArgumentNullException.ThrowIfNull(registry); ArgumentNullException.ThrowIfNull(metadata);
+        options ??= new(); options.Validate(); ValidateMetadata(metadata, options);
+        if (metadata.IsPaged) throw new NotSupportedException("Paged attribute buffers require a paged stream.");
+        AttributeArray array = registry.Create(type, metadata.Size, metadata.StrideOrTotalSize, metadata.HasConstantStride);
+        int width = array.StorageTypeSize;
+        long dataSize = metadata.HasConstantStride ? (long)metadata.Size * metadata.StrideOrTotalSize : metadata.StrideOrTotalSize;
+        long bytes = (metadata.IsUniform ? 1 : dataSize) * width;
+        if (width <= 0 || dataSize > int.MaxValue || bytes > options.MaximumStorageBytes || bytes > Array.MaxLength)
+            throw new InvalidDataException("Decoded attribute storage exceeds its budget.");
+        int expected = (int)bytes; long allocated = 0;
+        void Reserve(long count)
+        {
+            if (count < 0 || count > options.MaximumTotalAllocationBytes - allocated)
+                throw new InvalidDataException("Attribute decoding exceeds its allocation budget.");
+            allocated += count; options.CancellationToken.ThrowIfCancellationRequested();
+        }
+        int compression = 0;
+        if (!metadata.IsUniform)
+        {
+            Span<byte> marker = stackalloc byte[1]; ReadExactly(stream, marker, options.CancellationToken);
+            compression = marker[0]; if (compression > 1) throw new InvalidDataException("Unknown attribute compression marker.");
+        }
+        if (compression == 0 && metadata.EncodedBytes != expected)
+            throw new InvalidDataException("Raw attribute payload size does not match its shape.");
+        Reserve(metadata.EncodedBytes); byte[] payload = new byte[metadata.EncodedBytes]; ReadExactly(stream, payload, options.CancellationToken);
+        byte[] storage;
+        if (compression == 0) storage = payload;
+        else
+        {
+            uint decodedLength = checked((uint)BloscCodec.ValidateFrame(payload));
+            bool padded = decodedLength == 128 && expected <= 128;
+            if ((!padded && decodedLength != expected) || decodedLength > options.MaximumStorageBytes || decodedLength > Array.MaxLength)
+                throw new InvalidDataException("Attribute Blosc frame size does not match its shape or budget.");
+            Reserve(decodedLength); var decoded = new byte[(int)decodedLength]; BloscCodec.Decode(payload, decoded, Reserve);
+            if (decoded.Length == expected) storage = decoded;
+            else { Reserve(expected); storage = decoded.AsSpan(0, expected).ToArray(); }
+        }
         array.LoadSerializedStorage(storage, metadata.IsUniform, metadata.Flags & ~AttributeFlags.PartialRead);
         return array;
     }
