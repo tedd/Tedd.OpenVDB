@@ -5,27 +5,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 foreach(required OPENVDB_SOURCE_DIR OPENVDB_BUILD_DIR TBB_ROOT)
   if(NOT ${required})
     message(FATAL_ERROR "Set ${required}")
-    add_executable(vdb-archive-reference archive-oracle.cpp)
-  target_include_directories(vdb-archive-reference PRIVATE
-    "${OPENVDB_SOURCE_DIR}/openvdb" "${OPENVDB_SOURCE_DIR}/ext/imath"
-    "${OPENVDB_ZLIB_BUILD_DIR}/openvdb/openvdb" "${OPENVDB_ZLIB_BUILD_DIR}/openvdb/openvdb/openvdb"
-    "${TBB_ROOT}/include")
-  target_compile_definitions(vdb-archive-reference PRIVATE OPENVDB_STATICLIB _USE_MATH_DEFINES NOMINMAX)
-  target_link_libraries(vdb-archive-reference PRIVATE
-    "${OPENVDB_ZLIB_BUILD_DIR}/openvdb/openvdb/Release/libopenvdb.lib"
-    "${ZLIB_LIBRARY}" "${TBB_ROOT}/lib/intel64/vc14/tbb12.lib")
-  set_property(TARGET vdb-archive-reference PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-  add_executable(vdb-gridtypes-reference gridtypes-oracle.cpp)
-  target_include_directories(vdb-gridtypes-reference PRIVATE
-    "${OPENVDB_SOURCE_DIR}/openvdb" "${OPENVDB_SOURCE_DIR}/ext/imath"
-    "${OPENVDB_ZLIB_BUILD_DIR}/openvdb/openvdb" "${OPENVDB_ZLIB_BUILD_DIR}/openvdb/openvdb/openvdb"
-    "${TBB_ROOT}/include")
-  target_compile_definitions(vdb-gridtypes-reference PRIVATE OPENVDB_STATICLIB _USE_MATH_DEFINES NOMINMAX)
-  target_link_libraries(vdb-gridtypes-reference PRIVATE
-    "${OPENVDB_ZLIB_BUILD_DIR}/openvdb/openvdb/Release/libopenvdb.lib"
-    "${ZLIB_LIBRARY}" "${TBB_ROOT}/lib/intel64/vc14/tbb12.lib")
-  set_property(TARGET vdb-gridtypes-reference PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-endif()
+  endif()
 endforeach()
 add_executable(vdb-reference oracle.cpp)
 target_include_directories(vdb-reference PRIVATE
@@ -91,4 +71,18 @@ endif()
 
 if(TARGET vdb-gridtypes-reference)
   target_compile_options(vdb-gridtypes-reference PRIVATE /bigobj)
+endif()
+
+if(OPENVDB_BLOSC_BUILD_DIR AND BLOSC_LIBRARY AND BLOSC_INCLUDE_DIR AND ZLIB_LIBRARY)
+  add_executable(vdb-blosc-reference blosc-oracle.cpp)
+  target_include_directories(vdb-blosc-reference PRIVATE
+    "${OPENVDB_SOURCE_DIR}/openvdb" "${OPENVDB_SOURCE_DIR}/ext/imath"
+    "${OPENVDB_BLOSC_BUILD_DIR}/openvdb/openvdb" "${OPENVDB_BLOSC_BUILD_DIR}/openvdb/openvdb/openvdb"
+    "${TBB_ROOT}/include" "${BLOSC_INCLUDE_DIR}")
+  target_compile_definitions(vdb-blosc-reference PRIVATE OPENVDB_STATICLIB _USE_MATH_DEFINES NOMINMAX)
+  target_compile_options(vdb-blosc-reference PRIVATE /bigobj)
+  target_link_libraries(vdb-blosc-reference PRIVATE
+    "${OPENVDB_BLOSC_BUILD_DIR}/openvdb/openvdb/Release/libopenvdb.lib"
+    "${BLOSC_LIBRARY}" "${ZLIB_LIBRARY}" "${TBB_ROOT}/lib/intel64/vc14/tbb12.lib")
+  set_property(TARGET vdb-blosc-reference PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()

@@ -46,7 +46,7 @@ public static class PointSampler
 
 /// <summary>Trilinear sampling of the eight voxels at floor(position) and its positive neighbors.</summary>
 /// <remarks>The sample is active when any support voxel is active, including zero-weight neighbors.</remarks>
-public static class BoxSampler
+public static partial class BoxSampler
 {
     public const string Name = "box";
     public const int Radius = 1;
@@ -148,7 +148,7 @@ public static class BoxSampler
 
 /// <summary>Separable quadratic sampling of the 27 voxels centered on floor(position).</summary>
 /// <remarks>The sample is active when any support voxel is active, including zero-weight neighbors.</remarks>
-public static class QuadraticSampler
+public static partial class QuadraticSampler
 {
     public const string Name = "quadratic";
     public const int Radius = 1;
@@ -233,11 +233,38 @@ internal readonly struct AccessorSampleSource<T>(ValueAccessor<T> accessor) : IS
 internal static class SamplingArithmetic<T> where T : unmanaged, INumber<T>
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static T Linear(T a, T b, double weight) => a + T.CreateTruncating(double.CreateChecked(b - a) * weight);
+    internal static T Linear(T a, T b, double weight)
+    {
+        if (typeof(T) == typeof(Half))
+        {
+            float first = float.CreateChecked(a), delta = float.CreateChecked(b) - first;
+            return T.CreateTruncating(first + (float)(Half)(float)(delta * weight));
+        }
+        if (typeof(T) == typeof(byte) || typeof(T) == typeof(sbyte) || typeof(T) == typeof(short) || typeof(T) == typeof(ushort))
+        {
+            // Native 8/16-bit operands promote to int before subtraction and addition.
+            int first = int.CreateChecked(a), delta = int.CreateChecked(b) - first;
+            T step = T.CreateTruncating((int)(delta * weight));
+            return T.CreateTruncating(first + int.CreateChecked(step));
+        }
+        return a + T.CreateTruncating(double.CreateChecked(b - a) * weight);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static T Quadratic(T lower, T center, T upper, double weight)
     {
+        if (typeof(T) == typeof(Half))
+        {
+            float lo = float.CreateChecked(lower), mid = float.CreateChecked(center), hi = float.CreateChecked(upper);
+            Half qa = (Half)(float)(0.5 * (lo + hi) - mid), qb = (Half)(float)(0.5 * (hi - lo));
+            return T.CreateTruncating((float)(weight * (weight * (float)qa + (float)qb) + mid));
+        }
+        if (typeof(T) == typeof(byte) || typeof(T) == typeof(sbyte) || typeof(T) == typeof(short) || typeof(T) == typeof(ushort))
+        {
+            int lo = int.CreateChecked(lower), mid = int.CreateChecked(center), hi = int.CreateChecked(upper);
+            T qa = T.CreateTruncating((int)(0.5 * (lo + hi) - mid)), qb = T.CreateTruncating((int)(0.5 * (hi - lo)));
+            return T.CreateTruncating((int)(weight * (weight * int.CreateChecked(qa) + int.CreateChecked(qb)) + mid));
+        }
         var a = T.CreateTruncating(0.5 * double.CreateChecked(lower + upper) - double.CreateChecked(center));
         var b = T.CreateTruncating(0.5 * double.CreateChecked(upper - lower));
         return T.CreateTruncating(weight * (weight * double.CreateChecked(a) + double.CreateChecked(b)) + double.CreateChecked(center));

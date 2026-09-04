@@ -42,3 +42,18 @@ $fixture=$json | ConvertFrom-Json
 if($fixture.upstreamCommit -ne $expectedCommit){throw 'Unexpected finite-difference fixture provenance'}
 Set-Content -LiteralPath $finiteFixturePath -Value $json
 [pscustomobject]@{ Cases=$fixture.cases.Count; Sha256=(Get-FileHash -LiteralPath $finiteFixturePath -Algorithm SHA256).Hash }
+
+foreach($operatorName in @('operators','grid-operators')) {
+    $operatorFixturePath=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot ("..\tests\Tedd.OpenVDB.Tests\Fixtures\openvdb-13.0.1-"+$operatorName+".json")))
+    $operatorPreviousPath=$env:PATH
+    try {
+        $env:PATH=(Join-Path $TbbRoot 'redist\intel64\vc14')+';'+$operatorPreviousPath
+        $operatorOutput=& (Join-Path $build ("Release\"+$operatorName+"-reference.exe"))
+        if($LASTEXITCODE -ne 0){throw "$operatorName oracle execution failed"}
+    } finally { $env:PATH=$operatorPreviousPath }
+    $operatorJson=$operatorOutput -join [Environment]::NewLine
+    $operatorFixture=$operatorJson | ConvertFrom-Json
+    if($operatorFixture.upstreamCommit -ne $expectedCommit){throw "Unexpected $operatorName fixture provenance"}
+    Set-Content -LiteralPath $operatorFixturePath -Value $operatorJson
+    [pscustomobject]@{ Oracle=$operatorName; Cases=$operatorFixture.cases.Count; Sha256=(Get-FileHash -LiteralPath $operatorFixturePath -Algorithm SHA256).Hash }
+}

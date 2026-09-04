@@ -18,7 +18,28 @@ internal sealed partial class InternalNode<T> where T : unmanaged
     internal readonly int TotalLog2Dim;
     internal readonly T[] Values;
     internal readonly NodeMask Active;
+    // Mutations must go through AddChild/SetChild/RemoveChild so node-scoped traversals
+    // detect changes to this direct table without invalidation from sibling subtrees.
     internal readonly Dictionary<int, object> Children = [];
+    private long _directTopologyVersion;
+    internal long DirectTopologyVersion => Volatile.Read(ref _directTopologyVersion);
+    internal void AddChild(int offset, object child)
+    {
+        Children.Add(offset, child);
+        Interlocked.Increment(ref _directTopologyVersion);
+    }
+    internal void SetChild(int offset, object child)
+    {
+        if (Children.TryGetValue(offset, out var previous) && ReferenceEquals(previous, child)) return;
+        Children[offset] = child;
+        Interlocked.Increment(ref _directTopologyVersion);
+    }
+    internal bool RemoveChild(int offset)
+    {
+        if (!Children.Remove(offset)) return false;
+        Interlocked.Increment(ref _directTopologyVersion);
+        return true;
+    }
 
     internal InternalNode(int level, Coord origin, T value, bool active)
     {
@@ -73,7 +94,7 @@ internal sealed partial class InternalNode<T> where T : unmanaged
         bool active = Active.IsOn(offset);
         child = Level == 1 ? new LeafNode<T>(origin, value, active)
             : new InternalNode<T>(Level - 1, origin, value, active);
-        Children.Add(offset, child);
+        AddChild(offset, child);
         Active.Set(offset, false); // Child and active-tile masks are disjoint.
         return child;
     }
@@ -86,7 +107,7 @@ internal sealed partial class InternalNode<T> where T : unmanaged
 
     internal void SetTile(int offset, T value, bool active)
     {
-        Children.Remove(offset);
+        RemoveChild(offset);
         Values[offset] = value;
         Active.Set(offset, active);
     }
@@ -169,7 +190,7 @@ internal sealed partial class InternalNode<T> where T : unmanaged
         if (!allActive) copy.Active.OrWith(other.Active);
         foreach ((int offset, object child) in other.Children)
         {
-            copy.Children.Add(offset, CopyChildTopology<TOther>(child, value, allActive));
+            copy.AddChild(offset, CopyChildTopology<TOther>(child, value, allActive));
             copy.Active.SetOff(offset);
         }
         return copy;
@@ -210,7 +231,7 @@ internal sealed partial class InternalNode<T> where T : unmanaged
                 if (hasThis) CombineChildTopology<TOther>(target!, source, 0, default, preserveTiles);
                 else if (!preserveTiles || !Active.IsOn(i))
                 {
-                    Children.Add(i, CopyChildTopology<TOther>(source, Values[i], Active.IsOn(i)));
+                    AddChild(i, CopyChildTopology<TOther>(source, Values[i], Active.IsOn(i)));
                     Active.SetOff(i);
                 }
             }
@@ -247,7 +268,7 @@ internal sealed partial class InternalNode<T> where T : unmanaged
             {
                 if (hasOther)
                 {
-                    if (intersection) Children.Add(i, CopyChildTopology<TOther>(source!, Values[i], false));
+                    if (intersection) AddChild(i, CopyChildTopology<TOther>(source!, Values[i], false));
                     else
                     {
                         target = TouchChild(i); // Inherit the active tile, then subtract the other topology.
@@ -328,9 +349,9 @@ internal sealed partial class InternalNode<T> where T : unmanaged
                         leafB is null ? valueB : new(leafB.GetValue(j), leafB.IsValueOn(j)));
                     if (combined.IsActive) leaf.SetValueOn(j, combined.Value); else leaf.SetValueOff(j, combined.Value);
                 }
-                result.Children.Add(i, leaf);
+                result.AddChild(i, leaf);
             }
-            else result.Children.Add(i, CombineNodes((InternalNode<T>?)childA, valueA,
+            else result.AddChild(i, CombineNodes((InternalNode<T>?)childA, valueA,
                 (InternalNode<T>?)childB, valueB, level - 1, result.ChildOrigin(i), operation));
         }
         return result;
@@ -372,7 +393,7 @@ internal sealed partial class InternalNode<T> where T : unmanaged
         Values.AsSpan().CopyTo(copy.Values);
         for (int i = 0; i < Values.Length; i++) copy.Active.Set(i, Active.IsOn(i));
         foreach ((int offset, object child) in Children)
-            copy.Children.Add(offset, child is LeafNode<T> leaf ? leaf.DeepCopy() : ((InternalNode<T>)child).DeepCopy());
+            copy.AddChild(offset, child is LeafNode<T> leaf ? leaf.DeepCopy() : ((InternalNode<T>)child).DeepCopy());
         return copy;
     }
 

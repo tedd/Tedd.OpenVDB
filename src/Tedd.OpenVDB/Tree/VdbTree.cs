@@ -27,7 +27,8 @@ public readonly record struct VoxelValue<T>(CoordBBox Bounds, T Value, bool IsAc
 public sealed partial class VdbTree<T> where T : unmanaged
 {
     internal readonly Dictionary<Coord, RootEntry> Entries = [];
-    internal long TopologyVersion { get; private set; }
+    private long _topologyVersion;
+    internal long TopologyVersion => Volatile.Read(ref _topologyVersion);
     internal readonly record struct RootEntry(T Value, bool Active, InternalNode<T>? Child = null);
     public const int Depth = 4;
     public const int LeafLog2Dim = 3;
@@ -451,7 +452,7 @@ public sealed partial class VdbTree<T> where T : unmanaged
     }
 
     public ValueAccessor<T> GetAccessor() => new(this);
-    internal void InvalidateAccessors() => TopologyVersion = unchecked(TopologyVersion + 1);
+    internal void InvalidateAccessors() => Interlocked.Increment(ref _topologyVersion);
 
     /// <summary>Enumerates stored values (tiles once), not every voxel represented by a tile.</summary>
     public IEnumerable<VoxelValue<T>> EnumerateValues(ValueIterationMode mode = ValueIterationMode.Active)

@@ -16,7 +16,8 @@ public enum VdbCompression : uint
 {
     None = 0,
     Zlib = 1,
-    ActiveMask = 2
+    ActiveMask = 2,
+    Blosc = 4
 }
 
 public sealed record VdbWriteOptions
@@ -31,8 +32,8 @@ public static partial class VdbFile
 {
     private static VdbCompression ValidateCompression(VdbCompression compression)
     {
-        if ((compression & ~(VdbCompression.Zlib | VdbCompression.ActiveMask)) != 0)
-            throw new NotSupportedException("Only uncompressed, zlib and active-mask VDB compression are supported; Blosc and unknown flags are unsupported.");
+        if ((compression & ~(VdbCompression.Zlib | VdbCompression.ActiveMask | VdbCompression.Blosc)) != 0)
+            throw new NotSupportedException("Unknown VDB compression flags are unsupported.");
         return compression;
     }
 
@@ -89,7 +90,7 @@ public static partial class VdbFile
 
     private static void ReadValueData<T>(Input input, Span<T> destination) where T : unmanaged
     {
-        if (!input.Half && BitConverter.IsLittleEndian && (input.Compression & VdbCompression.Zlib) == 0)
+        if (!input.Half && BitConverter.IsLittleEndian && (input.Compression & (VdbCompression.Zlib | VdbCompression.Blosc)) == 0)
         {
             input.Exact(MemoryMarshal.AsBytes(destination)); ValidateBooleans(destination); return;
         }
@@ -122,26 +123,31 @@ public static partial class VdbFile
     }
     private static void ReadData(Input input, Span<byte> destination)
     {
-        if ((input.Compression & VdbCompression.Zlib) == 0) { input.Exact(destination); return; }
+        if ((input.Compression & (VdbCompression.Zlib | VdbCompression.Blosc)) == 0) { input.Exact(destination); return; }
         long length = input.Int64();
         if (length <= 0)
         {
-            if (length != -(long)destination.Length) throw new InvalidDataException("Raw zlib fallback chunk has the wrong length.");
+            if (length != -(long)destination.Length) throw new InvalidDataException("Raw compressed-data fallback chunk has the wrong length.");
             input.Exact(destination); return;
         }
         if (length > input.Options.MaxBytes - input.Position || length > int.MaxValue)
             throw new InvalidDataException("Compressed chunk exceeds the input byte limit.");
         // Resource accounting occurs before allocation; decompressed size comes from the fixed node layout.
         byte[] compressed = input.Bytes((int)length);
-        if (compressed.Length < 6 || (compressed[0] & 15) != 8 || (compressed[0] >> 4) > 7 ||
-            ((compressed[0] << 8) | compressed[1]) % 31 != 0 || (compressed[1] & 32) != 0)
+        if ((input.Compression & VdbCompression.Blosc) != 0) BloscCodec.Decode(compressed, destination, input.Reserve);
+        else DecompressZlib(compressed, 0, compressed.Length, destination);
+    }
+    internal static void DecompressZlib(byte[] compressed, int offset, int length, Span<byte> destination)
+    {
+        ReadOnlySpan<byte> data = compressed.AsSpan(offset, length);
+        if (data.Length < 6 || (data[0] & 15) != 8 || (data[0] >> 4) > 7 ||
+            ((data[0] << 8) | data[1]) % 31 != 0 || (data[1] & 32) != 0)
             throw new InvalidDataException("Invalid zlib header or unsupported preset dictionary.");
-        using var source = new MemoryStream(compressed, writable: false);
+        using var source = new MemoryStream(compressed, offset, length, writable: false);
         using var inflater = new ZLibStream(source, CompressionMode.Decompress);
         inflater.ReadExactly(destination);
         if (inflater.ReadByte() != -1) throw new InvalidDataException("Zlib chunk expands beyond its declared node size.");
-        // ZLibStream may produce all expected bytes before noticing a missing trailer. Check it explicitly.
-        if (BinaryPrimitives.ReadUInt32BigEndian(compressed.AsSpan(compressed.Length - 4)) != Adler32(destination))
+        if (BinaryPrimitives.ReadUInt32BigEndian(data[^4..]) != Adler32(destination))
             throw new InvalidDataException("Zlib checksum mismatch or truncated trailer.");
     }
     private static uint Adler32(ReadOnlySpan<byte> bytes)
@@ -202,7 +208,7 @@ public static partial class VdbFile
     private static void WriteValueData<T>(BinaryWriter output, ReadOnlySpan<T> values, VdbCompression compression, bool half) where T : unmanaged
     {
         if (half && values.IsEmpty) return;
-        if (!half && BitConverter.IsLittleEndian && (compression & VdbCompression.Zlib) == 0)
+        if (!half && BitConverter.IsLittleEndian && (compression & (VdbCompression.Zlib | VdbCompression.Blosc)) == 0)
         {
             output.Write(MemoryMarshal.AsBytes(values)); return;
         }
@@ -220,7 +226,11 @@ public static partial class VdbFile
             foreach (T value in values) WriteScalar(writer, value);
             bytes = buffer.ToArray();
         }
-        if ((compression & VdbCompression.Zlib) == 0) { output.Write(bytes); return; }
+        if ((compression & (VdbCompression.Zlib | VdbCompression.Blosc)) == 0) { output.Write(bytes); return; }
+        if ((compression & VdbCompression.Blosc) != 0)
+        {
+            byte[] frame = BloscCodec.Encode(bytes); output.Write((long)frame.Length); output.Write(frame); return;
+        }
         using var packed = new MemoryStream();
         using (var zipper = new ZLibStream(packed, CompressionLevel.Optimal, leaveOpen: true)) zipper.Write(bytes);
         if (packed.Length < bytes.Length)
