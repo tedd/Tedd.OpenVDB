@@ -8,6 +8,8 @@ namespace Tedd.OpenVDB.IO;
 
 internal static class Lz4BlockCodec
 {
+    private const int HashTableSize = 65536;
+
     internal static void Decode(ReadOnlySpan<byte> input, Span<byte> output)
     {
         int source = 0, target = 0; bool matched = false;
@@ -47,37 +49,59 @@ internal static class Lz4BlockCodec
         return length;
     }
 
+    internal static int MaximumEncodedLength(int inputLength)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(inputLength);
+        return checked(inputLength + inputLength / 255 + 16);
+    }
+
+    internal static int Encode(ReadOnlySpan<byte> input, Span<byte> output, Span<int> table)
+    {
+        int maximumLength = MaximumEncodedLength(input.Length);
+        if (output.Length < maximumLength) throw new ArgumentException("The LZ4 output buffer is too small.", nameof(output));
+        if (table.Length < HashTableSize) throw new ArgumentException("The LZ4 hash table is too small.", nameof(table));
+        table[..HashTableSize].Fill(-1);
+        int source = 0, anchor = 0, destination = 0;
+        while (source <= input.Length - 12)
+        {
+            uint sequence = BinaryPrimitives.ReadUInt32LittleEndian(input[source..]);
+            int hash = (int)(unchecked(sequence * 2654435761u) >> 16);
+            int match = table[hash]; table[hash] = source;
+            if (match < 0 || source - match > 65535 || BinaryPrimitives.ReadUInt32LittleEndian(input[match..]) != sequence) { ++source; continue; }
+            int length = 4;
+            while (source + length < input.Length - 5 && input[match + length] == input[source + length]) ++length;
+            int literals = source - anchor, matchLength = length - 4;
+            output[destination++] = (byte)((System.Math.Min(literals, 15) << 4) | System.Math.Min(matchLength, 15));
+            if (literals >= 15) WriteLength(output, ref destination, literals - 15);
+            input.Slice(anchor, literals).CopyTo(output[destination..]); destination += literals;
+            BinaryPrimitives.WriteUInt16LittleEndian(output[destination..], (ushort)(source - match)); destination += 2;
+            if (matchLength >= 15) WriteLength(output, ref destination, matchLength - 15);
+            source += length; anchor = source;
+        }
+        int last = input.Length - anchor;
+        output[destination++] = (byte)(System.Math.Min(last, 15) << 4);
+        if (last >= 15) WriteLength(output, ref destination, last - 15);
+        input[anchor..].CopyTo(output[destination..]); destination += last;
+        return destination;
+    }
+
     internal static byte[] Encode(ReadOnlySpan<byte> input)
     {
-        byte[] output = new byte[checked(input.Length + input.Length / 255 + 16)];
-        int[] table = ArrayPool<int>.Shared.Rent(65536);
-        table.AsSpan(0, 65536).Fill(-1);
+        int maximumLength = MaximumEncodedLength(input.Length);
+        byte[] output = ArrayPool<byte>.Shared.Rent(maximumLength);
+        int[] table = ArrayPool<int>.Shared.Rent(HashTableSize);
         try
         {
-            int source = 0, anchor = 0, destination = 0;
-            while (source <= input.Length - 12)
-            {
-                uint sequence = BinaryPrimitives.ReadUInt32LittleEndian(input[source..]);
-                int hash = (int)(unchecked(sequence * 2654435761u) >> 16);
-                int match = table[hash]; table[hash] = source;
-                if (match < 0 || source - match > 65535 || BinaryPrimitives.ReadUInt32LittleEndian(input[match..]) != sequence) { ++source; continue; }
-                int length = 4;
-                while (source + length < input.Length - 5 && input[match + length] == input[source + length]) ++length;
-                int literals = source - anchor, matchLength = length - 4;
-                output[destination++] = (byte)((System.Math.Min(literals, 15) << 4) | System.Math.Min(matchLength, 15));
-                if (literals >= 15) WriteLength(output, ref destination, literals - 15);
-                input.Slice(anchor, literals).CopyTo(output.AsSpan(destination)); destination += literals;
-                BinaryPrimitives.WriteUInt16LittleEndian(output.AsSpan(destination), (ushort)(source - match)); destination += 2;
-                if (matchLength >= 15) WriteLength(output, ref destination, matchLength - 15);
-                source += length; anchor = source;
-            }
-            int last = input.Length - anchor;
-            output[destination++] = (byte)(System.Math.Min(last, 15) << 4);
-            if (last >= 15) WriteLength(output, ref destination, last - 15);
-            input[anchor..].CopyTo(output.AsSpan(destination)); destination += last;
-            return output.AsSpan(0, destination).ToArray();
+            int length = Encode(input, output, table);
+            byte[] result = GC.AllocateUninitializedArray<byte>(length);
+            output.AsSpan(0, length).CopyTo(result);
+            return result;
         }
-        finally { ArrayPool<int>.Shared.Return(table); }
+        finally
+        {
+            ArrayPool<int>.Shared.Return(table);
+            ArrayPool<byte>.Shared.Return(output);
+        }
     }
     private static void WriteLength(Span<byte> output, ref int offset, int length)
     {

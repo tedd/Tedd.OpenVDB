@@ -74,6 +74,58 @@ public sealed class AttributeWriteHandle<T, TCodec> : AttributeHandle<T, TCodec>
 public sealed class AttributeArrayRegistry
 {
     public delegate AttributeArray Factory(int length, int strideOrTotalSize, bool constantStride, MetadataValue? metadata);
+    private static readonly Lazy<AttributeArrayRegistry> BuiltIns = new(BuildDefault, LazyThreadSafetyMode.ExecutionAndPublication);
+    /// <summary>Creates an independent registry containing every built-in managed attribute/codec combination.</summary>
+    public static AttributeArrayRegistry CreateDefault() => BuiltIns.Value.Copy();
+    private static AttributeArrayRegistry BuildDefault()
+    {
+        var registry = new AttributeArrayRegistry();
+        registry.Register<bool, NullCodec<bool>>(); registry.Register<Half, NullCodec<Half>>();
+        registry.Register<float, NullCodec<float>>(); registry.Register<double, NullCodec<double>>();
+        registry.Register<sbyte, NullCodec<sbyte>>(); registry.Register<byte, NullCodec<byte>>();
+        registry.Register<short, NullCodec<short>>(); registry.Register<ushort, NullCodec<ushort>>();
+        registry.Register<int, NullCodec<int>>(); registry.Register<uint, NullCodec<uint>>(); registry.Register<long, NullCodec<long>>();
+        registry.Register<uint, StringCodec>(); registry.Register<uint, TruncatedStringCodec>();
+        registry.Register<global::Tedd.OpenVDB.Math.Vec2i, NullCodec<global::Tedd.OpenVDB.Math.Vec2i>>();
+        registry.Register<global::Tedd.OpenVDB.Math.Vec2f, NullCodec<global::Tedd.OpenVDB.Math.Vec2f>>();
+        registry.Register<global::Tedd.OpenVDB.Math.Vec2d, NullCodec<global::Tedd.OpenVDB.Math.Vec2d>>();
+        registry.Register<global::Tedd.OpenVDB.Math.Vec3i, NullCodec<global::Tedd.OpenVDB.Math.Vec3i>>();
+        registry.Register<global::Tedd.OpenVDB.Math.Vec3f, NullCodec<global::Tedd.OpenVDB.Math.Vec3f>>();
+        registry.Register<global::Tedd.OpenVDB.Math.Vec3d, NullCodec<global::Tedd.OpenVDB.Math.Vec3d>>();
+        registry.Register<global::Tedd.OpenVDB.Math.Vec4i, NullCodec<global::Tedd.OpenVDB.Math.Vec4i>>();
+        registry.Register<global::Tedd.OpenVDB.Math.Vec4f, NullCodec<global::Tedd.OpenVDB.Math.Vec4f>>();
+        registry.Register<global::Tedd.OpenVDB.Math.Vec4d, NullCodec<global::Tedd.OpenVDB.Math.Vec4d>>();
+        registry.Register<global::Tedd.OpenVDB.Math.Mat3d, NullCodec<global::Tedd.OpenVDB.Math.Mat3d>>();
+        registry.Register<global::Tedd.OpenVDB.Math.Mat4f, NullCodec<global::Tedd.OpenVDB.Math.Mat4f>>();
+        registry.Register<global::Tedd.OpenVDB.Math.Mat4d, NullCodec<global::Tedd.OpenVDB.Math.Mat4d>>();
+        registry.Register<global::Tedd.OpenVDB.Math.Quatf, NullCodec<global::Tedd.OpenVDB.Math.Quatf>>();
+        registry.Register<global::Tedd.OpenVDB.Math.Quatd, NullCodec<global::Tedd.OpenVDB.Math.Quatd>>();
+        registry.Register<float, TruncateCodec<float>>(); registry.Register<int, TruncateCodec<int>>();
+        registry.Register<global::Tedd.OpenVDB.Math.Vec3f, TruncateCodec<global::Tedd.OpenVDB.Math.Vec3f>>();
+        registry.Register<global::Tedd.OpenVDB.Math.Vec3i, TruncateCodec<global::Tedd.OpenVDB.Math.Vec3i>>();
+        registry.Register<float, FixedPoint8Codec<float, PositionRange>>(); registry.Register<float, FixedPoint16Codec<float, PositionRange>>();
+        registry.Register<double, FixedPoint8Codec<double, PositionRange>>(); registry.Register<double, FixedPoint16Codec<double, PositionRange>>();
+        registry.Register<global::Tedd.OpenVDB.Math.Vec3f, FixedPoint8Codec<global::Tedd.OpenVDB.Math.Vec3f, PositionRange>>();
+        registry.Register<global::Tedd.OpenVDB.Math.Vec3f, FixedPoint16Codec<global::Tedd.OpenVDB.Math.Vec3f, PositionRange>>();
+        registry.Register<global::Tedd.OpenVDB.Math.Vec3d, FixedPoint8Codec<global::Tedd.OpenVDB.Math.Vec3d, PositionRange>>();
+        registry.Register<global::Tedd.OpenVDB.Math.Vec3d, FixedPoint16Codec<global::Tedd.OpenVDB.Math.Vec3d, PositionRange>>();
+        registry.Register<float, FixedPoint8Codec<float, UnitRange>>(); registry.Register<float, FixedPoint16Codec<float, UnitRange>>();
+        registry.Register<double, FixedPoint8Codec<double, UnitRange>>(); registry.Register<double, FixedPoint16Codec<double, UnitRange>>();
+        registry.Register<global::Tedd.OpenVDB.Math.Vec3f, FixedPoint8Codec<global::Tedd.OpenVDB.Math.Vec3f, UnitRange>>();
+        registry.Register<global::Tedd.OpenVDB.Math.Vec3f, FixedPoint16Codec<global::Tedd.OpenVDB.Math.Vec3f, UnitRange>>();
+        registry.Register<global::Tedd.OpenVDB.Math.Vec3d, FixedPoint8Codec<global::Tedd.OpenVDB.Math.Vec3d, UnitRange>>();
+        registry.Register<global::Tedd.OpenVDB.Math.Vec3d, FixedPoint16Codec<global::Tedd.OpenVDB.Math.Vec3d, UnitRange>>();
+        registry.Register<global::Tedd.OpenVDB.Math.Vec3f, UnitVecCodec<global::Tedd.OpenVDB.Math.Vec3f>>();
+        registry.Register<global::Tedd.OpenVDB.Math.Vec3d, UnitVecCodec<global::Tedd.OpenVDB.Math.Vec3d>>();
+        registry.Register<byte, GroupCodec>();
+        return registry;
+    }
+    private AttributeArrayRegistry Copy()
+    {
+        var copy = new AttributeArrayRegistry();
+        lock (_gate) foreach (var pair in _factories) copy._factories.Add(pair.Key, pair.Value);
+        return copy;
+    }
     private readonly object _gate = new();
     private readonly Dictionary<AttributeType, Factory> _factories = [];
     public void Register(AttributeType type, Factory factory)

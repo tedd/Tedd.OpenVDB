@@ -39,3 +39,13 @@ The original tree oracle above is supplemented by independently executed source 
 All managed conformance tests consume committed fixtures; native builds are only needed to reproduce or extend those fixtures. The native and managed reference generators are deliberately separate.
 
 Additional conformance records: [Blosc](BLOSC_VERIFICATION.md), [node managers](NODE_MANAGER_VERIFICATION.md), [sampling](SAMPLING_VERIFICATION.md), [level-set analysis](LEVELSET-ANALYSIS-CONFORMANCE.md), and [level-set tracking/filtering](LEVELSET-TRACKING-CONFORMANCE.md).
+
+Recent native conformance records:
+
+- [Attribute descriptors and sets](ATTRIBUTE_SET_VERIFICATION.md)
+- [String point attributes](STRING_ATTRIBUTE_VERIFICATION.md)
+- [Paged point buffers](PAGED_STREAM_VERIFICATION.md)
+- [Point-index grids and ParticleAtlas](PARTICLE_ATLAS_CONFORMANCE.md)
+- [PointDataGrid composition](POINT_DATA_GRID_CONFORMANCE.md)
+- [CPU ray tracing and volume rendering](RAY_TRACER_VERIFICATION.md)
+- [File lifecycle and copying](FILE_LIFECYCLE_VERIFICATION.md)

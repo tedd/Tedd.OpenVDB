@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <PackageId>Tedd.OpenVDB</PackageId>
-    <Version>0.1.0-preview.6</Version>
+    <Version>0.1.0-preview.7</Version>
     <Authors>tedd</Authors>
     <Company>Tedd Hansen</Company>
     <Description>Managed OpenVDB sparse voxel data structures for .NET 11.</Description>

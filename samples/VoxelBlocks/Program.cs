@@ -170,3 +170,30 @@ using (var selectedReader = VdbFile.OpenRead(compressed, leaveOpen: true))
         throw new InvalidOperationException("Selected grid read failed.");
 }
 Console.WriteLine($"Attributes: {decodedAttributes.DataSize} values, {attributeStream.Length} encoded bytes; scatter: {scattered.Count} points; callbacks: {transformedCount}.");
+// Point-data composition, paged attribute blocks and preview rendering are also AOT-compiled.
+var pointData = PointDataGrid.Create(new PointArray([
+    new Vec3d(-0.25, 0.5, 0.75),
+    new Vec3d(1.25, -0.5, 0.125),
+    new Vec3d(8.5, 0.25, -1.5)
+]), voxelSize: 0.5);
+if (pointData.PointCount != 3 || pointData.Tree.LeafCount == 0 || pointData.EnumeratePositions().Count() != 3)
+    throw new InvalidOperationException("PointDataGrid composition failed under NativeAOT.");
+
+byte[] pageBlock = new byte[4096];
+pageBlock.AsSpan().Fill(0x5A);
+using var pageHeaders = new MemoryStream();
+using (var pageWriter = new PagedOutputStream(pageHeaders, sizeOnly: true)) { pageWriter.Write(pageBlock); pageWriter.Flush(); }
+using var pagePayload = new MemoryStream();
+using (var pageWriter = new PagedOutputStream(pagePayload)) { pageWriter.Write(pageBlock); pageWriter.Flush(); }
+using var pageStream = new MemoryStream([.. pageHeaders.ToArray(), .. pagePayload.ToArray()]);
+PageHandle pageHandle = new PagedInputStream(pageStream).CreateHandle(pageBlock.Length);
+new PagedInputStream(pageStream).Read(pageHandle, pageBlock.Length);
+if (!pageHandle.Read().AsSpan().SequenceEqual(pageBlock))
+    throw new InvalidOperationException("Paged point-attribute storage failed under NativeAOT.");
+
+var previewFilm = new Film(8, 8);
+var previewCamera = new PerspectiveCamera(previewFilm, translation: new Vec3d(0, 0, 20));
+new LevelSetRayTracer<float>(sphere, new NormalShader(), previewCamera).Render(threaded: false);
+if (!previewFilm.ConvertToByteBuffer(includeAlpha: false).Any(static channel => channel != 0))
+    throw new InvalidOperationException("Level-set preview renderer produced no surface pixels under NativeAOT.");
+Console.WriteLine($"Point data: {pointData.PointCount} points in {pointData.Tree.LeafCount} leaves; paged bytes {pagePayload.Length}; preview pixels {previewFilm.PixelCount}.");

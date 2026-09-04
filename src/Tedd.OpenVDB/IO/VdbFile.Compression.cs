@@ -134,7 +134,11 @@ public static partial class VdbFile
             throw new InvalidDataException("Compressed chunk exceeds the input byte limit.");
         // Resource accounting occurs before allocation; decompressed size comes from the fixed node layout.
         byte[] compressed = input.Bytes((int)length);
-        if ((input.Compression & VdbCompression.Blosc) != 0) BloscCodec.Decode(compressed, destination, input.Reserve);
+        if ((input.Compression & VdbCompression.Blosc) != 0)
+        {
+            if (BloscCodec.ValidateFrame(compressed) != destination.Length) throw new InvalidDataException("Blosc chunk has the wrong decoded size.");
+            BloscCodec.Decode(compressed, destination, input.Reserve);
+        }
         else DecompressZlib(compressed, 0, compressed.Length, destination);
     }
     internal static void DecompressZlib(byte[] compressed, int offset, int length, Span<byte> destination)
