@@ -1,3 +1,4 @@
+using Tedd.OpenVDB.Points;
 using Tedd.OpenVDB;
 using Tedd.OpenVDB.IO;
 using Tedd.OpenVDB.Tools;
@@ -134,3 +135,38 @@ decodedMetadata.ReadMeta(metadataStream, options: new() { MetadataRegistry = reg
 if (decodedMetadata.MetaValue<int>("schema") != 17)
     throw new InvalidOperationException("Custom metadata registration failed under NativeAOT.");
 Console.WriteLine($"Regional queries: {regionFinder.CountActiveValues(chunk):N0} blocks; LOD density {lod.GetTree(1)[Coord.Zero]}, {lod.GetTree(2)[Coord.Zero]}; transported density {transported.Tree.GetValue(new(1, 0, 0))}.");
+
+// Exercise encoded point attributes, groups, scatter and native-style callbacks under NativeAOT.
+var attributes = new TypedAttributeArray<Vec3f, FixedPoint16Codec<Vec3f, PositionRange>>(64);
+using (var attributeWriter = new AttributeWriteHandle<Vec3f, FixedPoint16Codec<Vec3f, PositionRange>>(attributes))
+    attributeWriter.Fill(new Vec3f(.125f, -.25f, .375f));
+using var attributeStream = new MemoryStream();
+AttributeStreams.Write(attributeStream, attributes, compress: true);
+attributeStream.Position = 0;
+var decodedAttributes = AttributeStreams.Read<Vec3f, FixedPoint16Codec<Vec3f, PositionRange>>(attributeStream);
+if (!attributes.StorageEquals(decodedAttributes)) throw new InvalidOperationException("Encoded attributes did not survive NativeAOT stream IO.");
+var groups = new GroupAttributeArray(64);
+var groupWriter = new GroupWriteHandle(groups, 3);
+groupWriter.Set(17, true);
+if (!groupWriter.Get(17) || groupWriter.Get(16)) throw new InvalidOperationException("Point-group membership changed.");
+
+ValueTransformer.SetValueOnSum(density.Tree.GetAccessor(), Coord.Zero, 1);
+long transformedCount = ValueTransformer.ForEach(density.Tree.EnumerateValueHandles(), 0L,
+    static (TreeValue<double> value, ref long count) => { value.SetValue(value.Value + 1); count++; },
+    new() { Threaded = false });
+if (transformedCount != 1 || density.Tree.GetValue(Coord.Zero) != 66) throw new InvalidOperationException("Value transformation failed.");
+var diagnostic = new Diagnose<double>(density);
+if (diagnostic.Check(new CheckFinite<double>(), parallel: false).Length != 0 || diagnostic.FailureCount != 0)
+    throw new InvalidOperationException("Finite-value diagnosis failed.");
+var scattered = new List<Vec3d>();
+var scatter = new UniformPointScatter(scattered.Add, 16UL, new Mt19937(17));
+if (!scatter.Scatter(density) || scattered.Count != 16 || scattered.Any(point => !point.IsFinite))
+    throw new InvalidOperationException("Point scattering failed.");
+compressed.Position = 0;
+using (var selectedReader = VdbFile.OpenRead(compressed, leaveOpen: true))
+{
+    string selectedName = selectedReader.GridNames[0];
+    if (selectedReader.ReadGrid<int>(selectedName).ActiveVoxelCount != persisted.ActiveVoxelCount)
+        throw new InvalidOperationException("Selected grid read failed.");
+}
+Console.WriteLine($"Attributes: {decodedAttributes.DataSize} values, {attributeStream.Length} encoded bytes; scatter: {scattered.Count} points; callbacks: {transformedCount}.");

@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <PackageId>Tedd.OpenVDB</PackageId>
-    <Version>0.1.0-preview.5</Version>
+    <Version>0.1.0-preview.6</Version>
     <Authors>tedd</Authors>
     <Company>Tedd Hansen</Company>
     <Description>Managed OpenVDB sparse voxel data structures for .NET 11.</Description>
     <PackageTags>openvdb;vdb;voxel;sparse;volume;3d;managed</PackageTags>
     <PackageProjectUrl>https://github.com/tedd/Tedd.OpenVDB</PackageProjectUrl>
-    <PackageLicenseExpression>Apache-2.0 AND BSD-3-Clause AND BSD-2-Clause AND MIT</PackageLicenseExpression>
+    <PackageLicenseExpression>Apache-2.0 AND BSD-3-Clause AND BSD-2-Clause AND MIT AND (Apache-2.0 WITH LLVM-exception)</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/tedd/Tedd.OpenVDB</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <IsPackable>true</IsPackable>
@@ -26,5 +26,6 @@
     <None Include="../../README.md" Pack="true" PackagePath="/" />
     <None Include="../../THIRD_PARTY_NOTICES.md" Pack="true" PackagePath="/" />
     <None Include="../../LICENSE" Pack="true" PackagePath="/" />
+    <None Include="../../licenses/Microsoft-STL.txt" Pack="true" PackagePath="/licenses/" />
   </ItemGroup>
 </Project>

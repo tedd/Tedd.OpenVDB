@@ -61,7 +61,7 @@ public static partial class VdbFile
     public static VdbArchive ReadArchive(Stream stream, bool leaveOpen = true, VdbReadOptions? options = null) =>
         ReadArchiveCore(stream, leaveOpen, options, singleGrid: false);
 
-    private static VdbArchive ReadArchiveCore(Stream stream, bool leaveOpen, VdbReadOptions? options, bool singleGrid)
+    private static VdbArchive ReadArchiveCore(Stream stream, bool leaveOpen, VdbReadOptions? options, bool singleGrid, Action<Descriptor[], Input>? observed = null, bool fileOrder = false)
     {
         ArgumentNullException.ThrowIfNull(stream);
         try
@@ -124,7 +124,20 @@ public static partial class VdbFile
                 grids.Add(grid); descriptors[index] = descriptor; named.Add(name, index);
             }
             if (stream.CanSeek && input.Position != stream.Length) throw new InvalidDataException("Unexpected bytes after the VDB archive.");
-            ConnectInstances(grids, descriptors, named, options.InstanceResolution);
+            if (fileOrder)
+            {
+                input.Reserve(256L + count * 128L);
+                foreach (var descriptor in descriptors) input.Reserve(32L + descriptor.Name.Length * 2L);
+                string[] plainNames = descriptors.Select(d => d.Name.Split('\x1e')[0]).ToArray();
+                int[] order = Enumerable.Range(0, count).OrderBy(i => plainNames[i], MetadataNameComparer.Instance).ToArray();
+                var orderedGrids = order.Select(i => grids[i]).ToList(); var orderedDescriptors = order.Select(i => descriptors[i]).ToArray();
+                var orderedNames = new Dictionary<string, int>(StringComparer.Ordinal);
+                for (int i = 0; i < count; ++i) orderedNames.Add(orderedDescriptors[i].Name, i);
+                input.Reserve(256L + count * 128L);
+                ConnectInstances(orderedGrids, orderedDescriptors, orderedNames, options.InstanceResolution);
+            }
+            else ConnectInstances(grids, descriptors, named, options.InstanceResolution);
+            observed?.Invoke(descriptors, input);
             return new VdbArchive(grids, metadata);
         }
         catch (EndOfStreamException exception) { throw new InvalidDataException("Truncated VDB input.", exception); }

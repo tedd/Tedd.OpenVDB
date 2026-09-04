@@ -33,3 +33,15 @@ Managed validation rejects nonfinite/singular affine data, invalid uniform-scale
 ```
 
 Use `-SkipBuild` to reuse the native binaries. The script generates native map and velocity fixtures, publishes through temporary files, runs managed tests, exports managed archives, then verifies those archives in native OpenVDB. Native builds/dependencies remain ignored; the runtime package has no native dependency.
+
+## Additional inverse boundary regression
+
+The native PointPartitioner oracle subsequently exposed a half-voxel rounding difference in Mat4d.Inverse: native Mat4.h uses six expanded triple products for its 3x3 block determinant. The managed inverse now preserves that determinant and cofactor operation order. All 72 native partition profiles and the affected map/math suite pass; an additional focused regression checks cell-centered z=1 after scale .75, translation(.25,-.375,.125) and Z rotation .2 at world(.5,.5,.5). The map-specific suite now contains 577 tests.
+
+## Finite extreme-scale constructor boundary
+
+Native `ParticleAtlas` empty-input handling subsequently exposed another constructor boundary: `ScaleMap` and `ScaleTranslateMap` reject determinants smaller in magnitude than 3e-15, but permit finite scale components whose product overflows. The managed constructor now preserves that behavior instead of rejecting the infinite determinant. It continues to reject nonfinite scale components and nonfinite cached reciprocals.
+
+`maps-extreme-oracle.h`, invoked by `maps-oracle.cpp extreme`, generated **20 native profiles**: all four scale/scale-translate classes at positive/negative double maximum and 1e200, plus two nonuniform overflow configurations. Tests compare determinant sign/infinity, voxel size, copied determinant, five mapped/inverse-mapped points by double bits, and standalone transform bytes exactly, including deserialization and reserialization. `Build-MapsReference.ps1` now regenerates this fixture alongside the existing map fixtures.
+
+The affected final Release gate passed **1,638 tests**: 597 map tests, 1,001 native attribute-stream tests, and 40 standalone attribute-stream regressions. The finite extreme-scale change is one constructor-validation condition shared by the scale-translate classes; it does not alter affine inversion or normalize specialized maps through an affine representation.

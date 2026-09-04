@@ -77,7 +77,7 @@ public static partial class VdbFile
         finally { if (!leaveOpen) stream.Dispose(); }
     }
 
-    private static Grid<T> ReadGrid<T>(Input input, Descriptor descriptor) where T : unmanaged
+    private static Grid<T> ReadGrid<T>(Input input, Descriptor descriptor, CoordBBox? indexBounds = null, BBoxd? worldBounds = null) where T : unmanaged
     {
         bool instance = descriptor.Parent.Length != 0;
         VdbTree<T> tree;
@@ -86,6 +86,7 @@ public static partial class VdbFile
         if (input.Half != descriptor.Half) throw new InvalidDataException("Half-float descriptor and storage metadata disagree.");
         if (input.Half && !SupportsHalf(typeof(T))) throw new NotSupportedException("Half-float encoding requires floating-point scalar or vector grids.");
         Transform transform = ReadTransform(input);
+        if (worldBounds is BBoxd worldBox) indexBounds = transform.WorldToIndexNodeCentered(worldBox);
         if (instance)
         {
             // Native readers create all grids before connecting their trees. An instance's
@@ -120,6 +121,16 @@ public static partial class VdbFile
             {
                 NodeMask mask = ReadMask(input, 3);
                 if (!mask.Equals(leaf.ValueMask)) throw new InvalidDataException("Leaf buffer activity differs from its topology mask.");
+                if (indexBounds is CoordBBox clip && !new CoordBBox(leaf.Origin, leaf.Origin + new Coord(7)).Intersects(clip))
+                {
+                    if (typeof(T) == typeof(bool))
+                    {
+                        if (input.Coord() != leaf.Origin) throw new InvalidDataException("Boolean leaf origin differs from its topology position.");
+                        if (!descriptor.Mask) input.Seek(input.Position + 64);
+                    }
+                    else SkipCompressedValues<T>(input, mask);
+                    continue;
+                }
 
                 var values = new T[LeafNode<T>.Size];
                 if (typeof(T) == typeof(bool))
@@ -427,7 +438,7 @@ public static partial class VdbFile
         }
     }
 
-    private sealed class Input
+    private sealed partial class Input
     {
         private readonly Stream stream;
         internal Input(Stream stream, VdbReadOptions options)

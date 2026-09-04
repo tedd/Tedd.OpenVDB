@@ -21,7 +21,7 @@ public class ScaleMap : MapBase
     {
         if (!scale.IsFinite) throw new ArgumentException("Scale must be finite.", nameof(scale));
         double determinant = scale.X * scale.Y * scale.Z;
-        if (!double.IsFinite(determinant) || System.Math.Abs(determinant) < 3e-15) throw new ArithmeticException("Nonzero scale values are required.");
+        if (System.Math.Abs(determinant) < 3e-15) throw new ArithmeticException("Nonzero scale values are required.");
     }
     public override string MapType => nameof(ScaleMap);
     public Vec3d Scale { get; }

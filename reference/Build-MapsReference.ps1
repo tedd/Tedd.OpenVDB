@@ -27,6 +27,8 @@ try {
     $generated = Join-Path $build 'generated-maps'
     & $oracle generate $generated
     if ($LASTEXITCODE -ne 0) { throw 'Native map generation failed.' }
+    & $oracle extreme (Join-Path $generated 'native-maps-extreme.json')
+    if ($LASTEXITCODE -ne 0) { throw 'Native extreme-scale generation failed.' }
     $fixtures = Join-Path $root 'tests/Tedd.OpenVDB.Tests/Fixtures/maps'
     New-Item -ItemType Directory -Force -Path $fixtures | Out-Null
     foreach ($file in Get-ChildItem -LiteralPath $generated -File) {

@@ -1,0 +1,36 @@
+// Copyright Contributors to the OpenVDB Project
+// SPDX-License-Identifier: Apache-2.0
+#include <openvdb/openvdb.h>
+#include <openvdb/tools/ParticlesToLevelSet.h>
+#include <openvdb/tools/LevelSetSphere.h>
+#include <tbb/global_control.h>
+#include <fstream>
+#include <iomanip>
+#include <type_traits>
+using namespace openvdb;
+std::ofstream out;bool first=true;
+void num(double v){if(std::isfinite(v))out<<v;else out<<'"'<<(std::isnan(v)?"NaN":v>0?"Infinity":"-Infinity")<<'"';}
+template<class V>void vec(const V&v){out<<'[';num(v[0]);out<<',';num(v[1]);out<<',';num(v[2]);out<<']';}
+template<class G>void result(const G&grid){using T=typename G::ValueType;out<<"{\"background\":";num(grid.background());out<<",\"class\":"<<int(grid.getGridClass())<<",\"name\":\""<<grid.getName()<<"\",\"active\":"<<grid.activeVoxelCount()<<",\"tiles\":"<<grid.tree().activeTileCount()<<",\"roots\":"<<grid.tree().root().getTableSize()<<",\"voxelSize\":";vec(grid.voxelSize());out<<",\"worldZero\":";vec(grid.transform().indexToWorld(Vec3d(0)));out<<",\"leaves\":[";
+ bool firstLeaf=true;for(auto leaf=grid.tree().cbeginLeaf();leaf;++leaf){if(!firstLeaf)out<<',';firstLeaf=false;out<<"{\"origin\":";vec(leaf->origin());out<<",\"runs\":[";int i=0;while(i<512){if(i)out<<',';T v=leaf->getValue(i);bool active=leaf->isValueOn(i);int end=i+1;while(end<512&&leaf->getValue(end)==v&&leaf->isValueOn(end)==active)++end;out<<'['<<(end-i)<<',';num(v);out<<','<<active<<']';i=end;}out<<"]}";}
+ out<<"],\"probes\":[";bool firstProbe=true;for(int x:{-4096,-128,-16,-8,0,8,16,128,4096})for(int y:{-8,0,8})for(int z:{-8,0,8}){if(!firstProbe)out<<',';firstProbe=false;Coord c(x,y,z);out<<'['<<x<<','<<y<<','<<z<<',';num(grid.tree().getValue(c));out<<','<<grid.tree().isValueOn(c)<<','<<grid.tree().getValueDepth(c)<<']';}out<<"]}";
+}
+struct Particle{Vec3d p,v;double r;int a;};
+struct Particles{using PosType=Vec3d;std::vector<Particle> data;size_t size()const{return data.size();}void getPos(size_t n,Vec3d&p)const{p=data[n].p;}void getPosRad(size_t n,Vec3d&p,double&r)const{getPos(n,p);r=data[n].r;}void getPosRadVel(size_t n,Vec3d&p,double&r,Vec3d&v)const{getPosRad(n,p,r);v=data[n].v;}void getAtt(size_t n,int&a)const{a=data[n].a;}};
+Particles particles(int scene){Particles p;p.data.push_back({Vec3d(.25,.5,-.25),Vec3d(3,1,-2),3,11});
+ if(scene==1)p.data={{Vec3d(0),Vec3d(0),3,17},{Vec3d(0),Vec3d(0),3,29},{Vec3d(2,0,0),Vec3d(2,0,0),2,41}};
+ if(scene==2)p.data={{Vec3d(0),Vec3d(1,0,0),.5,11},{Vec3d(0),Vec3d(1,0,0),101,12},{Vec3d(0),Vec3d(1,0,0),-1,13},{Vec3d(-2,1,.5),Vec3d(-1,2,0),2,14}};
+ if(scene==3)p.data={{Vec3d(0),Vec3d(1,0,0),20,71}};
+ if(scene==4)p.data={{Vec3d(-7.5,0,0),Vec3d(2,1,0),2.75,1},{Vec3d(-8.5,1,0),Vec3d(1,0,0),2.5,2},{Vec3d(7.5,0,0),Vec3d(1,0,0),3,3},{Vec3d(8.5,0,0),Vec3d(-2,1,0),3.25,4}};
+ if(scene==5)p.data={{Vec3d(257,0,0),Vec3d(0),2,91},{Vec3d(0,257,0),Vec3d(0),2,92},{Vec3d(-257,0,0),Vec3d(0),2,93},{Vec3d(-1,-257,0),Vec3d(0),2,94}};
+ if(scene==6)p.data={{Vec3d(0),Vec3d(0),3,61}};
+ if(scene==7)p.data.push_back({Vec3d(std::numeric_limits<double>::quiet_NaN(),0,0),Vec3d(0),2,81}),p.data.push_back({Vec3d(0,std::numeric_limits<double>::infinity(),0),Vec3d(0),2,82});return p;}
+template<class G>typename G::Ptr grid(int profile){using T=typename G::ValueType;auto g=G::create(T(std::is_same_v<T,bool>?0:2.25));g->setTransform(math::Transform::createLinearTransform(.75));g->transform().postTranslate(Vec3d(.25,-.375,.125));g->setName("particles");
+ if(profile==4){if constexpr(std::is_same_v<T,bool>){g->tree().fill(CoordBBox(Coord(40),Coord(42)),false,true);g->tree().setValueOff(Coord(-32),true);}else{g=tools::createLevelSetSphere<G>(2.f,Vec3f(-1,0,0),.75f,3.f,false);g->transform().postTranslate(Vec3d(.25,-.375,.125));g->setName("particles");}}return g;}
+template<class G,class Att>void run(int scene,int mode,int profile){using T=typename G::ValueType;auto output=grid<G>(profile);Particles p=particles(scene);tools::ParticlesToLevelSet<G,Att> raster(*output);raster.setGrainSize(0);if(profile==6){raster.setRmin(.25);raster.setRmax(4);}auto apply=[&](const Particles& ps){if(mode==0)raster.rasterizeSpheres(ps);else if(mode==1)raster.rasterizeSpheres(ps,2.25);else raster.rasterizeTrails(ps,.7);};apply(p);if(profile==5){Particles more=particles(4);apply(more);}raster.finalize(profile!=0&&profile!=2);
+ if(!first)out<<',';first=false;out<<"{\"type\":\""<<(std::is_same_v<T,bool>?"bool":std::is_same_v<T,float>?"float":"double")<<"\",\"scene\":"<<scene<<",\"mode\":"<<mode<<",\"profile\":"<<profile<<",\"attributes\":"<<(!std::is_void_v<Att>)<<",\"minimumCount\":"<<raster.getMinCount()<<",\"maximumCount\":"<<raster.getMaxCount()<<",\"voxelSize\":";num(raster.getVoxelSize());out<<",\"halfWidth\":";num(raster.getHalfWidth());out<<",\"grid\":";result(*output);if constexpr(!std::is_void_v<Att>){out<<",\"attributeGrid\":";result(*raster.attributeGrid());}out<<'}';}
+template<class G>void family(){for(int scene=0;scene<8;++scene)for(int mode=0;mode<3;++mode){run<G,void>(scene,mode,0);run<G,void>(scene,mode,1);run<G,int>(scene,mode,2);run<G,int>(scene,mode,3);}for(int scene:{0,1,2,4})for(int mode=0;mode<3;++mode)for(int profile:{4,5,6})run<G,int>(scene,mode,profile);}
+math::Transform::Ptr transform(int mode){auto t=math::Transform::createLinearTransform(.75);if(mode==1){t->postTranslate(Vec3d(.25,-.375,.125));t->postRotate(.2,math::Z_AXIS);}if(mode==2)t=math::Transform::createFrustumTransform(BBoxd(Vec3d(-4),Vec3d(4)),.75,8,1);return t;}
+Particles partitionPoints(){Particles p;for(int i=0;i<96;++i){double x=((i*47)%103-51)*8.0+.5,y=((i*29)%61-30)*9.0-.5,z=((i*19)%43-21)*3.0+.25;p.data.push_back({Vec3d(x,y,z),Vec3d(0),1,i});}for(auto v:{Vec3d(-.5),Vec3d(.5),Vec3d(7.5),Vec3d(-8.5),Vec3d(255.5),Vec3d(256.5),Vec3d(0),Vec3d(0),Vec3d(std::numeric_limits<double>::quiet_NaN(),0,0),Vec3d(0,std::numeric_limits<double>::infinity(),0)})p.data.push_back({v,Vec3d(0),1,0});return p;}
+template<int Log>void partition(int mode,bool voxel,bool record,bool cell){auto points=partitionPoints();auto t=transform(mode);tools::PointPartitioner<uint32_t,Log> part;part.construct(points,*t,voxel,record,cell);if(!first)out<<',';first=false;out<<"{\"log\":"<<Log<<",\"transform\":"<<mode<<",\"voxel\":"<<voxel<<",\"record\":"<<record<<",\"cell\":"<<cell<<",\"buckets\":[";for(size_t n=0;n<part.size();++n){if(n)out<<',';out<<"{\"origin\":";vec(part.origin(n));out<<",\"indices\":[";bool f=true;for(auto it=part.indices(n);it;++it){if(!f)out<<',';f=false;out<<*it;}out<<"]}";}out<<"],\"offsets\":[";if(record)for(size_t i=0;i<points.size();++i){if(i)out<<',';const auto&v=points.data[i].p;out<<(std::isfinite(v[0])&&std::isfinite(v[1])&&std::isfinite(v[2])?part.voxelOffsets()[i]:-1);}out<<"]}";}
+int main(int argc,char**argv){if(argc!=2)return 2;initialize();tbb::global_control serial(tbb::global_control::max_allowed_parallelism,1);out.open(argv[1]);out<<std::setprecision(17)<<"{\"upstreamCommit\":\"f42248c35a9f7bb30641a8a74d9075ce7d1ddcaf\",\"cases\":[";family<FloatGrid>();family<DoubleGrid>();family<BoolGrid>();out<<"],\"partitions\":[";first=true;for(int mode=0;mode<3;++mode)for(bool voxel:{false,true})for(bool record:{false,true})for(bool cell:{false,true}){partition<0>(mode,voxel,record,cell);partition<3>(mode,voxel,record,cell);partition<5>(mode,voxel,record,cell);}out<<"]}\n";return out.good()?0:3;}

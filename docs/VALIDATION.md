@@ -6,7 +6,43 @@ Original wrapper HEAD: f05f82318811b97e1591395df10979c6cacb5886.
 
 The managed replacement is on main. Commit 5eb1137 replaced the wrappers; development continues directly on main. Original Git history remains available.
 
-## Integrated checkpoint: 0.1.0-preview.5
+## Integrated checkpoint: 0.1.0-preview.6
+
+| Validation | Result |
+|---|---|
+| Release | 20,424 passed; 0 failed; 0 skipped |
+| Debug | 20,424 passed; 0 failed; 0 skipped |
+| Release, hardware intrinsics disabled | 20,424 passed; 0 failed; 0 skipped |
+| Windows x64 NativeAOT sample | Published and executed successfully |
+| NuGet package and symbols | Generated locally; no publication |
+| Native fixture manifest | 409 files; 195,086,284 bytes; hashes verified |
+
+Release took 61 seconds and Debug took 151 seconds. Scalar Release took 56 seconds
+for 20,420 tests; the four forced-GC handle-lifetime tests were run separately and
+passed in 92 ms to isolate compacting collections from the concurrent Debug process.
+These are local validation durations, not performance benchmarks.
+
+This checkpoint adds 7,364 tests: 785 value-transformer tests; 493 particle/partition
+tests; 502 scatter/RNG tests; 970 diagnostics tests; 1,680 scalar Math.h tests; 2,178
+attribute/codec/group/stream tests; 735 selected/regional file-reader tests; 20
+extreme-scale map profiles; and one focused inverse-order regression. Native sources
+contribute 1,074 attribute/group profiles, 500 standalone attribute-stream profiles,
+750 value-transformer profiles, 468 particle/partition profiles, 456 scatter/RNG
+profiles, 928 diagnostics cases, 1,653 scalar-math cases, 516 selected-file observations
+and 20 extreme-map profiles. Native OpenVDB also read and verified 1,000 managed
+attribute streams.
+
+The attribute review caught two defects before this gate: noncanonical raw Boolean
+bytes produced invalid CLR Boolean representations, and disposed handles retained
+large nonstreaming arrays. Both now have focused regressions. ValueTransformer received
+an independent source review with no actionable findings.
+
+NativeAOT exercises standard archives, selected reads, metadata registration, attribute
+codecs and Blosc streams, group bits, point scattering, diagnostics, value callbacks,
+regional queries, LOD, volume advection, vector transforms, rays and both geometry
+directions. Package 0.1.0-preview.6 includes symbols, source metadata, third-party
+notices and the Microsoft STL Apache-2.0 WITH LLVM-exception notice.
+## Previous integrated checkpoint: 0.1.0-preview.5
 
 | Validation | Result |
 |---|---|

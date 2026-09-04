@@ -199,3 +199,12 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
 ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+## Microsoft STL random distributions
+
+The managed RandomDistributions implementation adapts canonical real generation and
+bounded integer sampling from Microsoft STL 14.51.36231. The source is distributed under
+Apache-2.0 WITH LLVM-exception. The complete notice is retained in
+licenses/Microsoft-STL.txt and included in the NuGet package. Mt19937 implements the
+standardized Mersenne Twister recurrence; distribution compatibility is specifically
+tested against the pinned MSVC implementation. See reference/POINT_SCATTER-CONFORMANCE.md.
