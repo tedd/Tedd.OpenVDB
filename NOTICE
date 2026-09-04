@@ -1,0 +1,19 @@
+Tedd.OpenVDB NOTICE
+
+This product includes source-code adaptations, API and behavioral references, and
+test-fixture material derived from the OpenVDB project.
+
+OpenVDB
+Copyright Contributors to the OpenVDB Project
+Source: https://github.com/AcademySoftwareFoundation/openvdb
+Pinned source revision: f42248c35a9f7bb30641a8a74d9075ce7d1ddcaf
+Upstream version: 13.0.1
+License: Apache License, Version 2.0
+Upstream license: https://github.com/AcademySoftwareFoundation/openvdb/blob/f42248c35a9f7bb30641a8a74d9075ce7d1ddcaf/LICENSE
+
+The LICENSE file in this repository is copied verbatim from the upstream
+OpenVDB LICENSE at the pinned revision. Tedd.OpenVDB is an independent managed
+C# port and is not an official OpenVDB release.
+
+Additional third-party copyright and license notices for codec and distribution
+adaptations are retained in THIRD_PARTY_NOTICES.md and licenses/.
