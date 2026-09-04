@@ -7,7 +7,7 @@ namespace Tedd.OpenVDB.Math;
 /// <remarks>This managed map is immutable. Taper is near-plane width divided by far-plane width.
 /// Finite positive depth/taper and ordered positive box extents are required; these strengthen
 /// native preconditions that otherwise allow nonfinite cached parameters.</remarks>
-public sealed class NonlinearFrustumMap
+public sealed class NonlinearFrustumMap : MapBase
 {
     private readonly Mat4d _inverse;
     private readonly double _lx, _xOffset, _yOffset, _depthOnLz;
@@ -29,13 +29,34 @@ public sealed class NonlinearFrustumMap
         _depthOnLz = depth / extents.Z; Gamma = (1 / taper - 1) / depth;
         if (!double.IsFinite(Gamma) || !double.IsFinite(_depthOnLz) || _depthOnLz == 0) throw new ArithmeticException("Frustum parameters overflowed or underflowed.");
     }
+    public override string MapType => nameof(NonlinearFrustumMap);
+    public override Mat4d Matrix => SecondMap;
+    public override Mat4d InverseMatrix => _inverse;
+    public override MapBase InverseMap() => throw new NotSupportedException("No map type represents an inverse frustum.");
+    public override bool IsEqual(MapBase? other)
+    {
+        if (other is not NonlinearFrustumMap map || !BoundingBox.Min.ApproxEquals(map.BoundingBox.Min) || !BoundingBox.Max.ApproxEquals(map.BoundingBox.Max) ||
+            !MathComparison.IsApproxEqual(Taper, map.Taper) || !MathComparison.IsApproxEqual(Depth, map.Depth)) return false;
+        return SecondMap.TransformPoint(Vec3d.Zero).ApproxEquals(map.SecondMap.TransformPoint(Vec3d.Zero)) &&
+            SecondMap.TransformPoint(Vec3d.UnitX).ApproxEquals(map.SecondMap.TransformPoint(Vec3d.UnitX)) &&
+            SecondMap.TransformPoint(Vec3d.UnitY).ApproxEquals(map.SecondMap.TransformPoint(Vec3d.UnitY)) &&
+            SecondMap.TransformPoint(Vec3d.UnitZ).ApproxEquals(map.SecondMap.TransformPoint(Vec3d.UnitZ));
+    }
+    public override MapBase PreTranslate(Vec3d value) => WithSecondMap(new AffineMap(SecondMap).PreTranslate(value).Matrix);
+    public override MapBase PostTranslate(Vec3d value) => WithSecondMap(new AffineMap(SecondMap).PostTranslate(value).Matrix);
+    public override MapBase PreScale(Vec3d value) => WithSecondMap(MapMatrix.Scale(SecondMap, value, true));
+    public override MapBase PostScale(Vec3d value) => WithSecondMap(MapMatrix.Scale(SecondMap, value, false));
+    public override MapBase PreRotate(double radians, Axis axis = Axis.X) => WithSecondMap(MapMatrix.Rotate(SecondMap, radians, axis, true));
+    public override MapBase PostRotate(double radians, Axis axis = Axis.X) => WithSecondMap(MapMatrix.Rotate(SecondMap, radians, axis, false));
+    public override MapBase PreShear(double value, Axis axis0, Axis axis1) => WithSecondMap(MapMatrix.Shear(SecondMap, value, axis0, axis1, true));
+    public override MapBase PostShear(double value, Axis axis0, Axis axis1) => WithSecondMap(MapMatrix.Shear(SecondMap, value, axis0, axis1, false));
     public BBoxd BoundingBox { get; }
     public double Taper { get; }
     public double Depth { get; }
     public double Gamma { get; }
     public Mat4d SecondMap { get; }
-    public bool IsLinear => false;
-    public bool HasUniformScale => false;
+    public override bool IsLinear => false;
+    public override bool HasUniformScale => false;
     public bool IsValid => !BoundingBox.IsEmpty;
     public bool HasSimpleAffine
     {
@@ -48,20 +69,20 @@ public sealed class NonlinearFrustumMap
                 System.Math.Abs(x.Dot(y)) <= 1e-7 && System.Math.Abs(y.Dot(z)) <= 1e-7 && System.Math.Abs(z.Dot(x)) <= 1e-7;
         }
     }
-    public bool IsIdentity => System.Math.Abs(Taper - 1) <= 1e-15 && ApplyMap(Vec3d.UnitX).ApproxEquals(Vec3d.UnitX) &&
+    public override bool IsIdentity => System.Math.Abs(Taper - 1) <= 1e-15 && ApplyMap(Vec3d.UnitX).ApproxEquals(Vec3d.UnitX) &&
         ApplyMap(Vec3d.UnitY).ApproxEquals(Vec3d.UnitY) && ApplyMap(Vec3d.UnitZ).ApproxEquals(Vec3d.UnitZ);
-    public Vec3d VoxelSize => VoxelSizeAt(new Vec3d(0.5 * (BoundingBox.Min.X + BoundingBox.Max.X),
+    public override Vec3d VoxelSize => VoxelSizeAt(new Vec3d(0.5 * (BoundingBox.Min.X + BoundingBox.Max.X),
         0.5 * (BoundingBox.Min.Y + BoundingBox.Max.Y), BoundingBox.Min.Z));
-    public double Determinant => SecondMap.Determinant3x3;
+    public override double Determinant => SecondMap.Determinant3x3;
     /// <summary>Retains the native determinant(loc) expression, whose Z argument is used in frustum-depth coordinates.</summary>
     /// <remarks>For the determinant of the actual index-space differential, use Jacobian(indexLocation).Determinant.</remarks>
-    public double DeterminantAt(Vec3d location)
+    public override double DeterminantAt(Vec3d location)
     {
         double scale = Gamma * location.Z + 1;
         return Determinant * scale * scale * _depthOnLz / (_lx * _lx);
     }
-    public Vec3d ApplyMap(Vec3d indexLocation) => SecondMap.TransformPoint(ApplyFrustum(indexLocation));
-    public Vec3d ApplyInverseMap(Vec3d worldLocation)
+    public override Vec3d ApplyMap(Vec3d indexLocation) => SecondMap.TransformPoint(ApplyFrustum(indexLocation));
+    public override Vec3d ApplyInverseMap(Vec3d worldLocation)
     {
         Vec3d location = _inverse.TransformPoint(worldLocation);
         double inverseScale = _lx / (Gamma * location.Z + 1);
@@ -74,23 +95,23 @@ public sealed class NonlinearFrustumMap
         double z = centered.Z * _depthOnLz, scale = (Gamma * z + 1) / _lx;
         return new(centered.X * scale, centered.Y * scale, z);
     }
-    public Vec3d VoxelSizeAt(Vec3d location)
+    public override Vec3d VoxelSizeAt(Vec3d location)
     {
         Vec3d position = ApplyMap(location);
         return new((ApplyMap(location + Vec3d.UnitX) - position).Length, (ApplyMap(location + Vec3d.UnitY) - position).Length, (ApplyMap(location + Vec3d.UnitZ) - position).Length);
     }
-    public Vec3d ApplyJacobian(Vec3d vector) => SecondMap.TransformDirection(vector);
-    public Vec3d ApplyInverseJacobian(Vec3d vector) => _inverse.TransformDirection(vector);
-    public Vec3d ApplyJacobianTranspose(Vec3d vector) => SecondMap.Transpose().TransformDirection(vector);
-    public Vec3d ApplyInverseJacobianTranspose(Vec3d vector) => _inverse.Transpose().TransformDirection(vector);
-    public Mat3d Jacobian(Vec3d indexLocation)
+    public override Vec3d ApplyJacobian(Vec3d vector) => SecondMap.TransformDirection(vector);
+    public override Vec3d ApplyInverseJacobian(Vec3d vector) => _inverse.TransformDirection(vector);
+    public override Vec3d ApplyJacobianTranspose(Vec3d vector) => SecondMap.Transpose().TransformDirection(vector);
+    public override Vec3d ApplyInverseJacobianTranspose(Vec3d vector) => _inverse.Transpose().TransformDirection(vector);
+    public override Mat3d Jacobian(Vec3d indexLocation)
     {
         Vec3d centered = Centered(indexLocation);
         double scale = (Gamma * centered.Z * _depthOnLz + 1) / _lx, scale2 = Gamma * _depthOnLz / _lx;
         return new Mat3d(scale, 0, 0, 0, scale, 0, scale2 * centered.X, scale2 * centered.Y, _depthOnLz) * SecondMap.GetMat3();
     }
-    public Vec3d ApplyJacobian(Vec3d vector, Vec3d indexLocation) => vector * Jacobian(indexLocation);
-    public Vec3d ApplyInverseJacobian(Vec3d vector, Vec3d indexLocation)
+    public override Vec3d ApplyJacobian(Vec3d vector, Vec3d indexLocation) => vector * Jacobian(indexLocation);
+    public override Vec3d ApplyInverseJacobian(Vec3d vector, Vec3d indexLocation)
     {
         Vec3d centered = Centered(indexLocation);
         double scale = (Gamma * centered.Z * _depthOnLz + 1) / _lx, scale2 = Gamma * _depthOnLz / _lx;
@@ -98,8 +119,8 @@ public sealed class NonlinearFrustumMap
         return new((output.X - scale2 * centered.X * output.Z / _depthOnLz) / scale,
             (output.Y - scale2 * centered.Y * output.Z / _depthOnLz) / scale, output.Z / _depthOnLz);
     }
-    public Vec3d ApplyJacobianTranspose(Vec3d vector, Vec3d indexLocation) => vector * Jacobian(indexLocation).Transpose();
-    public Vec3d ApplyInverseJacobianTranspose(Vec3d gradient, Vec3d indexLocation) => gradient * InverseGradientMatrix(indexLocation);
+    public override Vec3d ApplyJacobianTranspose(Vec3d vector, Vec3d indexLocation) => vector * Jacobian(indexLocation).Transpose();
+    public override Vec3d ApplyInverseJacobianTranspose(Vec3d gradient, Vec3d indexLocation) => gradient * InverseGradientMatrix(indexLocation);
     private Mat3d InverseGradientMatrix(Vec3d indexLocation)
     {
         Vec3d location = ApplyFrustum(indexLocation);
@@ -113,7 +134,7 @@ public sealed class NonlinearFrustumMap
     /// <summary>Ports the native Jacobian-curvature expression for an index-space Hessian and gradient.</summary>
     /// <remarks>The native zz correction uses one gamma factor, not gamma squared. This is retained for parity;
     /// for gamma other than zero or one the result can differ from the analytic world-space Hessian.</remarks>
-    public Mat3d ApplyInverseJacobianCurvature(Mat3d hessian, Vec3d gradient, Vec3d indexLocation)
+    public override Mat3d ApplyInverseJacobianCurvature(Mat3d hessian, Vec3d gradient, Vec3d indexLocation)
     {
         Vec3d location = ApplyFrustum(indexLocation);
         Mat3d inverseGradient = InverseGradientMatrix(indexLocation);
@@ -151,13 +172,13 @@ public sealed class NonlinearFrustumMap
         matrix = matrix with { M30 = translation.X, M31 = translation.Y, M32 = translation.Z };
         return new(new BBoxd(Vec3d.Zero, new Vec3d(xCount, yCount, zCount)), taper, normalizedDepth, matrix);
     }
-    public Mat3d ApplyInverseJacobianCurvature(Mat3d hessian)
+    public override Mat3d ApplyInverseJacobianCurvature(Mat3d hessian)
     {
         Mat3d inverse = _inverse.GetMat3();
         return inverse * hessian * inverse.Transpose();
     }
 
-    public NonlinearFrustumMap Copy() => new(BoundingBox, Taper, Depth, SecondMap);
+    public override NonlinearFrustumMap Copy() => new(BoundingBox, Taper, Depth, SecondMap);
     public NonlinearFrustumMap WithTaper(double taper) => new(BoundingBox, taper, Depth, SecondMap);
     public NonlinearFrustumMap WithDepth(double depth) => new(BoundingBox, Taper, depth, SecondMap);
     public NonlinearFrustumMap WithSecondMap(Mat4d map) => new(BoundingBox, Taper, Depth, map);

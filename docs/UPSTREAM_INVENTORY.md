@@ -2,7 +2,7 @@
 
 Reference: OpenVDB **13.0.1**, commit **f42248c35a9f7bb30641a8a74d9075ce7d1ddcaf**. The local checkout was inspected directly. No previous Tedd.OpenVDB wrapper source was used.
 
-This implementation is a managed port of selected OpenVDB storage, math and sampling behavior. **It is not a complete 1:1 port of OpenVDB.** The native differential fixture covers selected `Tree4<int32_t,5,4,3>` operations. It does not establish completeness of every tree API, every value specialization, the tools library or `.vdb` serialization.
+This implementation is a managed port of selected OpenVDB storage, math and sampling behavior. **It is not a complete 1:1 port of OpenVDB.** Native differential fixtures cover multiple tree value types, geometry, numerical tools, metadata and file interchange. It does not establish completeness of every tree API, every value specialization, the tools library or `.vdb` serialization.
 
 ## Measured source inventory
 
@@ -25,10 +25,10 @@ The 324 files under `openvdb/openvdb` split as follows:
 
 | Area | Files | Managed status / remaining work |
 |---|---:|---|
-| Root grid/metadata/platform files | 15 | Typed grid facade and native scalar/Half/vector/matrix/opaque metadata payloads and truth conversion. Full registry/MetaMap APIs, platform abstractions and remaining grid API remain. |
+| Root grid/metadata/platform files | 15 | Typed grid facade and native scalar/Half/vector/matrix/opaque metadata payloads and truth conversion. Registered unmanaged metadata codecs, MetaMap APIs and vector-space metadata are implemented; platform abstractions and remaining grid APIs remain. |
 | `tree` | 13 | Fixed Tree4 5/4/3 hierarchy, tiles, masks, accessors, topology, all three merge policies, leaf transfer, live value iterators, leaf manager, cached/dynamic node managers and node-local traversal. Full configurable tree family, remaining iterator overloads and specialized storage remain. |
-| math | 27 | Coordinates/boxes, expanded vector/matrix/quaternion math, affine/frustum/camera maps, proximity, quantized unit vectors, rays/DDA/hierarchical traversal, PCG/Jacobi/IC, finite differences/stencils/operators/statistics. Complete precision/map family and remaining numerical utilities remain. |
-| tools | 57 | Sampling, composites/CSG, spheres/boxes, pruning/flood fill/morphology/filtering, grid operators, level-set utility/measurement/tracking/filtering/rebuilding, scalar/vector resampling, mesh conversion and adaptive volume meshing/reference seams, voxel edge extraction, ray intersectors, sparse Poisson, velocity fields/RK integration, dense conversion and statistics. Remaining evolution/advection, regional queries, particles, point tools, rendering, diagnostics and surface generators remain. |
+| math | 27 | Coordinates/boxes, expanded vector/matrix/quaternion math, native affine/scale/translation/unitary map identities, frustum/camera maps, proximity, quantized unit vectors, rays/DDA/hierarchical traversal, PCG/Jacobi/IC, finite differences/stencils/operators/statistics. Complete precision family and remaining numerical utilities remain. |
+| tools | 57 | Sampling, composites/CSG, spheres/boxes, pruning/flood fill/morphology/filtering, grid operators, level-set utility/measurement/tracking/filtering/rebuilding, scalar/vector resampling, mesh conversion and adaptive volume meshing/reference seams, voxel edge extraction, ray intersectors, sparse Poisson, velocity fields/RK integration, dense conversion and statistics. Regional activity queries, extrema, multiresolution restriction/prolongation, vector transformations, Platonic solids, topology conversion, level-set/volume advection, morphing and fracture are added. Particles, point tools, rendering, diagnostics and remaining surface generators remain. |
 | `io` | 17 | Native format225 heterogeneous Int32/Int64/Float/Double/Bool/Vec3/Mask archives, forward/backward instances and optional complete chain resolution, all 18 builtin metadata types and opaque payloads, affine/frustum maps, active-mask/zlib/Blosc LZ4/BloscLZ/Snappy/Zstd compression, byte/bitshuffle and half encoding are verified bidirectionally. Dictionary-dependent Zstd and unsupported Blosc versions, point/custom grid layouts, legacy versions and delayed loading remain unsupported. MaskGrid is a restricted Boolean-backed specialization. |
 | `points` | 47 | Not implemented: point-data/index grids, attributes, groups, codecs and point tools. |
 | `util` | 13 | Selected node-mask/value helpers. Full utility API remains. |

@@ -16,6 +16,8 @@ namespace Tedd.OpenVDB.IO;
 /// <summary>Resource limits for untrusted .vdb input. All limits must be positive.</summary>
 public sealed record VdbReadOptions
 {
+    /// <summary>Metadata factories captured once at the start of a read. Null uses MetadataRegistry.Default.</summary>
+    public MetadataRegistry? MetadataRegistry { get; init; }
     public long MaxBytes { get; init; } = 512L * 1024 * 1024;
     public long MaxAllocatedBytes { get; init; } = 512L * 1024 * 1024;
     public int MaxNodes { get; init; } = 100_000;
@@ -295,54 +297,6 @@ public static partial class VdbFile
         byte[] bytes = Utf8.GetBytes(value); output.Write((uint)bytes.Length); output.Write(bytes);
     }
 
-    private static void WriteTransform(BinaryWriter output, Transform transform)
-    {
-        if (transform.FrustumMap is { } frustum)
-        {
-            WriteString(output, "NonlinearFrustumMap");
-            WriteVector(output, frustum.BoundingBox.Min); WriteVector(output, frustum.BoundingBox.Max);
-            output.Write(frustum.Taper); output.Write(frustum.Depth);
-        }
-        WriteString(output, "AffineMap"); WriteMatrix(output, transform.Matrix);
-    }
-
-    private static Transform ReadTransform(Input input, bool allowFrustum = true)
-    {
-        string type = input.String();
-        if (type == "NonlinearFrustumMap")
-        {
-            if (!allowFrustum) throw new InvalidDataException("A frustum secondary map must be linear.");
-            var bounds = new BBoxd(input.Vector(), input.Vector());
-            double taper = input.Scalar<double>(), depth = input.Scalar<double>();
-            Transform secondary = ReadTransform(input, allowFrustum: false);
-            try { return new Transform(new NonlinearFrustumMap(bounds, taper, depth, secondary.Matrix)); }
-            catch (Exception exception) when (exception is ArgumentException or ArithmeticException)
-            { throw new InvalidDataException("Invalid nonlinear frustum transform.", exception); }
-        }
-        Mat4d matrix;
-        if (type is "AffineMap" or "UnitaryMap") matrix = input.Matrix();
-        else if (type == "TranslationMap") matrix = Mat4d.CreateTranslation(input.Vector());
-        else if (type is "ScaleMap" or "UniformScaleMap" or "ScaleTranslateMap" or "UniformScaleTranslateMap")
-        {
-            bool translated = type is "ScaleTranslateMap" or "UniformScaleTranslateMap";
-            Vec3d translation = translated ? input.Vector() : Vec3d.Zero;
-            Vec3d scale = input.Vector();
-            // Native maps persist four cached vectors as well as their scale. Consume and
-            // validate finite numbers, then recompute the derived transform from the primary data.
-            for (int index = 0; index < 4; ++index)
-            {
-                Vec3d cached = input.Vector();
-                if (!double.IsFinite(cached.X) || !double.IsFinite(cached.Y) || !double.IsFinite(cached.Z))
-                    throw new InvalidDataException("Nonfinite cached linear-map data.");
-            }
-            matrix = Mat4d.CreateScale(scale) * Mat4d.CreateTranslation(translation);
-        }
-        else throw new NotSupportedException($"VDB transform map '{type}' is unsupported.");
-        try { return new Transform(matrix); }
-        catch (Exception exception) when (exception is ArgumentException or ArithmeticException)
-        { throw new InvalidDataException("Invalid affine transform.", exception); }
-    }
-
     private static Dictionary<string, MetadataValue> ReadMetadata(Input input, bool allowNonempty = true)
     {
         uint count = input.UInt32();
@@ -359,8 +313,19 @@ public static partial class VdbFile
             uint size = input.UInt32(); total += size;
             if (size > input.Options.MaxMetadataBytes || total > input.Options.MaxMetadataBytes) throw new InvalidDataException("Metadata byte limit exceeded.");
             if (type == "__delayedload") { input.Skip((int)size); continue; }
+            if (!input.MetadataTypes.TryGetValue(type, out var registered))
+            {
+                if (type.StartsWith("__", StringComparison.Ordinal)) { input.Skip((int)size); continue; }
+                result.Add(name, new MetadataValue(ReadOpaque(input, type, (int)size))); continue;
+            }
+            if (registered is not BuiltinMetadataType builtin)
+            {
+                if (registered.ExpectedSize is int expectedSize && expectedSize != size) throw new InvalidDataException("Metadata size disagrees with its registered type.");
+                input.Reserve((long)size + registered.DecodedValueBytes);
+                result.Add(name, registered.Decode(input.Bytes((int)size))); continue;
+            }
             long end = input.Position + size;
-            object value = type switch
+            object value = builtin.Name switch
             {
                 "bool" when size == 1 => input.Boolean(),
                 "int32" when size == 4 => input.Int32(),
@@ -390,15 +355,15 @@ public static partial class VdbFile
     }
     private static OpaqueMetadata ReadOpaque(Input input, string type, int size)
     {
-        input.Reserve(size); return new OpaqueMetadata(type, input.Bytes(size));
+        input.Reserve(size); return OpaqueMetadata.FromUnknown(type, input.Bytes(size));
     }
     private static void WriteMetadata(BinaryWriter output, IReadOnlyDictionary<string, MetadataValue> metadata)
     {
         output.Write((uint)metadata.Count);
-        foreach (var pair in metadata.OrderBy(pair => pair.Key, StringComparer.Ordinal))
+        foreach (var pair in metadata.OrderBy(pair => pair.Key, MetadataNameComparer.Instance))
         {
             WriteString(output, pair.Key); WriteString(output, pair.Value.TypeName);
-            object value = pair.Value.Value;
+            object value = pair.Value.Representation;
             switch (value)
             {
                 case bool v: output.Write(1u); output.Write(v); break;
@@ -420,6 +385,7 @@ public static partial class VdbFile
                 case Vec4f v: output.Write(16u); output.Write(v.X); output.Write(v.Y); output.Write(v.Z); output.Write(v.W); break;
                 case Vec4d v: output.Write(32u); output.Write(v.X); output.Write(v.Y); output.Write(v.Z); output.Write(v.W); break;
                 case OpaqueMetadata v: output.Write((uint)v.Data.Length); output.Write(v.Data); break;
+                case IRegisteredMetadata v: output.Write((uint)v.Data.Length); output.Write(v.Data); break;
                 default: throw new NotSupportedException("Unsupported metadata value.");
             }
         }
@@ -433,6 +399,7 @@ public static partial class VdbFile
     {
         _ = StorageHalfFlag(grid.Metadata);
         ValidateMetadata(grid.Metadata);
+        ValidateTransform(grid.Transform.BaseMap);
         if (grid.Metadata.TryGetValue(Grid<T>.NameMetadataKey, out var name) && name.Value is not string)
             throw new NotSupportedException("The grid name metadata must be a string.");
         if (grid.Name.Contains('\x1e')) throw new NotSupportedException("Grid names containing the native instance separator are unsupported.");
@@ -460,9 +427,16 @@ public static partial class VdbFile
         }
     }
 
-    private sealed class Input(Stream stream, VdbReadOptions options)
+    private sealed class Input
     {
-        public VdbReadOptions Options { get; } = options;
+        private readonly Stream stream;
+        internal Input(Stream stream, VdbReadOptions options)
+        {
+            this.stream = stream; Options = options;
+            MetadataTypes = (options.MetadataRegistry ?? Tedd.OpenVDB.MetadataRegistry.Default).Snapshot(Reserve);
+        }
+        public IReadOnlyDictionary<string, MetadataType> MetadataTypes { get; }
+        public VdbReadOptions Options { get; }
         public long Position { get; private set; }
         public VdbCompression Compression { get; set; }
         public bool Half { get; set; }

@@ -146,6 +146,8 @@ public class VdbFileReviewTests
     }
     private static byte[] Serialize<T>(Grid<T> grid) where T : unmanaged
     {
+        // Corruption offsets below deliberately target the native AffineMap layout.
+        grid.Transform = new Transform(grid.Transform.Matrix);
         using var stream = new MemoryStream();
         VdbFile.Write(stream, grid);
         return stream.ToArray();

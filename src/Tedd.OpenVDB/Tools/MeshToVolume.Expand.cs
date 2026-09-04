@@ -72,7 +72,7 @@ internal sealed partial class MeshConversion<T> where T : unmanaged, IFloatingPo
         {
             Coord origin = new((int)x, (int)y, (int)z); var leaf = _distance.ProbeLeaf(origin); if (leaf is null) continue;
             var indices = _indices.ProbeLeaf(origin)!;
-            foreach (Coord coordinate in region.Intersect(leaf.Bounds))
+            foreach (Coord coordinate in region.Intersection(leaf.Bounds))
             {
                 int offset = LeafNode<T>.CoordToOffset(coordinate);
                 if (leaf.IsValueOn(offset)) result.Add(new(indices.GetValue(offset), coordinate));

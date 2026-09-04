@@ -17,11 +17,12 @@ public sealed partial record MetadataValue
     public MetadataValue(object value)
     {
         ArgumentNullException.ThrowIfNull(value);
-        if (value is not (bool or int or long or float or double or string or Coord or Vec3d or Vec3i or Vec3f or Mat4d or Mat4f or Half or Vec2i or Vec2f or Vec2d or Vec4i or Vec4f or Vec4d or OpaqueMetadata))
+        if (value is not (bool or int or long or float or double or string or Coord or Vec3d or Vec3i or Vec3f or Mat4d or Mat4f or Half or Vec2i or Vec2f or Vec2d or Vec4i or Vec4f or Vec4d or OpaqueMetadata or IRegisteredMetadata))
             throw new ArgumentException("Metadata must be a supported immutable scalar, string, coordinate, vector or matrix.", nameof(value));
         _value = value is Vec3i vector ? new Coord(vector.X, vector.Y, vector.Z) : value;
     }
-    public object Value => _value;
+    internal object Representation => _value;
+    public object Value => _value is IRegisteredMetadata custom ? custom.Value : _value;
     public string TypeName => _value switch
     {
         bool => "bool",
@@ -43,11 +44,12 @@ public sealed partial record MetadataValue
         Vec4f => "vec4s",
         Vec4d => "vec4d",
         OpaqueMetadata opaque => opaque.TypeName,
+        IRegisteredMetadata custom => custom.TypeName,
         _ => throw new InvalidOperationException()
     };
     public TValue GetValue<TValue>()
     {
-        if (_value is TValue typed) return typed;
+        if (Value is TValue typed) return typed;
         if (_value is Coord coordinate && typeof(TValue) == typeof(Vec3i)) return (TValue)(object)new Vec3i(coordinate.X, coordinate.Y, coordinate.Z);
         throw new InvalidCastException($"Metadata type {TypeName} cannot be read as {typeof(TValue).Name}.");
     }
@@ -56,7 +58,7 @@ public sealed partial record MetadataValue
 
 /// <summary>A typed sparse tree with an index/world transform and independent grid metadata.</summary>
 /// <remarks>The tree supplied to the constructor is shared. DeepCopy clones the tree, transform and metadata map.</remarks>
-public sealed class Grid<T> : IGrid where T : unmanaged
+public sealed partial class Grid<T> : IGrid where T : unmanaged
 {
     public const string NameMetadataKey = "name";
     public const string ClassMetadataKey = "class";
@@ -138,7 +140,7 @@ public sealed class Grid<T> : IGrid where T : unmanaged
     public Grid<T> DeepCopy()
     {
         var copy = new Grid<T>(Tree.DeepCopy()) { Transform = _transform.Copy() };
-        foreach (var pair in _metadata) copy._metadata.Add(pair.Key, pair.Value);
+        foreach (var pair in _metadata) copy._metadata.Add(pair.Key, pair.Value.DeepCopy());
         return copy;
     }
 }

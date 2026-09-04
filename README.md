@@ -56,9 +56,14 @@ Tree APIs include sparse/dense fill, clipping, topology operations, merge polici
 
 `EnumerateValues` visits a tile once. `EnumerateActiveVoxels` expands tiles. `VoxelizeActiveTiles(maximumNewLeaves)` supports an explicit preflight allocation limit. Dense grids support both XYZ and ZYX layouts.
 
+
+For regional activity, construct FindActiveValues<T> once and call CountActiveValues(bounds), AnyActiveValues(bounds), or ActiveTiles(bounds). Update the finder after any tree mutation. CountActiveValues is the accurate counter; Count retains two documented upstream counting defects for compatibility.
+
+For continuous density or distance fields, MultiResGrid<float> and MultiResGrid<double> build powers-of-two LOD trees. GetGrid(level) shares a stored level; CreateGrid(fractionalLevel) produces an independent interpolated grid. Integer material identifiers should retain their discrete meaning rather than be averaged as density values.
+
 ## Standard .vdb archives
 
-Format 225 supports Int32, Int64, Float, Double, Bool, Vec3i, Vec3s/Vec3f, Vec3d and restricted topology-mask grids. Archives support heterogeneous grids, shared-tree instances, scalar/Half/vector/matrix and opaque metadata, affine/frustum maps, active masks, zlib, all c-blosc compressor IDs, byte/bitshuffle and real-valued half encoding.
+Format 225 supports Int32, Int64, Float, Double, Bool, Vec3i, Vec3s/Vec3f, Vec3d and restricted topology-mask grids. Archives support heterogeneous grids, shared-tree instances, scalar/Half/vector/matrix, opaque and registered unmanaged custom metadata, specialized linear/frustum maps, active masks, zlib, all c-blosc compressor IDs, byte/bitshuffle and real-valued half encoding.
 
 ```csharp
 using Tedd.OpenVDB;
@@ -84,7 +89,7 @@ Read options limit bytes, estimated allocation, grids, nodes and metadata. Strea
 
 ## Algorithms and numerical types
 
-Implemented tools include pruning, signed flood fill, morphology, level-set spheres/boxes, CSG/composites, filters with transformed masks, dense conversion, level-set masks/fog/segmentation, measurements, tracking/filtering, grid differential operators, sparse Poisson solves, hierarchical ray queries and statistics. Mesh conversion supports signed/unsigned fields, polygon indices, interior callbacks and lattice-edge intersections. Adaptive volume meshing supports masks and reference seams; rebuilding feeds transformed level-set resampling. Scalar/vector point, box, quadratic and staggered sampling support affine/mipmap and nonlinear grid resampling. Velocity fields and Runge-Kutta integration retain native precision rules. Math includes vectors/matrices/quaternions, frustum/camera maps, proximity, quantized unit vectors, rays/DDA, PCG, finite differences, WENO/Godunov kernels and stencils.
+Implemented tools include pruning, signed flood fill, morphology, level-set spheres/boxes/Platonic solids, topology-to-level-set conversion, CSG/composites, filters with transformed masks, dense conversion, level-set masks/fog/segmentation, measurements, tracking/filtering, grid differential operators, sparse Poisson solves, hierarchical ray and regional-activity queries, scalar/vector extrema and statistics. Mesh conversion supports signed/unsigned fields, polygon indices, interior callbacks and lattice-edge intersections. Adaptive volume meshing supports masks and reference seams; rebuilding feeds transformed level-set resampling. Scalar/vector point, box, quadratic and staggered sampling support affine/mipmap and nonlinear grid resampling. Velocity fields, Runge-Kutta integration, level-set and volume advection, morphing and fracture retain native precision rules. Multiresolution grids provide weighted/injection restriction, prolongation and fractional LOD sampling. Vector transformations respect covariant/contravariant and local/world-space metadata. Math includes vectors/matrices/quaternions, specialized affine/scale/translation/unitary and frustum/camera maps, proximity, quantized unit vectors, rays/DDA, PCG, finite differences, WENO/Godunov kernels and stencils.
 
 Some native behaviors differ from their comments. In particular, CSG may leave unused nodes in its second input; CSG copy with unequal backgrounds depends on native thread partitioning. Managed copy matches serial native execution. The [CSG record](reference/CSG-CONFORMANCE.md) and [math record](reference/MATH_VERIFICATION.md) describe these boundaries.
 
