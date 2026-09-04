@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="src/Tedd.OpenVDB/Tedd.OpenVDB.csproj" />
+  <Project Path="tests/Tedd.OpenVDB.Tests/Tedd.OpenVDB.Tests.csproj" />
+  <Project Path="samples/VoxelBlocks/VoxelBlocks.csproj" />
+  <Project Path="benchmarks/Tedd.OpenVDB.Benchmarks/Tedd.OpenVDB.Benchmarks.csproj" />
+</Solution>

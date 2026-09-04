@@ -1,0 +1,18 @@
+name: managed-tests
+on: [push, pull_request]
+jobs:
+  tests:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        intrinsics: ['1', '0']
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - run: dotnet test Tedd.OpenVDB.slnx -c Release
+        env:
+          DOTNET_EnableHWIntrinsic: ${{ matrix.intrinsics }}
+      - run: dotnet run --project samples/VoxelBlocks -c Release --no-build
