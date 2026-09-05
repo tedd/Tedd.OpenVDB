@@ -1,3 +1,7 @@
+[![Build and test](https://github.com/tedd/Tedd.OpenVDB/actions/workflows/tests.yml/badge.svg)](https://github.com/tedd/Tedd.OpenVDB/actions/workflows/tests.yml)
+[![NuGet](https://img.shields.io/nuget/v/Tedd.OpenVDB.svg?logo=nuget)](https://www.nuget.org/packages/Tedd.OpenVDB)
+[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+
 # Tedd.OpenVDB
 
 Tedd.OpenVDB is an independent, managed C# port of core [OpenVDB](https://www.openvdb.org/) storage, archive, math, and volume-processing facilities for .NET 11. It targets sparse voxel-world and volumetric-data workloads without requiring a native runtime.
