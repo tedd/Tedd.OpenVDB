@@ -24,25 +24,31 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: windows-latest
     permissions:
-      contents: write
+      contents: read
     concurrency:
       group: nuget-publish
       cancel-in-progress: false
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       - uses: actions/setup-dotnet@v4
         with:
           global-json-file: global.json
       - name: Build package
         run: dotnet build src/Tedd.OpenVDB/Tedd.OpenVDB.csproj -c Release
-      - name: Publish on version change
-        uses: tedd/publish-nuget-neo@v1
-        with:
-          PROJECT_FILE_PATH: src/Tedd.OpenVDB/Tedd.OpenVDB.csproj
-          PACKAGE_NAME: tedd.openvdb
-          NUGET_KEY: ${{ secrets.NUGET_API_KEY }}
-          INCLUDE_SYMBOLS: true
-          TAG_COMMIT: true
-          REBUILD_PROJECT: false
+      - name: Publish NuGet package
+        shell: pwsh
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: |
+          $packages = @(Get-ChildItem -LiteralPath 'src/Tedd.OpenVDB/bin/Release' -Filter 'Tedd.OpenVDB.*.nupkg' -File)
+          if ($packages.Count -ne 1) {
+            throw "Expected one package, found $($packages.Count)."
+          }
+
+          dotnet nuget push $packages[0].FullName `
+            --api-key $env:NUGET_API_KEY `
+            --source 'https://api.nuget.org/v3/index.json' `
+            --symbol-api-key $env:NUGET_API_KEY `
+            --symbol-source 'https://api.nuget.org/v3/index.json' `
+            --skip-duplicate `
+            --force-english-output
