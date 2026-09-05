@@ -161,9 +161,11 @@ public class DiagnosticsTests
     {
         var finite = new CheckFinite<Vec4d>(); var range = new CheckRange<Vec3f>(new Vec3f(-2), new Vec3f(2)); var magnitude = new CheckMagnitude<long>(9007199254740993, 0); int failures = 0;
         for (int i = 0; i < 2000; ++i) { failures += finite.Fails(new Vec4d(1, 2, 3, 4)) ? 1 : 0; failures += range.Fails(new Vec3f(3, 1, 0)) ? 1 : 0; failures += magnitude.Fails(9007199254740993) ? 1 : 0; }
+        // The first optimized generic instantiation can be promoted after the initial warm-up on some runtimes.
+        for (int i = 0; i < 10000; ++i) { failures += finite.Fails(new Vec4d(1, 2, 3, 4)) ? 1 : 0; failures += range.Fails(new Vec3f(3, 1, 0)) ? 1 : 0; failures += magnitude.Fails(9007199254740993) ? 1 : 0; }
         long before = GC.GetAllocatedBytesForCurrentThread();
         for (int i = 0; i < 10000; ++i) { failures += finite.Fails(new Vec4d(1, 2, 3, 4)) ? 1 : 0; failures += range.Fails(new Vec3f(3, 1, 0)) ? 1 : 0; failures += magnitude.Fails(9007199254740993) ? 1 : 0; }
-        long allocated = GC.GetAllocatedBytesForCurrentThread() - before; Assert.Equal(12000, failures); Assert.Equal(0, allocated);
+        long allocated = GC.GetAllocatedBytesForCurrentThread() - before; Assert.Equal(22000, failures); Assert.Equal(0, allocated);
     }
 
     private static Grid<double> Plane() { var grid = new Grid<double>(3) { Transform = new(Mat4d.CreateScale(0.5)) }; for (int x = -5; x <= 5; ++x) for (int y = -4; y <= 4; ++y) for (int z = -4; z <= 4; ++z) grid.Tree.SetValue(new(x, y, z), 0.25 * x); return grid; }
