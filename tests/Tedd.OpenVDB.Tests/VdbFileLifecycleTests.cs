@@ -49,6 +49,8 @@ public sealed class VdbFileLifecycleTests
             using var file = new VdbFileHandle(path); Assert.True(file.Open()); string tag = file.UniqueTag; file.Close();
             byte[] valid = File.ReadAllBytes(path); File.WriteAllBytes(path, valid[..40]);
             Assert.Throws<InvalidDataException>(() => file.Open()); Assert.False(file.IsOpen); Assert.Equal(tag, file.UniqueTag);
+            File.WriteAllBytes(path, valid[..57]);
+            Assert.Throws<InvalidDataException>(() => file.Open()); Assert.False(file.IsOpen); Assert.Equal(tag, file.UniqueTag);
             File.WriteAllBytes(path, valid); Assert.False(file.Open()); Assert.Equal(9.25f, file.ReadGrid<float>("density").Tree.GetValue(new(-1, 2, 3))); file.Close();
             valid[0] = 0; File.WriteAllBytes(path, valid); Assert.Throws<InvalidDataException>(() => file.Open()); Assert.False(file.IsOpen); Assert.Equal(tag, file.UniqueTag);
         }
