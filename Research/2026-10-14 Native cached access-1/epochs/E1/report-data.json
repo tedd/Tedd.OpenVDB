@@ -1,0 +1,270 @@
+{
+  "title": "Managed versus native OpenVDB cached access",
+  "generatedAt": "2026-10-14T08:53:27.728613+02:00",
+  "status": "complete",
+  "scope": "Two local coherent cached-access kernels on an existing UInt16 Tree4 5/4/3, Windows x64. No library optimization.",
+  "question": "How do matching managed and native cached reads/writes compare on the same warmed coordinate stream?",
+  "primaryMetric": "milliseconds per operation; median of launch medians",
+  "summary": {
+    "baseline": 3.634117596427548e-06,
+    "final": 8.086440260100959e-06,
+    "unit": "ms/op",
+    "changePercent": 122.51454570568066,
+    "headline": "Read managed/native time ratio 2.225x; write 2.677x. Ratios describe these kernels, not general OpenVDB performance."
+  },
+  "scorecards": [
+    {
+      "title": "accessor.read.coherent (50,003,968 operations)",
+      "value": 404.3541,
+      "unit": "ms/batch",
+      "baseline": 181.7203,
+      "wallChangePercent": 122.51454570568066,
+      "progression": "Managed 0.00000808644 ms/op; native 0.00000363412 ms/op. Native 275,169,962 ops/s; managed 123,663,809 ops/s"
+    },
+    {
+      "title": "accessor.write.coherent (50,003,968 operations)",
+      "value": 665.1985,
+      "unit": "ms/batch",
+      "baseline": 248.4838,
+      "wallChangePercent": 167.7029649417789,
+      "progression": "Managed 0.00001330291 ms/op; native 0.00000496928 ms/op. Native 201,236,330 ops/s; managed 75,171,498 ops/s"
+    }
+  ],
+  "series": [
+    {
+      "title": "Cached access time",
+      "description": "Milliseconds per batch of 50,003,968 operations. Bars: median of process-launch medians. Whiskers: fastest/slowest launch median. Setup excluded.",
+      "unit": "ms/batch",
+      "lowerIsBetter": true,
+      "rounds": [
+        "Native C++",
+        "Managed C#"
+      ],
+      "rows": [
+        {
+          "label": "accessor.read.coherent",
+          "detail": "UInt16, 32768 prepopulated coordinates, default safe cached accessors",
+          "measurements": [
+            {
+              "median": 181.7203,
+              "min": 179.0931,
+              "max": 239.882,
+              "n": 5
+            },
+            {
+              "median": 404.3541,
+              "min": 382.4329,
+              "max": 455.7429,
+              "n": 5
+            }
+          ]
+        },
+        {
+          "label": "accessor.write.coherent",
+          "detail": "UInt16, 32768 prepopulated coordinates, default safe cached accessors",
+          "measurements": [
+            {
+              "median": 248.4838,
+              "min": 225.18620000000004,
+              "max": 342.4665,
+              "n": 5
+            },
+            {
+              "median": 665.1985,
+              "min": 603.0487,
+              "max": 777.2317000000002,
+              "n": 5
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "effectGroups": [
+    {
+      "name": "Managed relative to native",
+      "control": "Contemporaneous paired launches with alternating implementation and workload order.",
+      "items": [
+        {
+          "hypothesisId": "H-001",
+          "label": "accessor.read.coherent",
+          "effect": 1.2251454570568066,
+          "range": [
+            0.7150002918101399,
+            1.544726178730504
+          ],
+          "note": "Managed time relative to native; positive means slower."
+        },
+        {
+          "hypothesisId": "H-002",
+          "label": "accessor.write.coherent",
+          "effect": 1.677029649417789,
+          "range": [
+            0.9423753856216592,
+            2.451506797485814
+          ],
+          "note": "Managed time relative to native; positive means slower."
+        }
+      ]
+    }
+  ],
+  "hypotheses": [
+    {
+      "id": "H-001",
+      "claim": "Native OpenVDB has lower elapsed time per coherent cached read than the managed port on the fixed fixture.",
+      "mechanism": "Measured implementation comparison; no single causal mechanism is asserted.",
+      "prediction": "All paired managed/native launch-median read ratios exceed 1.",
+      "falsification": "A ratio at or below 1 rejects consistent native leadership; mixed directions are inconclusive.",
+      "state": "retained",
+      "scope": "Cached reads only. The user restricted the task to cached reads/writes; optimization search and application profiling are not authorized targets.",
+      "decision": "Supported",
+      "change": "Added equivalent C# and C++ measurement/validation harnesses; library implementations unchanged.",
+      "changeScope": "local",
+      "maintainability": "One bounded reproduction runner and two explicit access loops.",
+      "codeComments": "Harness comments identify setup exclusion and checksum/anti-elimination controls.",
+      "result": "Managed/native ratio of launch medians 2.225; paired ratio median 2.105, range 1.715\u20132.545.",
+      "effectPercent": 122.51454570568066,
+      "decisionRationale": "Classifies the observed comparison only; no library optimization or application-speed claim is adopted.",
+      "evidence": [
+        "comparison.json",
+        "raw/validation.json",
+        "raw/environment.json"
+      ],
+      "risks": []
+    },
+    {
+      "id": "H-002",
+      "claim": "Native OpenVDB has lower elapsed time per coherent cached write than the managed port on the fixed fixture.",
+      "mechanism": "Measured implementation comparison; no single causal mechanism is asserted.",
+      "prediction": "All paired managed/native launch-median write ratios exceed 1.",
+      "falsification": "A ratio at or below 1 rejects consistent native leadership; mixed directions are inconclusive.",
+      "state": "retained",
+      "scope": "Existing active voxel writes only, with changing values. Only two defensible comparison hypotheses exist in the authorized scope; the catalogue is not padded to ten or twenty.",
+      "decision": "Supported",
+      "change": "Added equivalent C# and C++ measurement/validation harnesses; library implementations unchanged.",
+      "changeScope": "local",
+      "maintainability": "One bounded reproduction runner and two explicit access loops.",
+      "codeComments": "Harness comments identify setup exclusion and checksum/anti-elimination controls.",
+      "result": "Managed/native ratio of launch medians 2.677; paired ratio median 2.565, range 1.942\u20133.452.",
+      "effectPercent": 167.7029649417789,
+      "decisionRationale": "Classifies the observed comparison only; no library optimization or application-speed claim is adopted.",
+      "evidence": [
+        "comparison.json",
+        "raw/validation.json",
+        "raw/environment.json"
+      ],
+      "risks": []
+    }
+  ],
+  "retainedChanges": [
+    "Reproducible cross-language cached-access harnesses; no library implementation changes."
+  ],
+  "decisions": [],
+  "environment": [
+    {
+      "label": "Managed revision",
+      "value": "164d2bccf69dd582c27231dbc53d08e33e36eff1"
+    },
+    {
+      "label": "Native revision",
+      "value": "f42248c35a9f7bb30641a8a74d9075ce7d1ddcaf"
+    },
+    {
+      "label": "CPU",
+      "value": "AMD Ryzen 9 5950X 16-Core Processor"
+    },
+    {
+      "label": "OS",
+      "value": "Windows-11-10.0.26200-SP0"
+    },
+    {
+      "label": "Power",
+      "value": "Power Scheme GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c  (High performance)"
+    },
+    {
+      "label": "Affinity",
+      "value": "Both processes: logical CPU 8"
+    },
+    {
+      "label": "Native build",
+      "value": "MSVC x64 Release /O2 /Ob2 /DNDEBUG, static OpenVDB 13.0.1; no native PGO/LTO enabled."
+    },
+    {
+      "label": "Managed build",
+      "value": ".NET 11.0.0-rc.1.26425.128, Release, tiered compilation/PGO enabled, server GC requested."
+    },
+    {
+      "label": "Iterations",
+      "value": "5 paired launches; 9 samples/launch/workload; 50003968 operations/sample; 2000 ms warmup/workload."
+    },
+    {
+      "label": "Host lock",
+      "value": "C:\\Users\\tedd\\.codex\\locks\\performance-measurement.lock"
+    },
+    {
+      "label": "Baseline epoch",
+      "value": "E1; workloads and controls fixed before timing."
+    },
+    {
+      "label": "Preexisting changes",
+      "value": "Only unrelated untracked .pending files/attachments existed initially; preserved."
+    }
+  ],
+  "hotspots": [
+    {
+      "name": "Cached reads and writes",
+      "location": "benchmarks/CachedAccess.Managed/Program.cs; benchmarks/CachedAccess.Native/main.cpp",
+      "evidence": "User-nominated cached operations; no application profiling requested.",
+      "limit": "Local kernel comparison only."
+    }
+  ],
+  "areas": [
+    {
+      "name": "Cached access",
+      "boundary": "Coherent reads/writes of existing active voxels, no topology changes.",
+      "evidence": "Matching fixture hashes, checksums and topology; paired raw launch timings.",
+      "hypothesisIds": [
+        "H-001",
+        "H-002"
+      ],
+      "disposition": "Only these two comparison questions are authorized. Optimization hypotheses and additional workloads are outside scope; no padded ten/twenty-hypothesis catalogue."
+    }
+  ],
+  "correctness": [
+    "Native/managed UInt16 Tree4 5/4/3 fixture: identical coordinate hashes, 32768 active voxels, 64 leaves, checksum 147456.",
+    "Every measured read sum checked against count/8 \u00d7 36; every write pass changes the value phase and validates all 32768 values/activity outside timing.",
+    "Both restore the initial state before each workload and after measurements."
+  ],
+  "generatedCode": [],
+  "validityThreats": [
+    "A warm 32\u00d732\u00d732 coordinate working set with 87.5% leaf-cache hit rate; not random access, cold data, tree creation, meshing, filtering or I/O.",
+    "Different implementation languages, compilers, layouts and accessor cache levels; the result cannot identify a single causal mechanism.",
+    "No application-level speedup, universal performance advantage, confidence interval or native allocation measurement is claimed.",
+    "Shared host lock is cooperative. External applications can still affect CPU/cache/power; per-CPU load snapshots are recorded in raw/environment.json.",
+    "Allocation counters cover the managed current thread only. Native memory allocation is not instrumented.",
+    "Default safe native accessor versus managed structural-version invalidation; both conform for this no-topology-change workload.",
+    "Native dependency build paths contain prior reference artifacts; exact static-library SHA-256, source revision and compiler settings are retained."
+  ],
+  "reproduction": [
+    "Run the driver through scientific-method-performance/scripts/run_with_performance_lock.py; see benchmarks/CACHED_COMPARISON.md.",
+    "Use the pinned native checkout and Release reference libraries. All disposable builds/dependencies go under the named D:\\Workspaces\\AI task directory."
+  ],
+  "artifacts": [
+    {
+      "label": "Comparison summary",
+      "path": "comparison.json"
+    },
+    {
+      "label": "Raw process measurements and metadata",
+      "path": "raw/"
+    },
+    {
+      "label": "Hypothesis ledger",
+      "path": "hypotheses.json"
+    },
+    {
+      "label": "Reproduction runner",
+      "path": "..\\..\\..\\..\\benchmarks\\run_cached_comparison.py"
+    }
+  ]
+}

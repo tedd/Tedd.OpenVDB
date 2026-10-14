@@ -1,0 +1,72 @@
+[
+  {
+    "id": "H-001",
+    "claim": "Native OpenVDB has lower elapsed time per coherent cached read than the managed port on the fixed fixture.",
+    "mechanism": "Measured implementation comparison; no single causal mechanism is asserted.",
+    "prediction": "All paired managed/native launch-median read ratios exceed 1.",
+    "falsification": "A ratio at or below 1 rejects consistent native leadership; mixed directions are inconclusive.",
+    "state": "retained",
+    "scope": "Cached reads only. The user restricted the task to cached reads/writes; optimization search and application profiling are not authorized targets.",
+    "decision": "Supported",
+    "change": "Added equivalent C# and C++ measurement/validation harnesses; library implementations unchanged.",
+    "changeScope": "local",
+    "maintainability": "One bounded reproduction runner and two explicit access loops.",
+    "codeComments": "Harness comments identify setup exclusion and checksum/anti-elimination controls.",
+    "result": "Managed/native ratio of launch medians 2.153; paired ratio median 2.151, range 2.003\u20132.266.",
+    "effectPercent": 115.27408508707566,
+    "decisionRationale": "Classifies the observed comparison only; no library optimization or application-speed claim is adopted.",
+    "evidence": [
+      "comparison.json",
+      "epochs/E2/raw/validation.json",
+      "epochs/E2/raw/environment.json"
+    ],
+    "risks": [],
+    "epochs": [
+      {
+        "epoch": "E1",
+        "result": "Managed/native ratio of launch medians 2.225; paired ratio median 2.105, range 1.715\u20132.545.",
+        "state": "retained"
+      },
+      {
+        "epoch": "E2",
+        "result": "Managed/native ratio of launch medians 2.153; paired ratio median 2.151, range 2.003\u20132.266.",
+        "state": "retained"
+      }
+    ]
+  },
+  {
+    "id": "H-002",
+    "claim": "Native OpenVDB has lower elapsed time per coherent cached write than the managed port on the fixed fixture.",
+    "mechanism": "Measured implementation comparison; no single causal mechanism is asserted.",
+    "prediction": "All paired managed/native launch-median write ratios exceed 1.",
+    "falsification": "A ratio at or below 1 rejects consistent native leadership; mixed directions are inconclusive.",
+    "state": "retained",
+    "scope": "Existing active voxel writes only, with changing values. Only two defensible comparison hypotheses exist in the authorized scope; the catalogue is not padded to ten or twenty.",
+    "decision": "Supported",
+    "change": "Added equivalent C# and C++ measurement/validation harnesses; library implementations unchanged.",
+    "changeScope": "local",
+    "maintainability": "One bounded reproduction runner and two explicit access loops.",
+    "codeComments": "Harness comments identify setup exclusion and checksum/anti-elimination controls.",
+    "result": "Managed/native ratio of launch medians 2.863; paired ratio median 2.807, range 2.313\u20132.886.",
+    "effectPercent": 186.3089932170518,
+    "decisionRationale": "Classifies the observed comparison only; no library optimization or application-speed claim is adopted.",
+    "evidence": [
+      "comparison.json",
+      "epochs/E2/raw/validation.json",
+      "epochs/E2/raw/environment.json"
+    ],
+    "risks": [],
+    "epochs": [
+      {
+        "epoch": "E1",
+        "result": "Managed/native ratio of launch medians 2.677; paired ratio median 2.565, range 1.942\u20133.452.",
+        "state": "retained"
+      },
+      {
+        "epoch": "E2",
+        "result": "Managed/native ratio of launch medians 2.863; paired ratio median 2.807, range 2.313\u20132.886.",
+        "state": "retained"
+      }
+    ]
+  }
+]
