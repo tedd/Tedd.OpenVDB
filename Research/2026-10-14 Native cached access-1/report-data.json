@@ -1,33 +1,33 @@
 {
   "title": "Managed versus native OpenVDB cached access",
-  "generatedAt": "2026-10-14T09:07:06.212416+02:00",
+  "generatedAt": "2026-10-14T09:50:36.563312+02:00",
   "status": "complete",
-  "scope": "Two local coherent cached-access kernels on an existing UInt16 Tree4 5/4/3, Windows x64. No library optimization. Final result: E2 on logical CPU 16; the more heavily contended E1 on CPU 8 remains in epochs/E1.",
+  "scope": "Two local coherent cached-access kernels on an existing UInt16 Tree4 5/4/3, Windows x64. No library optimization. Final result: E3 on logical CPU 16; all earlier epochs remain available.",
   "question": "How do matching managed and native cached reads/writes compare on the same warmed coordinate stream?",
   "primaryMetric": "milliseconds per operation; median of launch medians",
   "summary": {
-    "baseline": 3.742081028449582e-06,
-    "final": 8.055730697211869e-06,
+    "baseline": 3.5918829481692332e-06,
+    "final": 7.818653511657316e-06,
     "unit": "ms/op",
-    "changePercent": 115.27408508707566,
-    "headline": "Read managed/native time ratio 2.153x; write 2.863x. Ratios describe these kernels, not general OpenVDB performance."
+    "changePercent": 117.6756209620486,
+    "headline": "Read managed/native time ratio 2.177x; write 2.791x. Ratios describe these kernels, not general OpenVDB performance."
   },
   "scorecards": [
     {
       "title": "accessor.read.coherent (50,003,968 operations)",
-      "value": 402.8185,
+      "value": 390.9637000000001,
       "unit": "ms/batch",
-      "baseline": 187.1189,
-      "wallChangePercent": 115.27408508707566,
-      "progression": "Managed 0.00000805573 ms/op; native 0.00000374208 ms/op. Native 267,230,985 ops/s; managed 124,135,232 ops/s"
+      "baseline": 179.6084,
+      "wallChangePercent": 117.6756209620486,
+      "progression": "Managed 0.00000781865 ms/op; native 0.00000359188 ms/op. Native 278,405,509 ops/s; managed 127,899,260 ops/s"
     },
     {
       "title": "accessor.write.coherent (50,003,968 operations)",
-      "value": 672.5759,
+      "value": 635.1425,
       "unit": "ms/batch",
-      "baseline": 234.91260000000003,
-      "wallChangePercent": 186.3089932170518,
-      "progression": "Managed 0.00001345045 ms/op; native 0.00000469788 ms/op. Native 212,862,009 ops/s; managed 74,346,952 ops/s"
+      "baseline": 227.5435,
+      "wallChangePercent": 179.13014434602616,
+      "progression": "Managed 0.00001270184 ms/op; native 0.00000455051 ms/op. Native 219,755,642 ops/s; managed 78,728,739 ops/s"
     }
   ],
   "series": [
@@ -46,15 +46,15 @@
           "detail": "UInt16, 32768 prepopulated coordinates, default safe cached accessors",
           "measurements": [
             {
-              "median": 187.1189,
-              "min": 177.7839,
-              "max": 214.59540000000004,
+              "median": 179.6084,
+              "min": 177.7873,
+              "max": 245.7553,
               "n": 5
             },
             {
-              "median": 402.8185,
-              "min": 384.7467,
-              "max": 429.78509999999994,
+              "median": 390.9637000000001,
+              "min": 367.8396,
+              "max": 407.1307,
               "n": 5
             }
           ]
@@ -64,15 +64,15 @@
           "detail": "UInt16, 32768 prepopulated coordinates, default safe cached accessors",
           "measurements": [
             {
-              "median": 234.91260000000003,
-              "min": 220.2256,
-              "max": 294.0115,
+              "median": 227.5435,
+              "min": 209.6801,
+              "max": 230.0061,
               "n": 5
             },
             {
-              "median": 672.5759,
-              "min": 628.7033,
-              "max": 737.213,
+              "median": 635.1425,
+              "min": 592.4596,
+              "max": 664.8052,
               "n": 5
             }
           ]
@@ -88,20 +88,20 @@
         {
           "hypothesisId": "H-001",
           "label": "accessor.read.coherent",
-          "effect": 1.1527408508707566,
+          "effect": 1.176756209620486,
           "range": [
-            1.002769397666492,
-            1.2657760348378
+            0.6566507416116762,
+            1.1807398763086807
           ],
           "note": "Managed time relative to native; positive means slower."
         },
         {
           "hypothesisId": "H-002",
           "label": "accessor.write.coherent",
-          "effect": 1.863089932170518,
+          "effect": 1.7913014434602617,
           "range": [
-            1.3130999977892017,
-            1.8860740862798009
+            1.7810300008569793,
+            2.0061377713850552
           ],
           "note": "Managed time relative to native; positive means slower."
         }
@@ -122,13 +122,13 @@
       "changeScope": "local",
       "maintainability": "One bounded reproduction runner and two explicit access loops.",
       "codeComments": "Harness comments identify setup exclusion and checksum/anti-elimination controls.",
-      "result": "Managed/native ratio of launch medians 2.153; paired ratio median 2.151, range 2.003\u20132.266.",
-      "effectPercent": 115.27408508707566,
+      "result": "Managed/native ratio of launch medians 2.177; paired ratio median 2.069, range 1.657\u20132.181.",
+      "effectPercent": 117.6756209620486,
       "decisionRationale": "Classifies the observed comparison only; no library optimization or application-speed claim is adopted.",
       "evidence": [
         "comparison.json",
-        "epochs/E2/raw/validation.json",
-        "epochs/E2/raw/environment.json"
+        "epochs/E3/raw/validation.json",
+        "epochs/E3/raw/environment.json"
       ],
       "risks": [],
       "epochs": [
@@ -140,6 +140,11 @@
         {
           "epoch": "E2",
           "result": "Managed/native ratio of launch medians 2.153; paired ratio median 2.151, range 2.003\u20132.266.",
+          "state": "retained"
+        },
+        {
+          "epoch": "E3",
+          "result": "Managed/native ratio of launch medians 2.177; paired ratio median 2.069, range 1.657\u20132.181.",
           "state": "retained"
         }
       ]
@@ -157,13 +162,13 @@
       "changeScope": "local",
       "maintainability": "One bounded reproduction runner and two explicit access loops.",
       "codeComments": "Harness comments identify setup exclusion and checksum/anti-elimination controls.",
-      "result": "Managed/native ratio of launch medians 2.863; paired ratio median 2.807, range 2.313\u20132.886.",
-      "effectPercent": 186.3089932170518,
+      "result": "Managed/native ratio of launch medians 2.791; paired ratio median 2.859, range 2.781\u20133.006.",
+      "effectPercent": 179.13014434602616,
       "decisionRationale": "Classifies the observed comparison only; no library optimization or application-speed claim is adopted.",
       "evidence": [
         "comparison.json",
-        "epochs/E2/raw/validation.json",
-        "epochs/E2/raw/environment.json"
+        "epochs/E3/raw/validation.json",
+        "epochs/E3/raw/environment.json"
       ],
       "risks": [],
       "epochs": [
@@ -176,6 +181,11 @@
           "epoch": "E2",
           "result": "Managed/native ratio of launch medians 2.863; paired ratio median 2.807, range 2.313\u20132.886.",
           "state": "retained"
+        },
+        {
+          "epoch": "E3",
+          "result": "Managed/native ratio of launch medians 2.791; paired ratio median 2.859, range 2.781\u20133.006.",
+          "state": "retained"
         }
       ]
     }
@@ -187,7 +197,7 @@
   "environment": [
     {
       "label": "Managed revision",
-      "value": "164d2bccf69dd582c27231dbc53d08e33e36eff1"
+      "value": "25ac9c145f7a2114c60690a9e64c88c57b845564"
     },
     {
       "label": "Native revision",
@@ -227,7 +237,7 @@
     },
     {
       "label": "Baseline epoch",
-      "value": "E2; workloads and controls fixed before timing."
+      "value": "E3; workloads and controls fixed before timing."
     },
     {
       "label": "Preexisting changes",
@@ -236,6 +246,10 @@
     {
       "label": "Epoch selection",
       "value": "E1 selected CPU 8: 22% before, 51% after; sibling CPU 9: 76% before. E2 selected CPU 16: 5% before, 0% after. The first complete run was retained, not discarded."
+    },
+    {
+      "label": "Confirmation controls",
+      "value": "E3 matched E2 benchmark source hashes, native library hash/revision, runtime/compiler, power scheme, CPU 16 affinity, iterations and warmup. CPU 16 snapshots: 0% before, 2% after. External host activity remains."
     }
   ],
   "hotspots": [
@@ -284,8 +298,12 @@
       "path": "comparison.json"
     },
     {
-      "label": "Final E2 raw measurements",
-      "path": "epochs/E2/raw/"
+      "label": "Final E3 raw measurements",
+      "path": "epochs/E3/raw/"
+    },
+    {
+      "label": "Previous E2 report and measurements",
+      "path": "epochs/E2/report.html"
     },
     {
       "label": "Retained first E1 report and measurements",

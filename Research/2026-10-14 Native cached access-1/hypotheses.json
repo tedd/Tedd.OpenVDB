@@ -12,13 +12,13 @@
     "changeScope": "local",
     "maintainability": "One bounded reproduction runner and two explicit access loops.",
     "codeComments": "Harness comments identify setup exclusion and checksum/anti-elimination controls.",
-    "result": "Managed/native ratio of launch medians 2.153; paired ratio median 2.151, range 2.003\u20132.266.",
-    "effectPercent": 115.27408508707566,
+    "result": "Managed/native ratio of launch medians 2.177; paired ratio median 2.069, range 1.657\u20132.181.",
+    "effectPercent": 117.6756209620486,
     "decisionRationale": "Classifies the observed comparison only; no library optimization or application-speed claim is adopted.",
     "evidence": [
       "comparison.json",
-      "epochs/E2/raw/validation.json",
-      "epochs/E2/raw/environment.json"
+      "epochs/E3/raw/validation.json",
+      "epochs/E3/raw/environment.json"
     ],
     "risks": [],
     "epochs": [
@@ -30,6 +30,11 @@
       {
         "epoch": "E2",
         "result": "Managed/native ratio of launch medians 2.153; paired ratio median 2.151, range 2.003\u20132.266.",
+        "state": "retained"
+      },
+      {
+        "epoch": "E3",
+        "result": "Managed/native ratio of launch medians 2.177; paired ratio median 2.069, range 1.657\u20132.181.",
         "state": "retained"
       }
     ]
@@ -47,13 +52,13 @@
     "changeScope": "local",
     "maintainability": "One bounded reproduction runner and two explicit access loops.",
     "codeComments": "Harness comments identify setup exclusion and checksum/anti-elimination controls.",
-    "result": "Managed/native ratio of launch medians 2.863; paired ratio median 2.807, range 2.313\u20132.886.",
-    "effectPercent": 186.3089932170518,
+    "result": "Managed/native ratio of launch medians 2.791; paired ratio median 2.859, range 2.781\u20133.006.",
+    "effectPercent": 179.13014434602616,
     "decisionRationale": "Classifies the observed comparison only; no library optimization or application-speed claim is adopted.",
     "evidence": [
       "comparison.json",
-      "epochs/E2/raw/validation.json",
-      "epochs/E2/raw/environment.json"
+      "epochs/E3/raw/validation.json",
+      "epochs/E3/raw/environment.json"
     ],
     "risks": [],
     "epochs": [
@@ -65,6 +70,11 @@
       {
         "epoch": "E2",
         "result": "Managed/native ratio of launch medians 2.863; paired ratio median 2.807, range 2.313\u20132.886.",
+        "state": "retained"
+      },
+      {
+        "epoch": "E3",
+        "result": "Managed/native ratio of launch medians 2.791; paired ratio median 2.859, range 2.781\u20133.006.",
         "state": "retained"
       }
     ]

@@ -1,15 +1,15 @@
 # Managed versus native OpenVDB cached access
 
-The final repeat measured native OpenVDB at approximately **2.15 times the cached
-read throughput** and **2.86 times the cached write throughput** of the managed
+The final repeat measured native OpenVDB at approximately **2.18 times the cached
+read throughput** and **2.79 times the cached write throughput** of the managed
 port on this coherent, prepopulated workload.
 
 | Operation | Managed milliseconds/operation | Native milliseconds/operation | Managed operations/second | Native operations/second |
 |---|---:|---:|---:|---:|
-| Cached read | 0.00000805573 | 0.00000374208 | 124 million | 267 million |
-| Cached write | 0.00001345045 | 0.00000469788 | 74 million | 213 million |
+| Cached read | 0.00000781865 | 0.00000359188 | 128 million | 278 million |
+| Cached write | 0.00001270184 | 0.00000455051 | 79 million | 220 million |
 
-Values are medians of five process-launch medians from E2. Each launch measures
+Values are medians of five process-launch medians from E3. Each launch measures
 nine batches of 50,003,968 operations after two seconds of warmup per operation.
 Both implementations run serially on logical CPU 16, with alternating implementation
 and workload order. The speed ratios divide the managed median by the native median;
@@ -26,7 +26,7 @@ are excluded from the measured intervals.
 Native and managed coordinate hashes and checksums match. Every timed read batch
 has an independently calculated expected sum. Every write batch changes values,
 then all values, activity and topology are checked outside timing. All 90 managed
-timed batches in E2 recorded zero current-thread managed allocation. Native
+timed batches in E3 recorded zero current-thread managed allocation. Native
 allocation was not instrumented.
 
 ## Environment and scope
@@ -54,11 +54,20 @@ hypothesis catalogue and application profiling are outside this task.
 
 ## Artifacts and reproduction
 
+The requested confirmation (E3) reproduced the previous E2 result: native read
+throughput advantage 2.18× versus 2.15× previously; write advantage 2.79× versus
+2.86×. All five pairs favored native for both workloads. Source hashes, native
+library hash, compiler/runtime, power scheme and timing controls matched E2.
+CPU 16 snapshots showed 0% utilization before and 2% after. External activity
+and launch variance remain; this confirms the direction and approximate size,
+not an invariant ratio. All three epochs are retained.
+
 - [Self-contained report](report.html)
 - [Final summary and raw samples](comparison.json)
-- [Final E2 raw evidence](epochs/E2/raw/)
+- [Final E3 raw evidence](epochs/E3/raw/)
+- [Retained E2 report](epochs/E2/report.html)
 - [Retained E1 report](epochs/E1/report.html)
-- [Hypothesis ledger with both epochs](hypotheses.json)
+- [Hypothesis ledger with all epochs](hypotheses.json)
 - [Runner instructions](../../benchmarks/CACHED_COMPARISON.md)
 
 `finalize_report.py` regenerates reviewed reports from existing raw measurements

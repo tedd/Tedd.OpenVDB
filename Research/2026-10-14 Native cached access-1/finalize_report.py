@@ -12,7 +12,8 @@ from run_cached_comparison import produce_report, save  # noqa: E402
 
 renderer = Path(r"C:\Users\tedd\.codex\skills\scientific-method-performance\scripts\render_report.py")
 epoch_hypotheses = {}
-for epoch_name in ("E1", "E2"):
+epoch_names = sorted(p.name for p in (run / "epochs").iterdir() if (p / "comparison.json").is_file())
+for epoch_name in epoch_names:
     epoch = run / "epochs" / epoch_name
     summaries = json.loads((epoch / "comparison.json").read_text(encoding="utf-8"))
     environment = json.loads((epoch / "raw" / "environment.json").read_text(encoding="utf-8"))
@@ -37,23 +38,34 @@ for epoch_name in ("E1", "E2"):
     subprocess.run([sys.executable, str(renderer), str(epoch / "report-data.json"), str(epoch / "report.html")], check=True)
     epoch_hypotheses[epoch_name] = json.loads((epoch / "hypotheses.json").read_text(encoding="utf-8"))
 
-final_data = json.loads((run / "epochs" / "E2" / "report-data.json").read_text(encoding="utf-8"))
-final_data["scope"] += " Final result: E2 on logical CPU 16; the more heavily contended E1 on CPU 8 remains in epochs/E1."
+latest = epoch_names[-1]
+if "E3" in epoch_names:
+    previous = json.loads((run / "epochs/E2/raw/environment.json").read_text(encoding="utf-8"))
+    confirmation = json.loads((run / "epochs/E3/raw/environment.json").read_text(encoding="utf-8"))
+    for field in ("benchmarkSourceSha256", "nativeRevision", "nativeLibrarySha256", "managedRuntime", "nativeCompiler", "runtimeControls", "os"):
+        assert previous[field] == confirmation[field], field
+    for field in ("cpu", "operations", "samples", "launches", "warmup_ms"):
+        assert previous["configuration"][field] == confirmation["configuration"][field], field
+final_data = json.loads((run / "epochs" / latest / "report-data.json").read_text(encoding="utf-8"))
+final_data["scope"] += f" Final result: {latest} on logical CPU 16; all earlier epochs remain available."
 final_data["environment"].append({"label": "Epoch selection", "value": "E1 selected CPU 8: 22% before, 51% after; sibling CPU 9: 76% before. E2 selected CPU 16: 5% before, 0% after. The first complete run was retained, not discarded."})
 final_data["validityThreats"].append("Native write launch medians in E2 vary from 0.00000440416 to 0.00000587976 ms/op. Background load and frequency drift remain; use approximate ratios rather than a precise guarantee.")
+if latest == "E3":
+    final_data["environment"].append({"label": "Confirmation controls", "value": "E3 matched E2 benchmark source hashes, native library hash/revision, runtime/compiler, power scheme, CPU 16 affinity, iterations and warmup. CPU 16 snapshots: 0% before, 2% after. External host activity remains."})
 final_data["artifacts"] = [
     {"label": "Final comparison summary", "path": "comparison.json"},
-    {"label": "Final E2 raw measurements", "path": "epochs/E2/raw/"},
+    {"label": f"Final {latest} raw measurements", "path": f"epochs/{latest}/raw/"},
+    {"label": "Previous E2 report and measurements", "path": "epochs/E2/report.html"},
     {"label": "Retained first E1 report and measurements", "path": "epochs/E1/report.html"},
     {"label": "Complete hypothesis ledger", "path": "hypotheses.json"},
     {"label": "Reproduction instructions", "path": "../../benchmarks/CACHED_COMPARISON.md"},
 ]
 for item in final_data["hypotheses"]:
-    item["evidence"] = ["comparison.json", "epochs/E2/raw/validation.json", "epochs/E2/raw/environment.json"]
+    item["evidence"] = ["comparison.json", f"epochs/{latest}/raw/validation.json", f"epochs/{latest}/raw/environment.json"]
     item["epochs"] = [{"epoch": name, "result": next(h for h in entries if h["id"] == item["id"])["result"],
                        "state": next(h for h in entries if h["id"] == item["id"])["state"]} for name, entries in epoch_hypotheses.items()]
 save(run / "hypotheses.json", final_data["hypotheses"])
 save(run / "report-data.json", final_data)
-save(run / "comparison.json", json.loads((run / "epochs" / "E2" / "comparison.json").read_text(encoding="utf-8")))
+save(run / "comparison.json", json.loads((run / "epochs" / latest / "comparison.json").read_text(encoding="utf-8")))
 subprocess.run([sys.executable, str(renderer), str(run / "report-data.json"), str(run / "report.html")], check=True)
-print("Reviewed both epochs: 180 measured samples per implementation, all managed allocation samples zero; reports rebuilt.")
+print(f"Reviewed {len(epoch_names)} epochs: {90 * len(epoch_names)} measured samples per implementation, all managed allocation samples zero; reports rebuilt.")
