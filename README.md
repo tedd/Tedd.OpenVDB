@@ -1,4 +1,4 @@
-[![Build and test](https://github.com/tedd/Tedd.OpenVDB/actions/workflows/tests.yml/badge.svg)](https://github.com/tedd/Tedd.OpenVDB/actions/workflows/tests.yml)
+[![Build and test](https://github.com/tedd/Tedd.OpenVDB/actions/workflows/nuget-publish.yml/badge.svg)](https://github.com/tedd/Tedd.OpenVDB/actions/workflows/nuget-publish.yml)
 [![NuGet](https://img.shields.io/nuget/v/Tedd.OpenVDB.svg?logo=nuget)](https://www.nuget.org/packages/Tedd.OpenVDB)
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 
