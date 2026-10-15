@@ -1,0 +1,16 @@
+{
+  "status": "inventory-complete; exhaustive timing suite not implemented",
+  "managedPublicTypes": 311,
+  "managedCallableDefinitions": 4103,
+  "sourceMatchedDefinitions": 4103,
+  "sourceErrors": 0,
+  "sourceWarnings": 0,
+  "nativeEquivalentMappings": 0,
+  "exhaustiveBenchmarkCasesExecuted": 0,
+  "scopeQuestionPending": "Tedd public API with native equivalents/N/A, or union of both libraries public APIs",
+  "nextRequired": [
+    "Resolve the native prototype accessor.addTile secondary-cache invalidation concern with a sanitizer reproduction.",
+    "Build independently matching stock and modified native cores; shared stock core plus changed accessor layout is insufficient for broad measurements.",
+    "Map every public overload, document concrete generic instantiations and unavailable equivalents, generate typed callers, validate semantics, then time the three implementations."
+  ]
+}
