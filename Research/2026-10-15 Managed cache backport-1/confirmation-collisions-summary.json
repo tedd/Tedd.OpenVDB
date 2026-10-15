@@ -1,0 +1,46 @@
+{
+  "final_base": {
+    "accessor.read.collisions": {
+      "nsPerOperation": 67.30524665562541,
+      "launchMedians": [
+        53.89047125220142,
+        71.84071872056234,
+        67.30524665562541
+      ],
+      "minimum": 53.89047125220142,
+      "maximum": 71.84071872056234
+    },
+    "accessor.write.collisions": {
+      "nsPerOperation": 71.82368007274943,
+      "launchMedians": [
+        58.764012487968955,
+        71.82368007274943,
+        74.23822445450729
+      ],
+      "minimum": 58.764012487968955,
+      "maximum": 74.23822445450729
+    }
+  },
+  "final_hot": {
+    "accessor.read.collisions": {
+      "nsPerOperation": 59.464152924823885,
+      "launchMedians": [
+        59.464152924823885,
+        69.71879911610215,
+        53.566928928520234
+      ],
+      "minimum": 53.566928928520234,
+      "maximum": 69.71879911610215
+    },
+    "accessor.write.collisions": {
+      "nsPerOperation": 73.89861940556398,
+      "launchMedians": [
+        79.2563662147772,
+        73.89861940556398,
+        67.8502714024615
+      ],
+      "minimum": 67.8502714024615,
+      "maximum": 79.2563662147772
+    }
+  }
+}

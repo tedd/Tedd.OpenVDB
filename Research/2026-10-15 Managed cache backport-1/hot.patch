@@ -1,0 +1,52 @@
+--- a/src/Tedd.OpenVDB/Tree/ValueAccessor.cs
++++ b/src/Tedd.OpenVDB/Tree/ValueAccessor.cs
+@@ -52,13 +52,20 @@
+     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+     public T GetValue(Coord coordinate)
+     {
+-        var leaf = Cached(coordinate);
+-        return leaf is not null ? leaf.GetValue(coordinate) : GetValueUncached(coordinate);
++        var leaf = _leaf;
++        if (leaf is not null && _version == _tree.TopologyVersion)
++        {
++            var origin = leaf.Origin;
++            if ((((coordinate.X ^ origin.X) | (coordinate.Y ^ origin.Y) | (coordinate.Z ^ origin.Z)) & -8) == 0)
++                return leaf.GetValue(coordinate);
++        }
++        return GetValueUncached(coordinate);
+     }
+ 
+     [MethodImpl(MethodImplOptions.NoInlining)]
+     private T GetValueUncached(Coord coordinate)
+     {
++        if (_version != _tree.TopologyVersion) Clear();
+         var leaf = CachedSecondary(coordinate);
+         if (leaf is not null) return leaf.GetValue(coordinate);
+         Resolve(coordinate, out T value);
+@@ -69,14 +76,23 @@
+     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+     public void SetValueOn(Coord coordinate, T value)
+     {
+-        var leaf = Cached(coordinate);
+-        if (leaf is not null) leaf.SetValueOn(coordinate, value);
+-        else SetValueOnUncached(coordinate, value);
++        var leaf = _leaf;
++        if (leaf is not null && _version == _tree.TopologyVersion)
++        {
++            var origin = leaf.Origin;
++            if ((((coordinate.X ^ origin.X) | (coordinate.Y ^ origin.Y) | (coordinate.Z ^ origin.Z)) & -8) == 0)
++            {
++                leaf.SetValueOn(coordinate, value);
++                return;
++            }
++        }
++        SetValueOnUncached(coordinate, value);
+     }
+ 
+     [MethodImpl(MethodImplOptions.NoInlining)]
+     private void SetValueOnUncached(Coord coordinate, T value)
+     {
++        if (_version != _tree.TopologyVersion) Clear();
+         var leaf = CachedSecondary(coordinate);
+         if (leaf is not null) { leaf.SetValueOn(coordinate, value); return; }
+         bool active = Resolve(coordinate, out T previous);

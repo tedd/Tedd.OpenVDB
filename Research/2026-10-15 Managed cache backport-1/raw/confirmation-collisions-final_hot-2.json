@@ -1,0 +1,62 @@
+{
+  "implementation": "managed",
+  "valueType": "UInt16",
+  "coordinates": 32768,
+  "pattern": "collisions",
+  "setupMilliseconds": 17.8763,
+  "setupAllocatedBytes": 719320,
+  "accessorAllocatedBytes": 552,
+  "coordinateHash": "ff1b561b27edeb37",
+  "checksum": 147456,
+  "activeVoxelCount": 32768,
+  "leafCount": 64,
+  "runtime": ".NET 11.0.0-rc.2.26504.105",
+  "os": "Microsoft Windows 10.0.26200",
+  "architecture": "X64",
+  "serverGc": true,
+  "vectorBytes": 32,
+  "cpu": 8,
+  "affinityMask": "100",
+  "tieredCompilation": "1",
+  "tieredPgo": "1",
+  "warmupMilliseconds": 4000,
+  "sink": 112508928,
+  "results": [
+    {
+      "name": "accessor.write.collisions",
+      "operations": 25001984,
+      "elapsedMilliseconds": [
+        1997.6337,
+        1843.2821,
+        1847.6121,
+        1858.4649,
+        1828.7212
+      ],
+      "allocatedBytes": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "accessor.read.collisions",
+      "operations": 25001984,
+      "elapsedMilliseconds": [
+        1909.4297,
+        1723.5612,
+        1713.0072,
+        1743.1083,
+        1851.318
+      ],
+      "allocatedBytes": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+['dotnet', 'build', 'D:\\Workspaces\\AI\\openvdb-managed-backport-20261015\\nomask\\source\\benchmarks\\CachedAccess.Managed\\CachedAccess.Managed.csproj', '-c', 'Release', '--artifacts-path', 'D:\\Workspaces\\AI\\openvdb-managed-backport-20261015\\nomask\\artifacts', '-p:GeneratePackageOnBuild=false']
+  Determining projects to restore...
+  Restored D:\Workspaces\AI\openvdb-managed-backport-20261015\nomask\source\src\Tedd.OpenVDB\Tedd.OpenVDB.csproj (in 1 ms).
+  Restored D:\Workspaces\AI\openvdb-managed-backport-20261015\nomask\source\benchmarks\CachedAccess.Managed\CachedAccess.Managed.csproj (in 2 ms).
+C:\Program Files\dotnet\sdk\11.0.100-rc.2.26504.105\Sdks\Microsoft.NET.Sdk\targets\Microsoft.NET.RuntimeIdentifierInference.targets(385,5): message NETSDK1057: You are using a preview version of .NET. See: https://aka.ms/dotnet-support-policy [D:\Workspaces\AI\openvdb-managed-backport-20261015\nomask\source\benchmarks\CachedAccess.Managed\CachedAccess.Managed.csproj]
+  Tedd.OpenVDB -> D:\Workspaces\AI\openvdb-managed-backport-20261015\nomask\artifacts\bin\Tedd.OpenVDB\release\Tedd.OpenVDB.dll
+  CachedAccess.Managed -> D:\Workspaces\AI\openvdb-managed-backport-20261015\nomask\artifacts\bin\CachedAccess.Managed\release\CachedAccess.Managed.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:02.26
+

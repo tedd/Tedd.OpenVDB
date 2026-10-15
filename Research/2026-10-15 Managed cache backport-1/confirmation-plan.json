@@ -1,0 +1,31 @@
+{
+  "selected": "hot: direct primary hit guard, topology invalidation moved into existing cold paths",
+  "rejected": {
+    "keys": "Coherent read +4.5%, random read +8.2% median time in screen.",
+    "nomask": "Dense write +7.6% time in the write-first screen pair; no consistent benefit."
+  },
+  "screenCaveat": "Synthesized and dynamic PGO callers observed in diagnostic runs; transient tiers may contaminate short warmup. Screen results exploratory, not adopted.",
+  "prospectiveChange": "Fresh normal builds, fixed 4000ms warmup per workload, no other runtime changes.",
+  "coherent": {
+    "launches": 5,
+    "samples": 9,
+    "operations": 50003968
+  },
+  "guardrails": {
+    "launches": 3,
+    "samples": 5,
+    "operations": 25001984,
+    "churnOperations": 32768,
+    "patterns": [
+      "random",
+      "partial",
+      "large",
+      "large-random",
+      "collisions",
+      "churn"
+    ]
+  },
+  "threshold": "At least 3% coherent read or write throughput gain; other coherent and all guardrail median times no worse than 5%. Full suite and zero steady-state allocations required.",
+  "exclusions": "None. Retain complete fixed budgets. If primary gate fails, do not spend guardrail budget or adopt.",
+  "statistics": "Median of launch medians; complete launch ranges; descriptive, shared host."
+}

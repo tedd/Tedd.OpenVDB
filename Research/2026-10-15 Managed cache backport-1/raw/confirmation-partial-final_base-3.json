@@ -1,0 +1,62 @@
+{
+  "implementation": "managed",
+  "valueType": "UInt16",
+  "coordinates": 32768,
+  "pattern": "partial",
+  "setupMilliseconds": 7.0152,
+  "setupAllocatedBytes": 719320,
+  "accessorAllocatedBytes": 552,
+  "coordinateHash": "0b6895be43c67b25",
+  "checksum": 147456,
+  "activeVoxelCount": 16384,
+  "leafCount": 64,
+  "runtime": ".NET 11.0.0-rc.2.26504.105",
+  "os": "Microsoft Windows 10.0.26200",
+  "architecture": "X64",
+  "serverGc": true,
+  "vectorBytes": 32,
+  "cpu": 8,
+  "affinityMask": "100",
+  "tieredCompilation": "1",
+  "tieredPgo": "1",
+  "warmupMilliseconds": 4000,
+  "sink": 112508928,
+  "results": [
+    {
+      "name": "accessor.read.partial",
+      "operations": 25001984,
+      "elapsedMilliseconds": [
+        75.9259,
+        75.8724,
+        75.9109,
+        80.8551,
+        80.2927
+      ],
+      "allocatedBytes": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "accessor.write.partial",
+      "operations": 25001984,
+      "elapsedMilliseconds": [
+        120.6031,
+        120.5126,
+        120.3346,
+        120.6341,
+        120.4136
+      ],
+      "allocatedBytes": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ]
+}

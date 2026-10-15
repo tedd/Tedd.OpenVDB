@@ -1,0 +1,62 @@
+{
+  "implementation": "managed",
+  "valueType": "UInt16",
+  "coordinates": 32768,
+  "pattern": "large-random",
+  "setupMilliseconds": 17.8551,
+  "setupAllocatedBytes": 1300312,
+  "accessorAllocatedBytes": 552,
+  "coordinateHash": "3ca1f959fffdf861",
+  "checksum": 147456,
+  "activeVoxelCount": 32768,
+  "leafCount": 512,
+  "runtime": ".NET 11.0.0-rc.2.26504.105",
+  "os": "Microsoft Windows 10.0.26200",
+  "architecture": "X64",
+  "serverGc": true,
+  "vectorBytes": 32,
+  "cpu": 8,
+  "affinityMask": "100",
+  "tieredCompilation": "1",
+  "tieredPgo": "1",
+  "warmupMilliseconds": 4000,
+  "sink": 112508928,
+  "results": [
+    {
+      "name": "accessor.write.large-random",
+      "operations": 25001984,
+      "elapsedMilliseconds": [
+        1273.4603,
+        1235.3692,
+        1231.3926,
+        1387.7045,
+        1318.8327
+      ],
+      "allocatedBytes": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "accessor.read.large-random",
+      "operations": 25001984,
+      "elapsedMilliseconds": [
+        1157.6736,
+        1159.1138,
+        1153.7326,
+        1153.7563,
+        1154.9628
+      ],
+      "allocatedBytes": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ]
+}

@@ -12,7 +12,7 @@ int samples = IntArg("--samples", 9);
 int warmupMilliseconds = IntArg("--warmup-ms", 2000);
 int cpu = IntArg("--cpu", 8);
 string pattern = Array.IndexOf(args, "--pattern") is int patternIndex && patternIndex >= 0 ? args[patternIndex + 1] : "coherent";
-if (pattern is not ("coherent" or "random" or "partial" or "churn")) throw new ArgumentException("Unknown access pattern.");
+if (pattern is not ("coherent" or "random" or "partial" or "churn" or "large" or "large-random" or "collisions")) throw new ArgumentException("Unknown access pattern.");
 if (operations < 32768 || operations % 32768 != 0 || samples < 1 || warmupMilliseconds < 0 || cpu is < 0 or > 62)
     throw new ArgumentException("Operations must be a positive multiple of 32768; invalid sample, warmup or CPU argument.");
 if (OperatingSystem.IsWindows()) Process.GetCurrentProcess().ProcessorAffinity = new IntPtr(1L << cpu);
@@ -49,7 +49,21 @@ var accessor = tree.GetAccessor();
 accessorAllocation = GC.GetAllocatedBytesForCurrentThread() - accessorAllocation;
 for (int i = 0; i < coordinates.Length; ++i)
     coordinates[i] = new((i >> 10) - 16, ((i >> 5) & 31) - 16, (i & 31) - 16);
-if (pattern == "random")
+if (pattern is "large" or "large-random")
+    for (int i = 0; i < coordinates.Length; ++i)
+    {
+        int leaf = i >> 6, local = i & 63;
+        coordinates[i] = new(((leaf >> 6) - 4) * 8, (((leaf >> 3) & 7) - 4) * 8 + (local >> 3),
+            ((leaf & 7) - 4) * 8 + (local & 7));
+    }
+if (pattern == "collisions")
+    for (int i = 0; i < coordinates.Length; ++i)
+    {
+        int leaf = i >> 9, local = i & 511;
+        coordinates[i] = new(((leaf >> 4) - 2) * 32 + (local >> 6),
+            (((leaf >> 2) & 3) - 2) * 32 + ((local >> 3) & 7), ((leaf & 3) - 2) * 32 + (local & 7));
+    }
+if (pattern is "random" or "large-random" or "collisions")
 {
     uint seed = 7391;
     for (int i = coordinates.Length - 1; i > 0; --i)
@@ -138,7 +152,8 @@ void Validate(int phase)
         checksum += actual;
     }
     long expectedChecksum = pattern == "partial" && (phase & 1) != 0 ? 163840 : 147456;
-    if (checksum != expectedChecksum || tree.ActiveVoxelCount != (pattern == "partial" ? 16384UL : 32768UL) || tree.LeafCount != 64)
+    if (checksum != expectedChecksum || tree.ActiveVoxelCount != (pattern == "partial" ? 16384UL : 32768UL)
+        || tree.LeafCount != (pattern is "large" or "large-random" ? 512L : 64L))
         throw new InvalidOperationException("Tree topology or aggregate checksum mismatch.");
 }
 void WriteFixture(int count, int phase)

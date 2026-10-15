@@ -1,0 +1,3347 @@
+; Assembly listing for method Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:.ctor(Tedd.OpenVDB.Tree.VdbTree`1[ushort]):this (Tier0)
+; Emitting BLENDED_CODE for x64 + VEX on Windows
+; Tier0 code
+; rbp based frame
+; partially interruptible
+; compiling with minopt
+
+G_M000_IG01:                ;; offset=0x0000
+       push     rbp
+       sub      rsp, 64
+       lea      rbp, [rsp+0x40]
+       vxorps   xmm4, xmm4, xmm4
+       vmovdqu  xmmword ptr [rbp-0x18], xmm4
+       xor      eax, eax
+       mov      qword ptr [rbp-0x08], rax
+       mov      gword ptr [rbp+0x10], rcx
+       mov      gword ptr [rbp+0x18], rdx
+ 
+G_M000_IG02:                ;; offset=0x0021
+       mov      rcx, gword ptr [rbp+0x10]
+       call     [System.Object:.ctor():this]
+       mov      rax, gword ptr [rbp+0x10]
+       mov      gword ptr [rbp-0x08], rax
+       mov      rax, gword ptr [rbp+0x18]
+       mov      gword ptr [rbp-0x10], rax
+       cmp      gword ptr [rbp+0x18], 0
+       jne      SHORT G_M000_IG04
+ 
+G_M000_IG03:                ;; offset=0x0042
+       mov      rcx, 0x7FFC1C761450
+       call     CORINFO_HELP_NEWSFAST
+       mov      gword ptr [rbp-0x18], rax
+       mov      rcx, gword ptr [rbp-0x18]
+       mov      rdx, 0x18380E06540
+       call     [System.ArgumentNullException:.ctor(System.String):this]
+       mov      rcx, gword ptr [rbp-0x18]
+       call     CORINFO_HELP_THROW
+       int3     
+ 
+G_M000_IG04:                ;; offset=0x0073
+       mov      rax, gword ptr [rbp-0x08]
+       lea      rcx, bword ptr [rax+0x08]
+       mov      rdx, gword ptr [rbp-0x10]
+       call     CORINFO_HELP_ASSIGN_REF
+       nop      
+ 
+G_M000_IG05:                ;; offset=0x0085
+       add      rsp, 64
+       pop      rbp
+       ret      
+ 
+; Total bytes of code 139
+
+; Assembly listing for method Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:SetValueOnUncached(Tedd.OpenVDB.Math.Coord,ushort):this (Tier0)
+; Emitting BLENDED_CODE for x64 + VEX on Windows
+; Tier0 code
+; rbp based frame
+; partially interruptible
+; compiling with minopt
+
+G_M000_IG01:                ;; offset=0x0000
+       push     rbp
+       sub      rsp, 208
+       lea      rbp, [rsp+0xD0]
+       xor      eax, eax
+       mov      qword ptr [rbp-0x88], rax
+       vxorps   xmm4, xmm4, xmm4
+       vmovdqu  ymmword ptr [rbp-0x80], ymm4
+       vmovdqu  ymmword ptr [rbp-0x60], ymm4
+       vmovdqu  ymmword ptr [rbp-0x40], ymm4
+       vmovdqu  ymmword ptr [rbp-0x20], ymm4
+       mov      gword ptr [rbp+0x10], rcx
+       mov      bword ptr [rbp+0x18], rdx
+       mov      dword ptr [rbp+0x20], r8d
+ 
+G_M000_IG02:                ;; offset=0x003D
+       mov      rax, gword ptr [rbp+0x10]
+       mov      rax, qword ptr [rax+0x18]
+       mov      qword ptr [rbp-0x30], rax
+       mov      rax, gword ptr [rbp+0x10]
+       mov      rcx, gword ptr [rax+0x08]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.VdbTree`1[ushort]:get_TopologyVersion():long:this]
+       cmp      rax, qword ptr [rbp-0x30]
+       je       SHORT G_M000_IG03
+       mov      rcx, gword ptr [rbp+0x10]
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:Clear():this]
+ 
+G_M000_IG03:                ;; offset=0x0069
+       mov      rax, bword ptr [rbp+0x18]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x50], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x48], ecx
+       lea      rdx, [rbp-0x50]
+       mov      rcx, gword ptr [rbp+0x10]
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:CachedSecondary(Tedd.OpenVDB.Math.Coord):Tedd.OpenVDB.Tree.LeafNode`1[ushort]:this]
+       mov      gword ptr [rbp-0x08], rax
+       cmp      gword ptr [rbp-0x08], 0
+       je       SHORT G_M000_IG05
+       mov      rax, bword ptr [rbp+0x18]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x60], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x58], ecx
+       lea      rdx, [rbp-0x60]
+       movzx    r8, word  ptr [rbp+0x20]
+       mov      rcx, gword ptr [rbp-0x08]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.LeafNode`1[ushort]:SetValueOn(Tedd.OpenVDB.Math.Coord,ushort):this]
+       nop      
+ 
+G_M000_IG04:                ;; offset=0x00BA
+       add      rsp, 208
+       pop      rbp
+       ret      
+ 
+G_M000_IG05:                ;; offset=0x00C3
+       mov      rax, bword ptr [rbp+0x18]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x70], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x68], ecx
+       lea      rdx, [rbp-0x70]
+       lea      r8, [rbp-0x18]
+       mov      rcx, gword ptr [rbp+0x10]
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:Resolve(Tedd.OpenVDB.Math.Coord,byref):bool:this]
+       mov      dword ptr [rbp-0x0C], eax
+       mov      rax, gword ptr [rbp+0x10]
+       mov      rax, gword ptr [rax+0x10]
+       mov      gword ptr [rbp-0x08], rax
+       cmp      gword ptr [rbp-0x08], 0
+       jne      G_M000_IG09
+       cmp      dword ptr [rbp-0x0C], 0
+       je       SHORT G_M000_IG07
+       movzx    rdx, word  ptr [rbp+0x20]
+       movzx    rcx, word  ptr [rbp-0x18]
+       call     [Tedd.OpenVDB.Util.ValueEquality`1[ushort]:Equals(ushort,ushort):bool]
+       test     eax, eax
+       je       SHORT G_M000_IG07
+ 
+G_M000_IG06:                ;; offset=0x0118
+       add      rsp, 208
+       pop      rbp
+       ret      
+ 
+G_M000_IG07:                ;; offset=0x0121
+       mov      rax, gword ptr [rbp+0x10]
+       mov      rax, qword ptr [rax+0x18]
+       mov      qword ptr [rbp-0x38], rax
+       mov      rax, gword ptr [rbp+0x10]
+       mov      rcx, gword ptr [rax+0x08]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.VdbTree`1[ushort]:get_TopologyVersion():long:this]
+       cmp      rax, qword ptr [rbp-0x38]
+       je       SHORT G_M000_IG08
+       mov      rcx, gword ptr [rbp+0x10]
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:Clear():this]
+ 
+G_M000_IG08:                ;; offset=0x014D
+       mov      rax, gword ptr [rbp+0x10]
+       mov      rax, gword ptr [rax+0x08]
+       mov      gword ptr [rbp-0x88], rax
+       mov      rax, bword ptr [rbp+0x18]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x80], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x78], ecx
+       mov      rcx, gword ptr [rbp-0x88]
+       lea      rdx, [rbp-0x80]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.VdbTree`1[ushort]:TouchLeaf(Tedd.OpenVDB.Math.Coord):Tedd.OpenVDB.Tree.LeafNode`1[ushort]:this]
+       mov      gword ptr [rbp-0x08], rax
+       mov      rax, gword ptr [rbp+0x10]
+       lea      rcx, bword ptr [rax+0x10]
+       mov      rdx, gword ptr [rbp-0x08]
+       call     CORINFO_HELP_ASSIGN_REF
+       mov      rax, gword ptr [rbp+0x10]
+       cmp      byte  ptr [rax], al
+       mov      rax, gword ptr [rbp+0x10]
+       lea      r8, bword ptr [rax+0x20]
+       lea      rcx, [rbp-0x28]
+       mov      rdx, 0x7FFC1C9195D8
+       mov      r9d, 64
+       call     [<PrivateImplementationDetails>:InlineArrayAsSpan[Tedd.OpenVDB.Tree.ValueAccessor`1+LeafCache[ushort],System.__Canon](byref,int):System.Span`1[System.__Canon]]
+       mov      rax, bword ptr [rbp+0x18]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x98], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x90], ecx
+       lea      rcx, [rbp-0x98]
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:CacheSlot(Tedd.OpenVDB.Math.Coord):int]
+       mov      dword ptr [rbp-0x3C], eax
+       mov      eax, dword ptr [rbp-0x20]
+       cmp      dword ptr [rbp-0x3C], eax
+       jae      SHORT G_M000_IG11
+       mov      eax, dword ptr [rbp-0x3C]
+       mov      rcx, bword ptr [rbp-0x28]
+       lea      rcx, bword ptr [rcx+8*rax]
+       mov      rdx, gword ptr [rbp-0x08]
+       call     CORINFO_HELP_CHECKED_ASSIGN_REF
+       mov      rax, gword ptr [rbp+0x10]
+       mov      rcx, gword ptr [rax+0x08]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.VdbTree`1[ushort]:get_TopologyVersion():long:this]
+       mov      rcx, gword ptr [rbp+0x10]
+       mov      qword ptr [rcx+0x18], rax
+ 
+G_M000_IG09:                ;; offset=0x0218
+       mov      rax, bword ptr [rbp+0x18]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0xA8], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0xA0], ecx
+       lea      rdx, [rbp-0xA8]
+       movzx    r8, word  ptr [rbp+0x20]
+       mov      rcx, gword ptr [rbp-0x08]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.LeafNode`1[ushort]:SetValueOn(Tedd.OpenVDB.Math.Coord,ushort):this]
+       nop      
+ 
+G_M000_IG10:                ;; offset=0x0248
+       add      rsp, 208
+       pop      rbp
+       ret      
+ 
+G_M000_IG11:                ;; offset=0x0251
+       call     CORINFO_HELP_RNGCHKFAIL
+       int3     
+ 
+; Total bytes of code 599
+
+; Assembly listing for method Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:CachedSecondary(Tedd.OpenVDB.Math.Coord):Tedd.OpenVDB.Tree.LeafNode`1[ushort]:this (Tier0)
+; Emitting BLENDED_CODE for x64 + VEX on Windows
+; Tier0 code
+; rbp based frame
+; partially interruptible
+; compiling with minopt
+
+G_M000_IG01:                ;; offset=0x0000
+       push     rbp
+       sub      rsp, 160
+       lea      rbp, [rsp+0xA0]
+       vxorps   xmm4, xmm4, xmm4
+       vmovdqu  xmmword ptr [rbp-0x18], xmm4
+       xor      eax, eax
+       mov      qword ptr [rbp-0x08], rax
+       mov      gword ptr [rbp+0x10], rcx
+       mov      bword ptr [rbp+0x18], rdx
+ 
+G_M000_IG02:                ;; offset=0x0027
+       mov      rax, gword ptr [rbp+0x10]
+       cmp      byte  ptr [rax], al
+       mov      rax, gword ptr [rbp+0x10]
+       lea      r8, bword ptr [rax+0x20]
+       lea      rcx, [rbp-0x18]
+       mov      rdx, 0x7FFC1C9195D8
+       mov      r9d, 64
+       call     [<PrivateImplementationDetails>:InlineArrayAsSpan[Tedd.OpenVDB.Tree.ValueAccessor`1+LeafCache[ushort],System.__Canon](byref,int):System.Span`1[System.__Canon]]
+       mov      rax, bword ptr [rbp+0x18]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x50], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x48], ecx
+       lea      rcx, [rbp-0x50]
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:CacheSlot(Tedd.OpenVDB.Math.Coord):int]
+       mov      dword ptr [rbp-0x1C], eax
+       mov      eax, dword ptr [rbp-0x10]
+       cmp      dword ptr [rbp-0x1C], eax
+       jae      G_M000_IG07
+       mov      eax, dword ptr [rbp-0x1C]
+       mov      rcx, bword ptr [rbp-0x18]
+       mov      rax, gword ptr [rcx+8*rax]
+       mov      gword ptr [rbp-0x08], rax
+       cmp      gword ptr [rbp-0x08], 0
+       je       SHORT G_M000_IG03
+       lea      rdx, [rbp-0x30]
+       mov      rcx, gword ptr [rbp-0x08]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.LeafNode`1[ushort]:get_Origin():Tedd.OpenVDB.Math.Coord:this]
+       mov      rax, bword ptr [rbp+0x18]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x60], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x58], ecx
+       lea      rdx, [rbp-0x60]
+       lea      rcx, [rbp-0x40]
+       mov      r8d, 3
+       call     [Tedd.OpenVDB.Tree.VdbTree`1[ushort]:Align(Tedd.OpenVDB.Math.Coord,int):Tedd.OpenVDB.Math.Coord]
+       mov      rax, qword ptr [rbp-0x30]
+       mov      qword ptr [rbp-0x70], rax
+       mov      eax, dword ptr [rbp-0x28]
+       mov      dword ptr [rbp-0x68], eax
+       mov      rax, qword ptr [rbp-0x40]
+       mov      qword ptr [rbp-0x80], rax
+       mov      eax, dword ptr [rbp-0x38]
+       mov      dword ptr [rbp-0x78], eax
+       lea      rcx, [rbp-0x70]
+       lea      rdx, [rbp-0x80]
+       call     [Tedd.OpenVDB.Math.Coord:op_Inequality(Tedd.OpenVDB.Math.Coord,Tedd.OpenVDB.Math.Coord):bool]
+       test     eax, eax
+       je       SHORT G_M000_IG05
+ 
+G_M000_IG03:                ;; offset=0x00F2
+       xor      rax, rax
+ 
+G_M000_IG04:                ;; offset=0x00F4
+       add      rsp, 160
+       pop      rbp
+       ret      
+ 
+G_M000_IG05:                ;; offset=0x00FD
+       mov      rax, gword ptr [rbp+0x10]
+       lea      rcx, bword ptr [rax+0x10]
+       mov      rdx, gword ptr [rbp-0x08]
+       call     CORINFO_HELP_ASSIGN_REF
+       mov      rax, gword ptr [rbp-0x08]
+ 
+G_M000_IG06:                ;; offset=0x0112
+       add      rsp, 160
+       pop      rbp
+       ret      
+ 
+G_M000_IG07:                ;; offset=0x011B
+       call     CORINFO_HELP_RNGCHKFAIL
+       int3     
+ 
+; Total bytes of code 289
+
+; Assembly listing for method Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:CacheSlot(Tedd.OpenVDB.Math.Coord):int (Tier0)
+; Emitting BLENDED_CODE for x64 + VEX on Windows
+; Tier0 code
+; rbp based frame
+; partially interruptible
+; compiling with minopt
+
+G_M000_IG01:                ;; offset=0x0000
+       push     rbp
+       sub      rsp, 48
+       lea      rbp, [rsp+0x30]
+       mov      bword ptr [rbp+0x10], rcx
+ 
+G_M000_IG02:                ;; offset=0x000E
+       mov      rcx, bword ptr [rbp+0x10]
+       call     [Tedd.OpenVDB.Math.Coord:get_X():int:this]
+       sar      eax, 3
+       and      eax, 3
+       shl      eax, 4
+       mov      dword ptr [rbp-0x04], eax
+       mov      rcx, bword ptr [rbp+0x10]
+       call     [Tedd.OpenVDB.Math.Coord:get_Y():int:this]
+       sar      eax, 3
+       and      eax, 3
+       shl      eax, 2
+       or       eax, dword ptr [rbp-0x04]
+       mov      dword ptr [rbp-0x08], eax
+       mov      rcx, bword ptr [rbp+0x10]
+       call     [Tedd.OpenVDB.Math.Coord:get_Z():int:this]
+       sar      eax, 3
+       and      eax, 3
+       or       eax, dword ptr [rbp-0x08]
+ 
+G_M000_IG03:                ;; offset=0x0050
+       add      rsp, 48
+       pop      rbp
+       ret      
+ 
+; Total bytes of code 86
+
+; Assembly listing for method Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:Resolve(Tedd.OpenVDB.Math.Coord,byref):bool:this (Tier0)
+; Emitting BLENDED_CODE for x64 + VEX on Windows
+; Tier0 code
+; rbp based frame
+; partially interruptible
+; compiling with minopt
+
+G_M000_IG01:                ;; offset=0x0000
+       push     rbp
+       sub      rsp, 128
+       lea      rbp, [rsp+0x80]
+       xor      eax, eax
+       mov      qword ptr [rbp-0x48], rax
+       vxorps   xmm4, xmm4, xmm4
+       vmovdqu  ymmword ptr [rbp-0x40], ymm4
+       vmovdqu  ymmword ptr [rbp-0x20], ymm4
+       mov      gword ptr [rbp+0x10], rcx
+       mov      bword ptr [rbp+0x18], rdx
+       mov      bword ptr [rbp+0x20], r8
+ 
+G_M000_IG02:                ;; offset=0x0030
+       mov      rax, gword ptr [rbp+0x10]
+       mov      rax, gword ptr [rax+0x08]
+       mov      gword ptr [rbp-0x48], rax
+       mov      rax, bword ptr [rbp+0x18]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x40], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x38], ecx
+       lea      rax, [rbp-0x10]
+       mov      qword ptr [rsp+0x20], rax
+       mov      rcx, gword ptr [rbp-0x48]
+       lea      rdx, [rbp-0x40]
+       mov      rax, gword ptr [rbp+0x10]
+       cmp      byte  ptr [rax], al
+       mov      rax, gword ptr [rbp+0x10]
+       lea      r9, bword ptr [rax+0x10]
+       mov      r8, bword ptr [rbp+0x20]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.VdbTree`1[ushort]:Probe(Tedd.OpenVDB.Math.Coord,byref,byref,byref):bool:this]
+       mov      dword ptr [rbp-0x24], eax
+       mov      rax, gword ptr [rbp+0x10]
+       mov      rax, gword ptr [rax+0x10]
+       mov      gword ptr [rbp-0x08], rax
+       mov      eax, dword ptr [rbp-0x24]
+       mov      dword ptr [rbp-0x28], eax
+       cmp      gword ptr [rbp-0x08], 0
+       je       SHORT G_M000_IG03
+       mov      rax, gword ptr [rbp+0x10]
+       cmp      byte  ptr [rax], al
+       mov      rax, gword ptr [rbp+0x10]
+       lea      r8, bword ptr [rax+0x20]
+       lea      rcx, [rbp-0x20]
+       mov      rdx, 0x7FFC1C9195D8
+       mov      r9d, 64
+       call     [<PrivateImplementationDetails>:InlineArrayAsSpan[Tedd.OpenVDB.Tree.ValueAccessor`1+LeafCache[ushort],System.__Canon](byref,int):System.Span`1[System.__Canon]]
+       mov      rax, bword ptr [rbp+0x18]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x58], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x50], ecx
+       lea      rcx, [rbp-0x58]
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:CacheSlot(Tedd.OpenVDB.Math.Coord):int]
+       mov      dword ptr [rbp-0x2C], eax
+       mov      eax, dword ptr [rbp-0x18]
+       cmp      dword ptr [rbp-0x2C], eax
+       jae      SHORT G_M000_IG05
+       mov      eax, dword ptr [rbp-0x2C]
+       mov      rcx, bword ptr [rbp-0x20]
+       lea      rcx, bword ptr [rcx+8*rax]
+       mov      rdx, gword ptr [rbp-0x08]
+       call     CORINFO_HELP_CHECKED_ASSIGN_REF
+ 
+G_M000_IG03:                ;; offset=0x00F6
+       movzx    rax, byte  ptr [rbp-0x28]
+ 
+G_M000_IG04:                ;; offset=0x00FA
+       add      rsp, 128
+       pop      rbp
+       ret      
+ 
+G_M000_IG05:                ;; offset=0x0103
+       call     CORINFO_HELP_RNGCHKFAIL
+       int3     
+ 
+; Total bytes of code 265
+
+; Assembly listing for method Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:ProbeValue(Tedd.OpenVDB.Math.Coord,byref):bool:this (Tier0)
+; Emitting BLENDED_CODE for x64 + VEX on Windows
+; Tier0 code
+; rbp based frame
+; partially interruptible
+; compiling with minopt
+
+G_M000_IG01:                ;; offset=0x0000
+       push     rbp
+       sub      rsp, 128
+       lea      rbp, [rsp+0x80]
+       vxorps   xmm4, xmm4, xmm4
+       vmovdqu  xmmword ptr [rbp-0x18], xmm4
+       xor      eax, eax
+       mov      qword ptr [rbp-0x08], rax
+       mov      gword ptr [rbp+0x10], rcx
+       mov      bword ptr [rbp+0x18], rdx
+       mov      bword ptr [rbp+0x20], r8
+ 
+G_M000_IG02:                ;; offset=0x002B
+       mov      rax, bword ptr [rbp+0x18]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x28], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x20], ecx
+       lea      rdx, [rbp-0x28]
+       mov      rcx, gword ptr [rbp+0x10]
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:Cached(Tedd.OpenVDB.Math.Coord):Tedd.OpenVDB.Tree.LeafNode`1[ushort]:this]
+       mov      gword ptr [rbp-0x10], rax
+       mov      rax, gword ptr [rbp-0x10]
+       mov      gword ptr [rbp-0x18], rax
+       cmp      gword ptr [rbp-0x10], 0
+       jne      SHORT G_M000_IG03
+       mov      rax, bword ptr [rbp+0x18]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x38], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x30], ecx
+       lea      rdx, [rbp-0x38]
+       mov      rcx, gword ptr [rbp+0x10]
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:CachedSecondary(Tedd.OpenVDB.Math.Coord):Tedd.OpenVDB.Tree.LeafNode`1[ushort]:this]
+       mov      gword ptr [rbp-0x18], rax
+ 
+G_M000_IG03:                ;; offset=0x0080
+       mov      rax, gword ptr [rbp-0x18]
+       mov      gword ptr [rbp-0x08], rax
+       cmp      gword ptr [rbp-0x08], 0
+       je       SHORT G_M000_IG05
+       mov      rax, bword ptr [rbp+0x18]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x48], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x40], ecx
+       lea      rdx, [rbp-0x48]
+       mov      rcx, gword ptr [rbp-0x08]
+       mov      r8, bword ptr [rbp+0x20]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.LeafNode`1[ushort]:ProbeValue(Tedd.OpenVDB.Math.Coord,byref):bool:this]
+       nop      
+ 
+G_M000_IG04:                ;; offset=0x00B5
+       add      rsp, 128
+       pop      rbp
+       ret      
+ 
+G_M000_IG05:                ;; offset=0x00BE
+       mov      rax, bword ptr [rbp+0x18]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x58], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x50], ecx
+       lea      rdx, [rbp-0x58]
+       mov      rcx, gword ptr [rbp+0x10]
+       mov      r8, bword ptr [rbp+0x20]
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:Resolve(Tedd.OpenVDB.Math.Coord,byref):bool:this]
+       nop      
+ 
+G_M000_IG06:                ;; offset=0x00E2
+       add      rsp, 128
+       pop      rbp
+       ret      
+ 
+; Total bytes of code 235
+
+; Assembly listing for method Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:Cached(Tedd.OpenVDB.Math.Coord):Tedd.OpenVDB.Tree.LeafNode`1[ushort]:this (Tier0)
+; Emitting BLENDED_CODE for x64 + VEX on Windows
+; Tier0 code
+; rbp based frame
+; partially interruptible
+; compiling with minopt
+
+G_M000_IG01:                ;; offset=0x0000
+       push     rbp
+       sub      rsp, 96
+       lea      rbp, [rsp+0x60]
+       vxorps   xmm4, xmm4, xmm4
+       vmovdqu  xmmword ptr [rbp-0x18], xmm4
+       xor      eax, eax
+       mov      qword ptr [rbp-0x08], rax
+       mov      gword ptr [rbp+0x10], rcx
+       mov      bword ptr [rbp+0x18], rdx
+ 
+G_M000_IG02:                ;; offset=0x0021
+       mov      rax, gword ptr [rbp+0x10]
+       mov      rax, qword ptr [rax+0x18]
+       mov      qword ptr [rbp-0x20], rax
+       mov      rax, gword ptr [rbp+0x10]
+       mov      rcx, gword ptr [rax+0x08]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.VdbTree`1[ushort]:get_TopologyVersion():long:this]
+       cmp      rax, qword ptr [rbp-0x20]
+       je       SHORT G_M000_IG04
+       mov      rcx, gword ptr [rbp+0x10]
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:Clear():this]
+       xor      rax, rax
+ 
+G_M000_IG03:                ;; offset=0x004F
+       add      rsp, 96
+       pop      rbp
+       ret      
+ 
+G_M000_IG04:                ;; offset=0x0055
+       mov      rax, gword ptr [rbp+0x10]
+       mov      rax, gword ptr [rax+0x10]
+       mov      gword ptr [rbp-0x08], rax
+       cmp      gword ptr [rbp-0x08], 0
+       jne      SHORT G_M000_IG06
+       xor      rax, rax
+ 
+G_M000_IG05:                ;; offset=0x006A
+       add      rsp, 96
+       pop      rbp
+       ret      
+ 
+G_M000_IG06:                ;; offset=0x0070
+       lea      rdx, [rbp-0x18]
+       mov      rcx, gword ptr [rbp-0x08]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.LeafNode`1[ushort]:get_Origin():Tedd.OpenVDB.Math.Coord:this]
+       mov      rcx, bword ptr [rbp+0x18]
+       call     [Tedd.OpenVDB.Math.Coord:get_X():int:this]
+       mov      dword ptr [rbp-0x24], eax
+       lea      rcx, [rbp-0x18]
+       call     [Tedd.OpenVDB.Math.Coord:get_X():int:this]
+       xor      eax, dword ptr [rbp-0x24]
+       mov      dword ptr [rbp-0x28], eax
+       mov      rcx, bword ptr [rbp+0x18]
+       call     [Tedd.OpenVDB.Math.Coord:get_Y():int:this]
+       mov      dword ptr [rbp-0x2C], eax
+       lea      rcx, [rbp-0x18]
+       call     [Tedd.OpenVDB.Math.Coord:get_Y():int:this]
+       xor      eax, dword ptr [rbp-0x2C]
+       or       eax, dword ptr [rbp-0x28]
+       mov      dword ptr [rbp-0x30], eax
+       mov      rcx, bword ptr [rbp+0x18]
+       call     [Tedd.OpenVDB.Math.Coord:get_Z():int:this]
+       mov      dword ptr [rbp-0x34], eax
+       lea      rcx, [rbp-0x18]
+       call     [Tedd.OpenVDB.Math.Coord:get_Z():int:this]
+       xor      eax, dword ptr [rbp-0x34]
+       or       eax, dword ptr [rbp-0x30]
+       and      eax, -8
+       test     eax, eax
+       je       SHORT G_M000_IG08
+       xor      rax, rax
+ 
+G_M000_IG07:                ;; offset=0x00E3
+       add      rsp, 96
+       pop      rbp
+       ret      
+ 
+G_M000_IG08:                ;; offset=0x00E9
+       mov      rax, gword ptr [rbp-0x08]
+ 
+G_M000_IG09:                ;; offset=0x00ED
+       add      rsp, 96
+       pop      rbp
+       ret      
+ 
+; Total bytes of code 243
+
+; Assembly listing for method Program:<<Main>$>g__Read|0_3(Tedd.OpenVDB.Tree.ValueAccessor`1[ushort],Tedd.OpenVDB.Math.Coord[],int):long (Instrumented Tier0)
+; Emitting BLENDED_CODE for x64 + VEX on Windows
+; Instrumented Tier0 code
+; rbp based frame
+; partially interruptible
+; compiling with minopt
+
+G_M000_IG01:                ;; offset=0x0000
+       push     rbp
+       sub      rsp, 128
+       lea      rbp, [rsp+0x80]
+       xor      eax, eax
+       mov      qword ptr [rbp-0x40], rax
+       mov      dword ptr [rbp-0x44], eax
+       mov      gword ptr [rbp+0x10], rcx
+       mov      gword ptr [rbp+0x18], rdx
+       mov      dword ptr [rbp+0x20], r8d
+ 
+G_M000_IG02:                ;; offset=0x0025
+       mov      dword ptr [rbp-0x48], 0x3E8
+       xor      eax, eax
+       mov      qword ptr [rbp-0x40], rax
+       xor      eax, eax
+       mov      dword ptr [rbp-0x44], eax
+       jmp      SHORT G_M000_IG04
+ 
+G_M000_IG03:                ;; offset=0x0039
+       mov      rcx, 0x7FFC1C952DB8
+       call     CORINFO_HELP_COUNTPROFILE32
+       mov      rax, gword ptr [rbp+0x18]
+       mov      ecx, dword ptr [rbp-0x44]
+       and      ecx, 0x7FFF
+       cmp      ecx, dword ptr [rax+0x08]
+       jae      G_M000_IG08
+       mov      edx, ecx
+       imul     rdx, rdx, 12
+       lea      rax, bword ptr [rax+rdx+0x10]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x58], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x50], ecx
+       lea      rdx, [rbp-0x58]
+       mov      rcx, gword ptr [rbp+0x10]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:GetValue(Tedd.OpenVDB.Math.Coord):ushort:this]
+       mov      eax, eax
+       add      rax, qword ptr [rbp-0x40]
+       mov      qword ptr [rbp-0x40], rax
+       mov      eax, dword ptr [rbp-0x44]
+       inc      eax
+       mov      dword ptr [rbp-0x44], eax
+ 
+G_M000_IG04:                ;; offset=0x0098
+       mov      eax, dword ptr [rbp-0x48]
+       dec      eax
+       mov      dword ptr [rbp-0x48], eax
+       cmp      dword ptr [rbp-0x48], 0
+       jg       SHORT G_M000_IG06
+ 
+G_M000_IG05:                ;; offset=0x00A6
+       lea      rcx, [rbp-0x48]
+       mov      edx, 34
+       call     CORINFO_HELP_PATCHPOINT
+       jmp      rax
+ 
+G_M000_IG06:                ;; offset=0x00B6
+       mov      eax, dword ptr [rbp-0x44]
+       cmp      eax, dword ptr [rbp+0x20]
+       jl       G_M000_IG03
+       mov      rcx, 0x7FFC1C952DBC
+       call     CORINFO_HELP_COUNTPROFILE32
+       mov      rax, qword ptr [rbp-0x40]
+ 
+G_M000_IG07:                ;; offset=0x00D5
+       add      rsp, 128
+       pop      rbp
+       ret      
+ 
+G_M000_IG08:                ;; offset=0x00DE
+       call     CORINFO_HELP_RNGCHKFAIL
+       int3     
+ 
+; Total bytes of code 228
+
+; Assembly listing for method Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:GetValue(Tedd.OpenVDB.Math.Coord):ushort:this (Tier0)
+; Emitting BLENDED_CODE for x64 + VEX on Windows
+; Tier0 code
+; rbp based frame
+; partially interruptible
+; compiling with minopt
+
+G_M000_IG01:                ;; offset=0x0000
+       push     rbp
+       sub      rsp, 128
+       lea      rbp, [rsp+0x80]
+       vxorps   xmm4, xmm4, xmm4
+       vmovdqu  xmmword ptr [rbp-0x18], xmm4
+       xor      eax, eax
+       mov      qword ptr [rbp-0x08], rax
+       mov      gword ptr [rbp+0x10], rcx
+       mov      bword ptr [rbp+0x18], rdx
+ 
+G_M000_IG02:                ;; offset=0x0027
+       mov      rax, gword ptr [rbp+0x10]
+       mov      rax, gword ptr [rax+0x10]
+       mov      gword ptr [rbp-0x08], rax
+       cmp      gword ptr [rbp-0x08], 0
+       je       G_M000_IG04
+       mov      rax, gword ptr [rbp+0x10]
+       mov      rax, qword ptr [rax+0x18]
+       mov      qword ptr [rbp-0x20], rax
+       mov      rax, gword ptr [rbp+0x10]
+       mov      rcx, gword ptr [rax+0x08]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.VdbTree`1[ushort]:get_TopologyVersion():long:this]
+       cmp      rax, qword ptr [rbp-0x20]
+       jne      G_M000_IG04
+       lea      rdx, [rbp-0x18]
+       mov      rcx, gword ptr [rbp-0x08]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.LeafNode`1[ushort]:get_Origin():Tedd.OpenVDB.Math.Coord:this]
+       mov      rcx, bword ptr [rbp+0x18]
+       call     [Tedd.OpenVDB.Math.Coord:get_X():int:this]
+       mov      dword ptr [rbp-0x24], eax
+       lea      rcx, [rbp-0x18]
+       call     [Tedd.OpenVDB.Math.Coord:get_X():int:this]
+       xor      eax, dword ptr [rbp-0x24]
+       mov      dword ptr [rbp-0x28], eax
+       mov      rcx, bword ptr [rbp+0x18]
+       call     [Tedd.OpenVDB.Math.Coord:get_Y():int:this]
+       mov      dword ptr [rbp-0x2C], eax
+       lea      rcx, [rbp-0x18]
+       call     [Tedd.OpenVDB.Math.Coord:get_Y():int:this]
+       xor      eax, dword ptr [rbp-0x2C]
+       or       eax, dword ptr [rbp-0x28]
+       mov      dword ptr [rbp-0x30], eax
+       mov      rcx, bword ptr [rbp+0x18]
+       call     [Tedd.OpenVDB.Math.Coord:get_Z():int:this]
+       mov      dword ptr [rbp-0x34], eax
+       lea      rcx, [rbp-0x18]
+       call     [Tedd.OpenVDB.Math.Coord:get_Z():int:this]
+       xor      eax, dword ptr [rbp-0x34]
+       or       eax, dword ptr [rbp-0x30]
+       and      eax, -8
+       test     eax, eax
+       jne      SHORT G_M000_IG04
+       mov      rax, bword ptr [rbp+0x18]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x48], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x40], ecx
+       lea      rdx, [rbp-0x48]
+       mov      rcx, gword ptr [rbp-0x08]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.LeafNode`1[ushort]:GetValue(Tedd.OpenVDB.Math.Coord):ushort:this]
+       nop      
+ 
+G_M000_IG03:                ;; offset=0x00F7
+       add      rsp, 128
+       pop      rbp
+       ret      
+ 
+G_M000_IG04:                ;; offset=0x0100
+       mov      rax, bword ptr [rbp+0x18]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x58], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x50], ecx
+       lea      rdx, [rbp-0x58]
+       mov      rcx, gword ptr [rbp+0x10]
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:GetValueUncached(Tedd.OpenVDB.Math.Coord):ushort:this]
+       nop      
+ 
+G_M000_IG05:                ;; offset=0x0120
+       add      rsp, 128
+       pop      rbp
+       ret      
+ 
+; Total bytes of code 297
+
+; Assembly listing for method Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:GetValueUncached(Tedd.OpenVDB.Math.Coord):ushort:this (Tier0)
+; Emitting BLENDED_CODE for x64 + VEX on Windows
+; Tier0 code
+; rbp based frame
+; partially interruptible
+; compiling with minopt
+
+G_M000_IG01:                ;; offset=0x0000
+       push     rbp
+       sub      rsp, 112
+       lea      rbp, [rsp+0x70]
+       xor      eax, eax
+       mov      qword ptr [rbp-0x08], rax
+       mov      qword ptr [rbp-0x10], rax
+       mov      gword ptr [rbp+0x10], rcx
+       mov      bword ptr [rbp+0x18], rdx
+ 
+G_M000_IG02:                ;; offset=0x001C
+       mov      rax, gword ptr [rbp+0x10]
+       mov      rax, qword ptr [rax+0x18]
+       mov      qword ptr [rbp-0x18], rax
+       mov      rax, gword ptr [rbp+0x10]
+       mov      rcx, gword ptr [rax+0x08]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.VdbTree`1[ushort]:get_TopologyVersion():long:this]
+       cmp      rax, qword ptr [rbp-0x18]
+       je       SHORT G_M000_IG03
+       mov      rcx, gword ptr [rbp+0x10]
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:Clear():this]
+ 
+G_M000_IG03:                ;; offset=0x0048
+       mov      rax, bword ptr [rbp+0x18]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x28], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x20], ecx
+       lea      rdx, [rbp-0x28]
+       mov      rcx, gword ptr [rbp+0x10]
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:CachedSecondary(Tedd.OpenVDB.Math.Coord):Tedd.OpenVDB.Tree.LeafNode`1[ushort]:this]
+       mov      gword ptr [rbp-0x08], rax
+       cmp      gword ptr [rbp-0x08], 0
+       je       SHORT G_M000_IG05
+       mov      rax, bword ptr [rbp+0x18]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x38], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x30], ecx
+       lea      rdx, [rbp-0x38]
+       mov      rcx, gword ptr [rbp-0x08]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.LeafNode`1[ushort]:GetValue(Tedd.OpenVDB.Math.Coord):ushort:this]
+       nop      
+ 
+G_M000_IG04:                ;; offset=0x0094
+       add      rsp, 112
+       pop      rbp
+       ret      
+ 
+G_M000_IG05:                ;; offset=0x009A
+       mov      rax, bword ptr [rbp+0x18]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x48], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x40], ecx
+       lea      rdx, [rbp-0x48]
+       lea      r8, [rbp-0x10]
+       mov      rcx, gword ptr [rbp+0x10]
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:Resolve(Tedd.OpenVDB.Math.Coord,byref):bool:this]
+       movzx    rax, word  ptr [rbp-0x10]
+ 
+G_M000_IG06:                ;; offset=0x00C1
+       add      rsp, 112
+       pop      rbp
+       ret      
+ 
+; Total bytes of code 199
+
+; Assembly listing for method Program:<<Main>$>g__Read|0_3(Tedd.OpenVDB.Tree.ValueAccessor`1[ushort],Tedd.OpenVDB.Math.Coord[],int):long (Tier1-OSR)
+; Emitting BLENDED_CODE for x64 + VEX on Windows
+; Tier1-OSR code
+; OSR variant for entry point 0x22
+; optimized code
+; optimized using Synthesized PGO
+; rsp based frame
+; fully interruptible
+; with Synthesized PGO: fgCalledCount is 1
+; 0 inlinees with PGO data; 13 single block inlinees; 1 inlinees without PGO data
+
+G_M000_IG01:                ;; offset=0x0000
+       push     rax
+       sub      rsp, 104
+       mov      qword ptr [rsp+0xE8], r15
+       mov      qword ptr [rsp+0xE0], r14
+       mov      qword ptr [rsp+0xD8], rdi
+       mov      qword ptr [rsp+0xD0], rsi
+       mov      qword ptr [rsp+0xC8], rbx
+       mov      rbx, gword ptr [rsp+0x100]
+       mov      rsi, gword ptr [rsp+0x108]
+       mov      edi, dword ptr [rsp+0x110]
+       mov      r14, qword ptr [rsp+0xB0]
+       mov      ebp, dword ptr [rsp+0xAC]
+ 
+G_M000_IG02:                ;; offset=0x0053
+       cmp      ebp, edi
+       jl       SHORT G_M000_IG07
+ 
+G_M000_IG03:                ;; offset=0x0057
+       mov      rax, r14
+ 
+G_M000_IG04:                ;; offset=0x005A
+       add      rsp, 200
+       pop      rbx
+       pop      rsi
+       pop      rdi
+       pop      r14
+       pop      r15
+       pop      rbp
+       ret      
+ 
+G_M000_IG05:                ;; offset=0x006A
+       mov      dword ptr [rsp+0x28], ecx
+       mov      dword ptr [rsp+0x2C], eax
+       mov      dword ptr [rsp+0x30], edx
+       lea      rdx, [rsp+0x28]
+       mov      rcx, rbx
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:GetValueUncached(Tedd.OpenVDB.Math.Coord):ushort:this]
+       mov      r15d, eax
+ 
+G_M000_IG06:                ;; offset=0x0087
+       mov      eax, r15d
+       add      r14, rax
+       inc      ebp
+       cmp      ebp, edi
+       jge      SHORT G_M000_IG03
+ 
+G_M000_IG07:                ;; offset=0x0093
+       mov      edx, ebp
+       and      edx, 0x7FFF
+       cmp      edx, dword ptr [rsi+0x08]
+       jae      SHORT G_M000_IG11
+       lea      rdx, [rdx+2*rdx]
+       lea      rdx, bword ptr [rsi+4*rdx+0x10]
+       mov      ecx, dword ptr [rdx]
+       mov      eax, dword ptr [rdx+0x04]
+       mov      edx, dword ptr [rdx+0x08]
+       mov      r8, gword ptr [rbx+0x10]
+       test     r8, r8
+       je       SHORT G_M000_IG05
+ 
+G_M000_IG08:                ;; offset=0x00BA
+       mov      r10, qword ptr [rbx+0x18]
+       mov      r9, gword ptr [rbx+0x08]
+       cmp      r10, qword ptr [r9+0x10]
+       jne      SHORT G_M000_IG05
+ 
+G_M000_IG09:                ;; offset=0x00C8
+       mov      r10d, dword ptr [r8+0x20]
+       mov      r9d, dword ptr [r8+0x24]
+       mov      r11d, dword ptr [r8+0x28]
+       xor      r10d, ecx
+       xor      r9d, eax
+       or       r10d, r9d
+       xor      r11d, edx
+       or       r10d, r11d
+       test     r10d, -8
+       jne      G_M000_IG05
+ 
+G_M000_IG10:                ;; offset=0x00F0
+       mov      r8, gword ptr [r8+0x08]
+       and      ecx, 7
+       shl      ecx, 6
+       and      eax, 7
+       shl      eax, 3
+       or       ecx, eax
+       and      edx, 7
+       or       edx, ecx
+       cmp      edx, dword ptr [r8+0x08]
+       jae      SHORT G_M000_IG11
+       movzx    r15, word  ptr [r8+2*rdx+0x10]
+       jmp      G_M000_IG06
+ 
+G_M000_IG11:                ;; offset=0x0118
+       call     CORINFO_HELP_RNGCHKFAIL
+       int3     
+ 
+; Total bytes of code 286
+
+; Assembly listing for method Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:GetValueUncached(Tedd.OpenVDB.Math.Coord):ushort:this (Instrumented Tier0)
+; Emitting BLENDED_CODE for x64 + VEX on Windows
+; Instrumented Tier0 code
+; rbp based frame
+; partially interruptible
+; compiling with minopt
+
+G_M000_IG01:                ;; offset=0x0000
+       push     rbp
+       sub      rsp, 112
+       lea      rbp, [rsp+0x70]
+       xor      eax, eax
+       mov      qword ptr [rbp-0x08], rax
+       mov      qword ptr [rbp-0x10], rax
+       mov      gword ptr [rbp+0x10], rcx
+       mov      bword ptr [rbp+0x18], rdx
+ 
+G_M000_IG02:                ;; offset=0x001C
+       mov      rax, gword ptr [rbp+0x10]
+       mov      rax, qword ptr [rax+0x18]
+       mov      qword ptr [rbp-0x18], rax
+       mov      rax, gword ptr [rbp+0x10]
+       mov      rcx, gword ptr [rax+0x08]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.VdbTree`1[ushort]:get_TopologyVersion():long:this]
+       cmp      rax, qword ptr [rbp-0x18]
+       je       SHORT G_M000_IG03
+       mov      rcx, 0x7FFC1C952E20
+       call     CORINFO_HELP_COUNTPROFILE32
+       mov      rcx, gword ptr [rbp+0x10]
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:Clear():this]
+ 
+G_M000_IG03:                ;; offset=0x0057
+       mov      rax, bword ptr [rbp+0x18]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x28], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x20], ecx
+       lea      rdx, [rbp-0x28]
+       mov      rcx, gword ptr [rbp+0x10]
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:CachedSecondary(Tedd.OpenVDB.Math.Coord):Tedd.OpenVDB.Tree.LeafNode`1[ushort]:this]
+       mov      gword ptr [rbp-0x08], rax
+       cmp      gword ptr [rbp-0x08], 0
+       je       SHORT G_M000_IG05
+       mov      rcx, 0x7FFC1C952E24
+       call     CORINFO_HELP_COUNTPROFILE32
+       mov      rax, bword ptr [rbp+0x18]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x38], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x30], ecx
+       lea      rdx, [rbp-0x38]
+       mov      rcx, gword ptr [rbp-0x08]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.LeafNode`1[ushort]:GetValue(Tedd.OpenVDB.Math.Coord):ushort:this]
+       nop      
+ 
+G_M000_IG04:                ;; offset=0x00B2
+       add      rsp, 112
+       pop      rbp
+       ret      
+ 
+G_M000_IG05:                ;; offset=0x00B8
+       mov      rcx, 0x7FFC1C952E28
+       call     CORINFO_HELP_COUNTPROFILE32
+       mov      rax, bword ptr [rbp+0x18]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x48], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x40], ecx
+       lea      rdx, [rbp-0x48]
+       lea      r8, [rbp-0x10]
+       mov      rcx, gword ptr [rbp+0x10]
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:Resolve(Tedd.OpenVDB.Math.Coord,byref):bool:this]
+       movzx    rax, word  ptr [rbp-0x10]
+ 
+G_M000_IG06:                ;; offset=0x00EE
+       add      rsp, 112
+       pop      rbp
+       ret      
+ 
+; Total bytes of code 244
+
+; Assembly listing for method Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:CachedSecondary(Tedd.OpenVDB.Math.Coord):Tedd.OpenVDB.Tree.LeafNode`1[ushort]:this (Instrumented Tier0)
+; Emitting BLENDED_CODE for x64 + VEX on Windows
+; Instrumented Tier0 code
+; rbp based frame
+; partially interruptible
+; compiling with minopt
+
+G_M000_IG01:                ;; offset=0x0000
+       push     rbp
+       sub      rsp, 160
+       lea      rbp, [rsp+0xA0]
+       vxorps   xmm4, xmm4, xmm4
+       vmovdqu  xmmword ptr [rbp-0x18], xmm4
+       xor      eax, eax
+       mov      qword ptr [rbp-0x08], rax
+       mov      gword ptr [rbp+0x10], rcx
+       mov      bword ptr [rbp+0x18], rdx
+ 
+G_M000_IG02:                ;; offset=0x0027
+       mov      rax, gword ptr [rbp+0x10]
+       cmp      byte  ptr [rax], al
+       mov      rax, gword ptr [rbp+0x10]
+       lea      r8, bword ptr [rax+0x20]
+       lea      rcx, [rbp-0x18]
+       mov      rdx, 0x7FFC1C9195D8
+       mov      r9d, 64
+       call     [<PrivateImplementationDetails>:InlineArrayAsSpan[Tedd.OpenVDB.Tree.ValueAccessor`1+LeafCache[ushort],System.__Canon](byref,int):System.Span`1[System.__Canon]]
+       mov      rax, bword ptr [rbp+0x18]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x50], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x48], ecx
+       lea      rcx, [rbp-0x50]
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:CacheSlot(Tedd.OpenVDB.Math.Coord):int]
+       mov      dword ptr [rbp-0x1C], eax
+       mov      eax, dword ptr [rbp-0x10]
+       cmp      dword ptr [rbp-0x1C], eax
+       jae      G_M000_IG08
+       mov      eax, dword ptr [rbp-0x1C]
+       mov      rcx, bword ptr [rbp-0x18]
+       mov      rax, gword ptr [rcx+8*rax]
+       mov      gword ptr [rbp-0x08], rax
+       cmp      gword ptr [rbp-0x08], 0
+       je       SHORT G_M000_IG04
+       lea      rdx, [rbp-0x30]
+       mov      rcx, gword ptr [rbp-0x08]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.LeafNode`1[ushort]:get_Origin():Tedd.OpenVDB.Math.Coord:this]
+       mov      rax, bword ptr [rbp+0x18]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x60], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x58], ecx
+       lea      rdx, [rbp-0x60]
+       lea      rcx, [rbp-0x40]
+       mov      r8d, 3
+       call     [Tedd.OpenVDB.Tree.VdbTree`1[ushort]:Align(Tedd.OpenVDB.Math.Coord,int):Tedd.OpenVDB.Math.Coord]
+       mov      rax, qword ptr [rbp-0x30]
+       mov      qword ptr [rbp-0x70], rax
+       mov      eax, dword ptr [rbp-0x28]
+       mov      dword ptr [rbp-0x68], eax
+       mov      rax, qword ptr [rbp-0x40]
+       mov      qword ptr [rbp-0x80], rax
+       mov      eax, dword ptr [rbp-0x38]
+       mov      dword ptr [rbp-0x78], eax
+       lea      rcx, [rbp-0x70]
+       lea      rdx, [rbp-0x80]
+       call     [Tedd.OpenVDB.Math.Coord:op_Inequality(Tedd.OpenVDB.Math.Coord,Tedd.OpenVDB.Math.Coord):bool]
+       test     eax, eax
+       je       SHORT G_M000_IG06
+ 
+G_M000_IG03:                ;; offset=0x00F2
+       mov      rcx, 0x7FFC1C952E60
+       call     CORINFO_HELP_COUNTPROFILE32
+ 
+G_M000_IG04:                ;; offset=0x0101
+       mov      rcx, 0x7FFC1C952E64
+       call     CORINFO_HELP_COUNTPROFILE32
+       xor      rax, rax
+ 
+G_M000_IG05:                ;; offset=0x0112
+       add      rsp, 160
+       pop      rbp
+       ret      
+ 
+G_M000_IG06:                ;; offset=0x011B
+       mov      rcx, 0x7FFC1C952E68
+       call     CORINFO_HELP_COUNTPROFILE32
+       mov      rax, gword ptr [rbp+0x10]
+       lea      rcx, bword ptr [rax+0x10]
+       mov      rdx, gword ptr [rbp-0x08]
+       call     CORINFO_HELP_ASSIGN_REF
+       mov      rax, gword ptr [rbp-0x08]
+ 
+G_M000_IG07:                ;; offset=0x013F
+       add      rsp, 160
+       pop      rbp
+       ret      
+ 
+G_M000_IG08:                ;; offset=0x0148
+       call     CORINFO_HELP_RNGCHKFAIL
+       int3     
+ 
+; Total bytes of code 334
+
+; Assembly listing for method Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:CacheSlot(Tedd.OpenVDB.Math.Coord):int (Instrumented Tier0)
+; Emitting BLENDED_CODE for x64 + VEX on Windows
+; Instrumented Tier0 code
+; rbp based frame
+; partially interruptible
+; compiling with minopt
+
+G_M000_IG01:                ;; offset=0x0000
+       push     rbp
+       sub      rsp, 48
+       lea      rbp, [rsp+0x30]
+       mov      bword ptr [rbp+0x10], rcx
+ 
+G_M000_IG02:                ;; offset=0x000E
+       mov      rcx, bword ptr [rbp+0x10]
+       call     [Tedd.OpenVDB.Math.Coord:get_X():int:this]
+       sar      eax, 3
+       and      eax, 3
+       shl      eax, 4
+       mov      dword ptr [rbp-0x04], eax
+       mov      rcx, bword ptr [rbp+0x10]
+       call     [Tedd.OpenVDB.Math.Coord:get_Y():int:this]
+       sar      eax, 3
+       and      eax, 3
+       shl      eax, 2
+       or       eax, dword ptr [rbp-0x04]
+       mov      dword ptr [rbp-0x08], eax
+       mov      rcx, bword ptr [rbp+0x10]
+       call     [Tedd.OpenVDB.Math.Coord:get_Z():int:this]
+       sar      eax, 3
+       and      eax, 3
+       or       eax, dword ptr [rbp-0x08]
+ 
+G_M000_IG03:                ;; offset=0x0050
+       add      rsp, 48
+       pop      rbp
+       ret      
+ 
+; Total bytes of code 86
+
+; Assembly listing for method Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:GetValue(Tedd.OpenVDB.Math.Coord):ushort:this (Instrumented Tier0)
+; Emitting BLENDED_CODE for x64 + VEX on Windows
+; Instrumented Tier0 code
+; rbp based frame
+; partially interruptible
+; compiling with minopt
+
+G_M000_IG01:                ;; offset=0x0000
+       push     rbp
+       sub      rsp, 128
+       lea      rbp, [rsp+0x80]
+       vxorps   xmm4, xmm4, xmm4
+       vmovdqu  xmmword ptr [rbp-0x18], xmm4
+       xor      eax, eax
+       mov      qword ptr [rbp-0x08], rax
+       mov      gword ptr [rbp+0x10], rcx
+       mov      bword ptr [rbp+0x18], rdx
+ 
+G_M000_IG02:                ;; offset=0x0027
+       mov      rax, gword ptr [rbp+0x10]
+       mov      rax, gword ptr [rax+0x10]
+       mov      gword ptr [rbp-0x08], rax
+       cmp      gword ptr [rbp-0x08], 0
+       je       G_M000_IG06
+       mov      rax, gword ptr [rbp+0x10]
+       mov      rax, qword ptr [rax+0x18]
+       mov      qword ptr [rbp-0x20], rax
+       mov      rax, gword ptr [rbp+0x10]
+       mov      rcx, gword ptr [rax+0x08]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.VdbTree`1[ushort]:get_TopologyVersion():long:this]
+       cmp      rax, qword ptr [rbp-0x20]
+       jne      G_M000_IG05
+       lea      rdx, [rbp-0x18]
+       mov      rcx, gword ptr [rbp-0x08]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.LeafNode`1[ushort]:get_Origin():Tedd.OpenVDB.Math.Coord:this]
+       mov      rcx, bword ptr [rbp+0x18]
+       call     [Tedd.OpenVDB.Math.Coord:get_X():int:this]
+       mov      dword ptr [rbp-0x24], eax
+       lea      rcx, [rbp-0x18]
+       call     [Tedd.OpenVDB.Math.Coord:get_X():int:this]
+       xor      eax, dword ptr [rbp-0x24]
+       mov      dword ptr [rbp-0x28], eax
+       mov      rcx, bword ptr [rbp+0x18]
+       call     [Tedd.OpenVDB.Math.Coord:get_Y():int:this]
+       mov      dword ptr [rbp-0x2C], eax
+       lea      rcx, [rbp-0x18]
+       call     [Tedd.OpenVDB.Math.Coord:get_Y():int:this]
+       xor      eax, dword ptr [rbp-0x2C]
+       or       eax, dword ptr [rbp-0x28]
+       mov      dword ptr [rbp-0x30], eax
+       mov      rcx, bword ptr [rbp+0x18]
+       call     [Tedd.OpenVDB.Math.Coord:get_Z():int:this]
+       mov      dword ptr [rbp-0x34], eax
+       lea      rcx, [rbp-0x18]
+       call     [Tedd.OpenVDB.Math.Coord:get_Z():int:this]
+       xor      eax, dword ptr [rbp-0x34]
+       or       eax, dword ptr [rbp-0x30]
+       and      eax, -8
+       test     eax, eax
+       jne      SHORT G_M000_IG04
+       mov      rcx, 0x7FFC1C9532C8
+       call     CORINFO_HELP_COUNTPROFILE32
+       mov      rax, bword ptr [rbp+0x18]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x48], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x40], ecx
+       lea      rdx, [rbp-0x48]
+       mov      rcx, gword ptr [rbp-0x08]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.LeafNode`1[ushort]:GetValue(Tedd.OpenVDB.Math.Coord):ushort:this]
+       nop      
+ 
+G_M000_IG03:                ;; offset=0x0106
+       add      rsp, 128
+       pop      rbp
+       ret      
+ 
+G_M000_IG04:                ;; offset=0x010F
+       mov      rcx, 0x7FFC1C9532CC
+       call     CORINFO_HELP_COUNTPROFILE32
+       jmp      SHORT G_M000_IG06
+ 
+G_M000_IG05:                ;; offset=0x0120
+       mov      rcx, 0x7FFC1C9532D0
+       call     CORINFO_HELP_COUNTPROFILE32
+ 
+G_M000_IG06:                ;; offset=0x012F
+       mov      rcx, 0x7FFC1C9532D4
+       call     CORINFO_HELP_COUNTPROFILE32
+       mov      rax, bword ptr [rbp+0x18]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x58], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x50], ecx
+       lea      rdx, [rbp-0x58]
+       mov      rcx, gword ptr [rbp+0x10]
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:GetValueUncached(Tedd.OpenVDB.Math.Coord):ushort:this]
+       nop      
+ 
+G_M000_IG07:                ;; offset=0x015E
+       add      rsp, 128
+       pop      rbp
+       ret      
+ 
+; Total bytes of code 359
+
+; Assembly listing for method Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:GetValueUncached(Tedd.OpenVDB.Math.Coord):ushort:this (Tier1)
+; Emitting BLENDED_CODE for x64 + VEX on Windows
+; Tier1 code
+; optimized code
+; optimized using Synthesized PGO
+; rsp based frame
+; partially interruptible
+; with Synthesized PGO: fgCalledCount is 213120
+; 2 inlinees with PGO data; 27 single block inlinees; 3 inlinees without PGO data
+
+G_M000_IG01:                ;; offset=0x0000
+       push     rdi
+       push     rsi
+       push     rbx
+       sub      rsp, 48
+       xor      eax, eax
+       mov      qword ptr [rsp+0x28], rax
+       mov      rsi, rcx
+       mov      rbx, rdx
+ 
+G_M000_IG02:                ;; offset=0x0014
+       mov      rcx, qword ptr [rsi+0x18]
+       mov      rax, gword ptr [rsi+0x08]
+       cmp      rcx, qword ptr [rax+0x10]
+       jne      G_M000_IG05
+ 
+G_M000_IG03:                ;; offset=0x0026
+       lea      rcx, bword ptr [rsi+0x20]
+       mov      edx, dword ptr [rbx]
+       mov      eax, edx
+       mov      r8d, dword ptr [rbx+0x04]
+       mov      r10d, r8d
+       mov      r9d, dword ptr [rbx+0x08]
+       mov      r11d, r9d
+       sar      eax, 3
+       and      eax, 3
+       shl      eax, 4
+       sar      r10d, 3
+       and      r10d, 3
+       shl      r10d, 2
+       or       eax, r10d
+       sar      r11d, 3
+       and      r11d, 3
+       or       eax, r11d
+       mov      rdi, gword ptr [rcx+8*rax]
+       test     rdi, rdi
+       je       SHORT G_M000_IG06
+       mov      ecx, dword ptr [rdi+0x20]
+       mov      eax, dword ptr [rdi+0x24]
+       mov      r10d, dword ptr [rdi+0x28]
+       and      edx, -8
+       and      r8d, -8
+       and      r9d, -8
+       cmp      ecx, edx
+       jne      SHORT G_M000_IG06
+       cmp      eax, r8d
+       jne      SHORT G_M000_IG06
+       cmp      r10d, r9d
+       jne      SHORT G_M000_IG06
+       lea      rcx, bword ptr [rsi+0x10]
+       mov      rdx, rdi
+       call     CORINFO_HELP_ASSIGN_REF
+       mov      rax, gword ptr [rdi+0x08]
+       mov      r8d, dword ptr [rbx]
+       mov      ecx, dword ptr [rbx+0x04]
+       mov      edx, dword ptr [rbx+0x08]
+       and      r8d, 7
+       shl      r8d, 6
+       and      ecx, 7
+       shl      ecx, 3
+       or       r8d, ecx
+       and      edx, 7
+       or       r8d, edx
+       cmp      r8d, dword ptr [rax+0x08]
+       jae      SHORT G_M000_IG08
+       movzx    rax, word  ptr [rax+2*r8+0x10]
+ 
+G_M000_IG04:                ;; offset=0x00C7
+       add      rsp, 48
+       pop      rbx
+       pop      rsi
+       pop      rdi
+       ret      
+ 
+G_M000_IG05:                ;; offset=0x00CF
+       mov      rcx, rsi
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:Clear():this]
+       jmp      G_M000_IG03
+ 
+G_M000_IG06:                ;; offset=0x00DD
+       lea      r8, [rsp+0x28]
+       mov      rcx, rsi
+       mov      rdx, rbx
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:Resolve(Tedd.OpenVDB.Math.Coord,byref):bool:this]
+       movzx    rax, word  ptr [rsp+0x28]
+ 
+G_M000_IG07:                ;; offset=0x00F3
+       add      rsp, 48
+       pop      rbx
+       pop      rsi
+       pop      rdi
+       ret      
+ 
+G_M000_IG08:                ;; offset=0x00FB
+       call     CORINFO_HELP_RNGCHKFAIL
+       int3     
+ 
+; Total bytes of code 257
+
+; Assembly listing for method Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:CachedSecondary(Tedd.OpenVDB.Math.Coord):Tedd.OpenVDB.Tree.LeafNode`1[ushort]:this (Tier1)
+; Emitting BLENDED_CODE for x64 + VEX on Windows
+; Tier1 code
+; optimized code
+; optimized using Synthesized PGO
+; rsp based frame
+; partially interruptible
+; with Synthesized PGO: fgCalledCount is 213056
+; 1 inlinees with PGO data; 21 single block inlinees; 3 inlinees without PGO data
+
+G_M000_IG01:                ;; offset=0x0000
+       push     rbx
+ 
+G_M000_IG02:                ;; offset=0x0001
+       lea      rax, bword ptr [rcx+0x20]
+       cmp      byte  ptr [rax], al
+       mov      r8d, dword ptr [rdx]
+       mov      r10d, r8d
+       mov      r9d, dword ptr [rdx+0x04]
+       mov      r11d, r9d
+       mov      edx, dword ptr [rdx+0x08]
+       mov      ebx, edx
+       sar      r10d, 3
+       and      r10d, 3
+       shl      r10d, 4
+       sar      r11d, 3
+       and      r11d, 3
+       shl      r11d, 2
+       or       r10d, r11d
+       sar      ebx, 3
+       and      ebx, 3
+       or       r10d, ebx
+       mov      rbx, gword ptr [rax+8*r10]
+       test     rbx, rbx
+       je       SHORT G_M000_IG04
+       mov      eax, dword ptr [rbx+0x20]
+       mov      r10d, dword ptr [rbx+0x24]
+       mov      r11d, dword ptr [rbx+0x28]
+       and      r8d, -8
+       and      r9d, -8
+       and      edx, -8
+       cmp      eax, r8d
+       jne      SHORT G_M000_IG04
+       cmp      r10d, r9d
+       jne      SHORT G_M000_IG04
+       cmp      r11d, edx
+       jne      SHORT G_M000_IG04
+       lea      rcx, bword ptr [rcx+0x10]
+       mov      rdx, rbx
+       call     CORINFO_HELP_ASSIGN_REF
+       mov      rax, rbx
+ 
+G_M000_IG03:                ;; offset=0x007A
+       pop      rbx
+       ret      
+ 
+G_M000_IG04:                ;; offset=0x007C
+       xor      rax, rax
+ 
+G_M000_IG05:                ;; offset=0x007E
+       pop      rbx
+       ret      
+ 
+; Total bytes of code 128
+
+; Assembly listing for method Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:CacheSlot(Tedd.OpenVDB.Math.Coord):int (Tier1)
+; Emitting BLENDED_CODE for x64 + VEX on Windows
+; Tier1 code
+; optimized code
+; optimized using Synthesized PGO
+; rsp based frame
+; partially interruptible
+; with Synthesized PGO: fgCalledCount is 100
+; No PGO data
+; 0 inlinees with PGO data; 3 single block inlinees; 0 inlinees without PGO data
+
+G_M000_IG01:                ;; offset=0x0000
+ 
+G_M000_IG02:                ;; offset=0x0000
+       mov      eax, dword ptr [rcx]
+       sar      eax, 3
+       and      eax, 3
+       shl      eax, 4
+       mov      edx, dword ptr [rcx+0x04]
+       sar      edx, 3
+       and      edx, 3
+       shl      edx, 2
+       or       eax, edx
+       mov      ecx, dword ptr [rcx+0x08]
+       sar      ecx, 3
+       and      ecx, 3
+       or       eax, ecx
+ 
+G_M000_IG03:                ;; offset=0x0024
+       ret      
+ 
+; Total bytes of code 37
+
+; Assembly listing for method Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:GetValue(Tedd.OpenVDB.Math.Coord):ushort:this (Tier1)
+; Emitting BLENDED_CODE for x64 + VEX on Windows
+; Tier1 code
+; optimized code
+; optimized using Dynamic PGO
+; rsp based frame
+; partially interruptible
+; with Dynamic PGO: fgCalledCount is 1998
+; 0 inlinees with PGO data; 13 single block inlinees; 0 inlinees without PGO data
+
+G_M000_IG01:                ;; offset=0x0000
+       push     rbx
+       sub      rsp, 48
+ 
+G_M000_IG02:                ;; offset=0x0005
+       mov      r8d, dword ptr [rdx]
+       mov      r10d, dword ptr [rdx+0x04]
+       mov      edx, dword ptr [rdx+0x08]
+       mov      rax, gword ptr [rcx+0x10]
+       test     rax, rax
+       je       SHORT G_M000_IG05
+       mov      r9, qword ptr [rcx+0x18]
+       mov      r11, gword ptr [rcx+0x08]
+       cmp      r9, qword ptr [r11+0x10]
+       jne      SHORT G_M000_IG05
+       mov      r9d, dword ptr [rax+0x20]
+       mov      r11d, dword ptr [rax+0x24]
+       mov      ebx, dword ptr [rax+0x28]
+       xor      r9d, r8d
+       xor      r11d, r10d
+       or       r9d, r11d
+       xor      ebx, edx
+       or       r9d, ebx
+       test     r9d, -8
+       jne      SHORT G_M000_IG05
+ 
+G_M000_IG03:                ;; offset=0x0048
+       mov      rax, gword ptr [rax+0x08]
+       and      r8d, 7
+       shl      r8d, 6
+       and      r10d, 7
+       shl      r10d, 3
+       or       r8d, r10d
+       and      edx, 7
+       or       edx, r8d
+       cmp      edx, dword ptr [rax+0x08]
+       jae      SHORT G_M000_IG07
+       movzx    rax, word  ptr [rax+2*rdx+0x10]
+ 
+G_M000_IG04:                ;; offset=0x006F
+       add      rsp, 48
+       pop      rbx
+       ret      
+ 
+G_M000_IG05:                ;; offset=0x0075
+       mov      dword ptr [rsp+0x20], r8d
+       mov      dword ptr [rsp+0x24], r10d
+       mov      dword ptr [rsp+0x28], edx
+       lea      rdx, [rsp+0x20]
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:GetValueUncached(Tedd.OpenVDB.Math.Coord):ushort:this]
+       nop      
+ 
+G_M000_IG06:                ;; offset=0x008F
+       add      rsp, 48
+       pop      rbx
+       ret      
+ 
+G_M000_IG07:                ;; offset=0x0095
+       call     CORINFO_HELP_RNGCHKFAIL
+       int3     
+ 
+; Total bytes of code 155
+
+; Assembly listing for method Program:<<Main>$>g__Read|0_3(Tedd.OpenVDB.Tree.ValueAccessor`1[ushort],Tedd.OpenVDB.Math.Coord[],int):long (Instrumented Tier0)
+; Emitting BLENDED_CODE for x64 + VEX on Windows
+; Instrumented Tier0 code
+; rbp based frame
+; partially interruptible
+; compiling with minopt
+
+G_M000_IG01:                ;; offset=0x0000
+       push     rbp
+       sub      rsp, 128
+       lea      rbp, [rsp+0x80]
+       xor      eax, eax
+       mov      qword ptr [rbp-0x40], rax
+       mov      dword ptr [rbp-0x44], eax
+       mov      gword ptr [rbp+0x10], rcx
+       mov      gword ptr [rbp+0x18], rdx
+       mov      dword ptr [rbp+0x20], r8d
+ 
+G_M000_IG02:                ;; offset=0x0025
+       mov      dword ptr [rbp-0x48], 0x3E8
+       xor      eax, eax
+       mov      qword ptr [rbp-0x40], rax
+       xor      eax, eax
+       mov      dword ptr [rbp-0x44], eax
+       jmp      SHORT G_M000_IG04
+ 
+G_M000_IG03:                ;; offset=0x0039
+       mov      rcx, 0x7FFC1C952DB8
+       call     CORINFO_HELP_COUNTPROFILE32
+       mov      rax, gword ptr [rbp+0x18]
+       mov      ecx, dword ptr [rbp-0x44]
+       and      ecx, 0x7FFF
+       cmp      ecx, dword ptr [rax+0x08]
+       jae      G_M000_IG08
+       mov      edx, ecx
+       imul     rdx, rdx, 12
+       lea      rax, bword ptr [rax+rdx+0x10]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x58], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x50], ecx
+       lea      rdx, [rbp-0x58]
+       mov      rcx, gword ptr [rbp+0x10]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:GetValue(Tedd.OpenVDB.Math.Coord):ushort:this]
+       mov      eax, eax
+       add      rax, qword ptr [rbp-0x40]
+       mov      qword ptr [rbp-0x40], rax
+       mov      eax, dword ptr [rbp-0x44]
+       inc      eax
+       mov      dword ptr [rbp-0x44], eax
+ 
+G_M000_IG04:                ;; offset=0x0098
+       mov      eax, dword ptr [rbp-0x48]
+       dec      eax
+       mov      dword ptr [rbp-0x48], eax
+       cmp      dword ptr [rbp-0x48], 0
+       jg       SHORT G_M000_IG06
+ 
+G_M000_IG05:                ;; offset=0x00A6
+       lea      rcx, [rbp-0x48]
+       mov      edx, 34
+       call     CORINFO_HELP_PATCHPOINT
+       jmp      rax
+ 
+G_M000_IG06:                ;; offset=0x00B6
+       mov      eax, dword ptr [rbp-0x44]
+       cmp      eax, dword ptr [rbp+0x20]
+       jl       G_M000_IG03
+       mov      rcx, 0x7FFC1C952DBC
+       call     CORINFO_HELP_COUNTPROFILE32
+       mov      rax, qword ptr [rbp-0x40]
+ 
+G_M000_IG07:                ;; offset=0x00D5
+       add      rsp, 128
+       pop      rbp
+       ret      
+ 
+G_M000_IG08:                ;; offset=0x00DE
+       call     CORINFO_HELP_RNGCHKFAIL
+       int3     
+ 
+; Total bytes of code 228
+
+; Assembly listing for method Program:<<Main>$>g__Read|0_3(Tedd.OpenVDB.Tree.ValueAccessor`1[ushort],Tedd.OpenVDB.Math.Coord[],int):long (Tier1-OSR)
+; Emitting BLENDED_CODE for x64 + VEX on Windows
+; Tier1-OSR code
+; OSR variant for entry point 0x22
+; optimized code
+; optimized using Synthesized PGO
+; rsp based frame
+; fully interruptible
+; with Synthesized PGO: fgCalledCount is 1
+; 1 inlinees with PGO data; 13 single block inlinees; 0 inlinees without PGO data
+
+G_M000_IG01:                ;; offset=0x0000
+       push     rax
+       sub      rsp, 104
+       mov      qword ptr [rsp+0xE8], r15
+       mov      qword ptr [rsp+0xE0], r14
+       mov      qword ptr [rsp+0xD8], rdi
+       mov      qword ptr [rsp+0xD0], rsi
+       mov      qword ptr [rsp+0xC8], rbx
+       mov      rbx, gword ptr [rsp+0x100]
+       mov      rsi, gword ptr [rsp+0x108]
+       mov      edi, dword ptr [rsp+0x110]
+       mov      r14, qword ptr [rsp+0xB0]
+       mov      ebp, dword ptr [rsp+0xAC]
+ 
+G_M000_IG02:                ;; offset=0x0053
+       cmp      ebp, edi
+       jl       SHORT G_M000_IG07
+ 
+G_M000_IG03:                ;; offset=0x0057
+       mov      rax, r14
+ 
+G_M000_IG04:                ;; offset=0x005A
+       add      rsp, 200
+       pop      rbx
+       pop      rsi
+       pop      rdi
+       pop      r14
+       pop      r15
+       pop      rbp
+       ret      
+ 
+G_M000_IG05:                ;; offset=0x006A
+       mov      r8, gword ptr [r8+0x08]
+       and      ecx, 7
+       shl      ecx, 6
+       and      eax, 7
+       shl      eax, 3
+       or       ecx, eax
+       and      edx, 7
+       or       edx, ecx
+       cmp      edx, dword ptr [r8+0x08]
+       jae      G_M000_IG09
+       movzx    r15, word  ptr [r8+2*rdx+0x10]
+ 
+G_M000_IG06:                ;; offset=0x0091
+       mov      eax, r15d
+       add      r14, rax
+       inc      ebp
+       cmp      ebp, edi
+       jge      SHORT G_M000_IG03
+ 
+G_M000_IG07:                ;; offset=0x009D
+       mov      edx, ebp
+       and      edx, 0x7FFF
+       cmp      edx, dword ptr [rsi+0x08]
+       jae      SHORT G_M000_IG09
+       lea      rdx, [rdx+2*rdx]
+       lea      rdx, bword ptr [rsi+4*rdx+0x10]
+       mov      ecx, dword ptr [rdx]
+       mov      eax, dword ptr [rdx+0x04]
+       mov      edx, dword ptr [rdx+0x08]
+       mov      r8, gword ptr [rbx+0x10]
+       test     r8, r8
+       je       SHORT G_M000_IG08
+       mov      r10, qword ptr [rbx+0x18]
+       mov      r9, gword ptr [rbx+0x08]
+       cmp      r10, qword ptr [r9+0x10]
+       jne      SHORT G_M000_IG08
+       mov      r10d, dword ptr [r8+0x20]
+       mov      r9d, dword ptr [r8+0x24]
+       mov      r11d, dword ptr [r8+0x28]
+       xor      r10d, ecx
+       xor      r9d, eax
+       or       r10d, r9d
+       xor      r11d, edx
+       or       r10d, r11d
+       test     r10d, -8
+       je       G_M000_IG05
+ 
+G_M000_IG08:                ;; offset=0x00FA
+       mov      dword ptr [rsp+0x28], ecx
+       mov      dword ptr [rsp+0x2C], eax
+       mov      dword ptr [rsp+0x30], edx
+       lea      rdx, [rsp+0x28]
+       mov      rcx, rbx
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:GetValueUncached(Tedd.OpenVDB.Math.Coord):ushort:this]
+       mov      r15d, eax
+       jmp      G_M000_IG06
+ 
+G_M000_IG09:                ;; offset=0x011C
+       call     CORINFO_HELP_RNGCHKFAIL
+       int3     
+ 
+; Total bytes of code 290
+
+; Assembly listing for method Program:<<Main>$>g__Read|0_3(Tedd.OpenVDB.Tree.ValueAccessor`1[ushort],Tedd.OpenVDB.Math.Coord[],int):long (Tier1)
+; Emitting BLENDED_CODE for x64 + VEX on Windows
+; Tier1 code
+; optimized code
+; optimized using Dynamic PGO
+; rsp based frame
+; fully interruptible
+; with Dynamic PGO: fgCalledCount is 100
+; 1 inlinees with PGO data; 13 single block inlinees; 0 inlinees without PGO data
+
+G_M000_IG01:                ;; offset=0x0000
+       push     r15
+       push     r14
+       push     rdi
+       push     rsi
+       push     rbp
+       push     rbx
+       sub      rsp, 56
+       mov      rbx, rcx
+       mov      rsi, rdx
+       mov      edi, r8d
+ 
+G_M000_IG02:                ;; offset=0x0015
+       xor      ebp, ebp
+       xor      r14d, r14d
+       test     edi, edi
+       jg       SHORT G_M000_IG07
+ 
+G_M000_IG03:                ;; offset=0x001E
+       mov      rax, rbp
+ 
+G_M000_IG04:                ;; offset=0x0021
+       add      rsp, 56
+       pop      rbx
+       pop      rbp
+       pop      rsi
+       pop      rdi
+       pop      r14
+       pop      r15
+       ret      
+ 
+G_M000_IG05:                ;; offset=0x002E
+       mov      r8, gword ptr [r8+0x08]
+       and      ecx, 7
+       shl      ecx, 6
+       and      eax, 7
+       shl      eax, 3
+       or       ecx, eax
+       and      edx, 7
+       or       edx, ecx
+       cmp      edx, dword ptr [r8+0x08]
+       jae      G_M000_IG09
+       movzx    r15, word  ptr [r8+2*rdx+0x10]
+ 
+G_M000_IG06:                ;; offset=0x0055
+       mov      eax, r15d
+       add      rbp, rax
+       inc      r14d
+       cmp      r14d, edi
+       jge      SHORT G_M000_IG03
+ 
+G_M000_IG07:                ;; offset=0x0063
+       mov      edx, r14d
+       and      edx, 0x7FFF
+       cmp      edx, dword ptr [rsi+0x08]
+       jae      SHORT G_M000_IG09
+       lea      rdx, [rdx+2*rdx]
+       lea      rdx, bword ptr [rsi+4*rdx+0x10]
+       mov      ecx, dword ptr [rdx]
+       mov      eax, dword ptr [rdx+0x04]
+       mov      edx, dword ptr [rdx+0x08]
+       mov      r8, gword ptr [rbx+0x10]
+       test     r8, r8
+       je       SHORT G_M000_IG08
+       mov      r10, qword ptr [rbx+0x18]
+       mov      r9, gword ptr [rbx+0x08]
+       cmp      r10, qword ptr [r9+0x10]
+       jne      SHORT G_M000_IG08
+       mov      r10d, dword ptr [r8+0x20]
+       mov      r9d, dword ptr [r8+0x24]
+       mov      r11d, dword ptr [r8+0x28]
+       xor      r10d, ecx
+       xor      r9d, eax
+       or       r10d, r9d
+       xor      r11d, edx
+       or       r10d, r11d
+       test     r10d, -8
+       je       G_M000_IG05
+ 
+G_M000_IG08:                ;; offset=0x00C1
+       mov      dword ptr [rsp+0x28], ecx
+       mov      dword ptr [rsp+0x2C], eax
+       mov      dword ptr [rsp+0x30], edx
+       lea      rdx, [rsp+0x28]
+       mov      rcx, rbx
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:GetValueUncached(Tedd.OpenVDB.Math.Coord):ushort:this]
+       mov      r15d, eax
+       jmp      G_M000_IG06
+ 
+G_M000_IG09:                ;; offset=0x00E3
+       call     CORINFO_HELP_RNGCHKFAIL
+       int3     
+ 
+; Total bytes of code 233
+
+; Assembly listing for method Program:<<Main>$>g__Write|0_4(Tedd.OpenVDB.Tree.ValueAccessor`1[ushort],Tedd.OpenVDB.Math.Coord[],int,int) (Instrumented Tier0)
+; Emitting BLENDED_CODE for x64 + VEX on Windows
+; Instrumented Tier0 code
+; rbp based frame
+; partially interruptible
+; compiling with minopt
+
+G_M000_IG01:                ;; offset=0x0000
+       push     rbp
+       sub      rsp, 112
+       lea      rbp, [rsp+0x70]
+       xor      eax, eax
+       mov      dword ptr [rbp-0x3C], eax
+       mov      gword ptr [rbp+0x10], rcx
+       mov      gword ptr [rbp+0x18], rdx
+       mov      dword ptr [rbp+0x20], r8d
+       mov      dword ptr [rbp+0x28], r9d
+ 
+G_M000_IG02:                ;; offset=0x001F
+       mov      dword ptr [rbp-0x40], 0x3E8
+       xor      eax, eax
+       mov      dword ptr [rbp-0x3C], eax
+       jmp      SHORT G_M000_IG04
+ 
+G_M000_IG03:                ;; offset=0x002D
+       mov      rcx, 0x7FFC1C953308
+       call     CORINFO_HELP_COUNTPROFILE32
+       mov      rax, gword ptr [rbp+0x18]
+       mov      ecx, dword ptr [rbp-0x3C]
+       and      ecx, 0x7FFF
+       cmp      ecx, dword ptr [rax+0x08]
+       jae      G_M000_IG08
+       mov      edx, ecx
+       imul     rdx, rdx, 12
+       lea      rax, bword ptr [rax+rdx+0x10]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x50], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x48], ecx
+       lea      rdx, [rbp-0x50]
+       mov      eax, dword ptr [rbp-0x3C]
+       add      eax, dword ptr [rbp+0x28]
+       and      eax, 7
+       inc      eax
+       movzx    r8, ax
+       mov      rcx, gword ptr [rbp+0x10]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:SetValueOn(Tedd.OpenVDB.Math.Coord,ushort):this]
+       mov      eax, dword ptr [rbp-0x3C]
+       inc      eax
+       mov      dword ptr [rbp-0x3C], eax
+ 
+G_M000_IG04:                ;; offset=0x0091
+       mov      eax, dword ptr [rbp-0x40]
+       dec      eax
+       mov      dword ptr [rbp-0x40], eax
+       cmp      dword ptr [rbp-0x40], 0
+       jg       SHORT G_M000_IG06
+ 
+G_M000_IG05:                ;; offset=0x009F
+       lea      rcx, [rbp-0x40]
+       mov      edx, 35
+       call     CORINFO_HELP_PATCHPOINT
+       jmp      rax
+ 
+G_M000_IG06:                ;; offset=0x00AF
+       mov      eax, dword ptr [rbp-0x3C]
+       cmp      eax, dword ptr [rbp+0x20]
+       jl       G_M000_IG03
+       mov      rcx, 0x7FFC1C95330C
+       call     CORINFO_HELP_COUNTPROFILE32
+       nop      
+ 
+G_M000_IG07:                ;; offset=0x00CB
+       add      rsp, 112
+       pop      rbp
+       ret      
+ 
+G_M000_IG08:                ;; offset=0x00D1
+       call     CORINFO_HELP_RNGCHKFAIL
+       int3     
+ 
+; Total bytes of code 215
+
+; Assembly listing for method Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:SetValueOn(Tedd.OpenVDB.Math.Coord,ushort):this (Tier0)
+; Emitting BLENDED_CODE for x64 + VEX on Windows
+; Tier0 code
+; rbp based frame
+; partially interruptible
+; compiling with minopt
+
+G_M000_IG01:                ;; offset=0x0000
+       push     rbp
+       sub      rsp, 128
+       lea      rbp, [rsp+0x80]
+       vxorps   xmm4, xmm4, xmm4
+       vmovdqu  xmmword ptr [rbp-0x18], xmm4
+       xor      eax, eax
+       mov      qword ptr [rbp-0x08], rax
+       mov      gword ptr [rbp+0x10], rcx
+       mov      bword ptr [rbp+0x18], rdx
+       mov      dword ptr [rbp+0x20], r8d
+ 
+G_M000_IG02:                ;; offset=0x002B
+       mov      rax, gword ptr [rbp+0x10]
+       mov      rax, gword ptr [rax+0x10]
+       mov      gword ptr [rbp-0x08], rax
+       cmp      gword ptr [rbp-0x08], 0
+       je       G_M000_IG04
+       mov      rax, gword ptr [rbp+0x10]
+       mov      rax, qword ptr [rax+0x18]
+       mov      qword ptr [rbp-0x20], rax
+       mov      rax, gword ptr [rbp+0x10]
+       mov      rcx, gword ptr [rax+0x08]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.VdbTree`1[ushort]:get_TopologyVersion():long:this]
+       cmp      rax, qword ptr [rbp-0x20]
+       jne      G_M000_IG04
+       lea      rdx, [rbp-0x18]
+       mov      rcx, gword ptr [rbp-0x08]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.LeafNode`1[ushort]:get_Origin():Tedd.OpenVDB.Math.Coord:this]
+       mov      rcx, bword ptr [rbp+0x18]
+       call     [Tedd.OpenVDB.Math.Coord:get_X():int:this]
+       mov      dword ptr [rbp-0x24], eax
+       lea      rcx, [rbp-0x18]
+       call     [Tedd.OpenVDB.Math.Coord:get_X():int:this]
+       xor      eax, dword ptr [rbp-0x24]
+       mov      dword ptr [rbp-0x28], eax
+       mov      rcx, bword ptr [rbp+0x18]
+       call     [Tedd.OpenVDB.Math.Coord:get_Y():int:this]
+       mov      dword ptr [rbp-0x2C], eax
+       lea      rcx, [rbp-0x18]
+       call     [Tedd.OpenVDB.Math.Coord:get_Y():int:this]
+       xor      eax, dword ptr [rbp-0x2C]
+       or       eax, dword ptr [rbp-0x28]
+       mov      dword ptr [rbp-0x30], eax
+       mov      rcx, bword ptr [rbp+0x18]
+       call     [Tedd.OpenVDB.Math.Coord:get_Z():int:this]
+       mov      dword ptr [rbp-0x34], eax
+       lea      rcx, [rbp-0x18]
+       call     [Tedd.OpenVDB.Math.Coord:get_Z():int:this]
+       xor      eax, dword ptr [rbp-0x34]
+       or       eax, dword ptr [rbp-0x30]
+       and      eax, -8
+       test     eax, eax
+       jne      SHORT G_M000_IG04
+       mov      rax, bword ptr [rbp+0x18]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x48], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x40], ecx
+       lea      rdx, [rbp-0x48]
+       movzx    r8, word  ptr [rbp+0x20]
+       mov      rcx, gword ptr [rbp-0x08]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.LeafNode`1[ushort]:SetValueOn(Tedd.OpenVDB.Math.Coord,ushort):this]
+       nop      
+ 
+G_M000_IG03:                ;; offset=0x0100
+       add      rsp, 128
+       pop      rbp
+       ret      
+ 
+G_M000_IG04:                ;; offset=0x0109
+       mov      rax, bword ptr [rbp+0x18]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x58], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x50], ecx
+       lea      rdx, [rbp-0x58]
+       movzx    r8, word  ptr [rbp+0x20]
+       mov      rcx, gword ptr [rbp+0x10]
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:SetValueOnUncached(Tedd.OpenVDB.Math.Coord,ushort):this]
+       nop      
+ 
+G_M000_IG05:                ;; offset=0x012E
+       add      rsp, 128
+       pop      rbp
+       ret      
+ 
+; Total bytes of code 311
+
+; Assembly listing for method Program:<<Main>$>g__Write|0_4(Tedd.OpenVDB.Tree.ValueAccessor`1[ushort],Tedd.OpenVDB.Math.Coord[],int,int) (Tier1-OSR)
+; Emitting BLENDED_CODE for x64 + VEX on Windows
+; Tier1-OSR code
+; OSR variant for entry point 0x23
+; optimized code
+; optimized using Synthesized PGO
+; rsp based frame
+; fully interruptible
+; with Synthesized PGO: fgCalledCount is 1
+; 0 inlinees with PGO data; 12 single block inlinees; 2 inlinees without PGO data
+
+G_M000_IG01:                ;; offset=0x0000
+       push     rax
+       sub      rsp, 104
+       mov      qword ptr [rsp+0xD8], r15
+       mov      qword ptr [rsp+0xD0], r14
+       mov      qword ptr [rsp+0xC8], rdi
+       mov      qword ptr [rsp+0xC0], rsi
+       mov      qword ptr [rsp+0xB8], rbx
+       mov      rbx, gword ptr [rsp+0xF0]
+       mov      rsi, gword ptr [rsp+0xF8]
+       mov      edi, dword ptr [rsp+0x100]
+       mov      ebp, dword ptr [rsp+0x108]
+       mov      r14d, dword ptr [rsp+0xA4]
+ 
+G_M000_IG02:                ;; offset=0x0053
+       cmp      r14d, edi
+       jl       SHORT G_M000_IG06
+ 
+G_M000_IG03:                ;; offset=0x0058
+       add      rsp, 184
+       pop      rbx
+       pop      rsi
+       pop      rdi
+       pop      r14
+       pop      r15
+       pop      rbp
+       ret      
+ 
+G_M000_IG04:                ;; offset=0x0068
+       mov      dword ptr [rsp+0x28], ecx
+       mov      dword ptr [rsp+0x2C], r8d
+       mov      dword ptr [rsp+0x30], edx
+       lea      rdx, [rsp+0x28]
+       mov      rcx, rbx
+       mov      r8d, eax
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:SetValueOnUncached(Tedd.OpenVDB.Math.Coord,ushort):this]
+ 
+G_M000_IG05:                ;; offset=0x0086
+       inc      r14d
+       cmp      r14d, edi
+       jge      SHORT G_M000_IG03
+ 
+G_M000_IG06:                ;; offset=0x008E
+       mov      edx, r14d
+       and      edx, 0x7FFF
+       cmp      edx, dword ptr [rsi+0x08]
+       jae      G_M000_IG11
+       lea      rdx, [rdx+2*rdx]
+       lea      rdx, bword ptr [rsi+4*rdx+0x10]
+       mov      ecx, dword ptr [rdx]
+       mov      r8d, dword ptr [rdx+0x04]
+       mov      edx, dword ptr [rdx+0x08]
+       lea      eax, [r14+rbp]
+       and      eax, 7
+       inc      eax
+       movzx    rax, ax
+       mov      r10, gword ptr [rbx+0x10]
+       test     r10, r10
+       je       SHORT G_M000_IG04
+ 
+G_M000_IG07:                ;; offset=0x00C7
+       mov      r9, qword ptr [rbx+0x18]
+       mov      r11, gword ptr [rbx+0x08]
+       cmp      r9, qword ptr [r11+0x10]
+       jne      SHORT G_M000_IG04
+ 
+G_M000_IG08:                ;; offset=0x00D5
+       mov      r9d, dword ptr [r10+0x20]
+       mov      r11d, dword ptr [r10+0x24]
+       mov      r15d, dword ptr [r10+0x28]
+       xor      r9d, ecx
+       xor      r11d, r8d
+       or       r9d, r11d
+       xor      r15d, edx
+       or       r9d, r15d
+       test     r9d, -8
+       jne      G_M000_IG04
+ 
+G_M000_IG09:                ;; offset=0x00FD
+       and      ecx, 7
+       shl      ecx, 6
+       and      r8d, 7
+       shl      r8d, 3
+       or       ecx, r8d
+       and      edx, 7
+       or       edx, ecx
+       mov      rcx, gword ptr [r10+0x08]
+       cmp      edx, dword ptr [rcx+0x08]
+       jae      SHORT G_M000_IG11
+       mov      r8d, edx
+       mov      word  ptr [rcx+2*r8+0x10], ax
+       mov      rcx, gword ptr [r10+0x18]
+       mov      eax, edx
+       sar      eax, 6
+       cmp      eax, dword ptr [rcx+0x08]
+       jae      SHORT G_M000_IG11
+       mov      r8d, eax
+       lea      rcx, bword ptr [rcx+8*r8+0x10]
+       cmp      qword ptr [rcx], -1
+       je       G_M000_IG05
+ 
+G_M000_IG10:                ;; offset=0x0145
+       mov      r8, qword ptr [rcx]
+       bts      r8, rdx
+       mov      qword ptr [rcx], r8
+       jmp      G_M000_IG05
+ 
+G_M000_IG11:                ;; offset=0x0154
+       call     CORINFO_HELP_RNGCHKFAIL
+       int3     
+ 
+; Total bytes of code 346
+
+; Assembly listing for method Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:SetValueOnUncached(Tedd.OpenVDB.Math.Coord,ushort):this (Instrumented Tier0)
+; Emitting BLENDED_CODE for x64 + VEX on Windows
+; Instrumented Tier0 code
+; rbp based frame
+; partially interruptible
+; compiling with minopt
+
+G_M000_IG01:                ;; offset=0x0000
+       push     rbp
+       sub      rsp, 208
+       lea      rbp, [rsp+0xD0]
+       xor      eax, eax
+       mov      qword ptr [rbp-0x88], rax
+       vxorps   xmm4, xmm4, xmm4
+       vmovdqu  ymmword ptr [rbp-0x80], ymm4
+       vmovdqu  ymmword ptr [rbp-0x60], ymm4
+       vmovdqu  ymmword ptr [rbp-0x40], ymm4
+       vmovdqu  ymmword ptr [rbp-0x20], ymm4
+       mov      gword ptr [rbp+0x10], rcx
+       mov      bword ptr [rbp+0x18], rdx
+       mov      dword ptr [rbp+0x20], r8d
+ 
+G_M000_IG02:                ;; offset=0x003D
+       mov      rax, gword ptr [rbp+0x10]
+       mov      rax, qword ptr [rax+0x18]
+       mov      qword ptr [rbp-0x30], rax
+       mov      rax, gword ptr [rbp+0x10]
+       mov      rcx, gword ptr [rax+0x08]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.VdbTree`1[ushort]:get_TopologyVersion():long:this]
+       cmp      rax, qword ptr [rbp-0x30]
+       je       SHORT G_M000_IG03
+       mov      rcx, 0x7FFC1C953388
+       call     CORINFO_HELP_COUNTPROFILE32
+       mov      rcx, gword ptr [rbp+0x10]
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:Clear():this]
+ 
+G_M000_IG03:                ;; offset=0x0078
+       mov      rax, bword ptr [rbp+0x18]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x50], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x48], ecx
+       lea      rdx, [rbp-0x50]
+       mov      rcx, gword ptr [rbp+0x10]
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:CachedSecondary(Tedd.OpenVDB.Math.Coord):Tedd.OpenVDB.Tree.LeafNode`1[ushort]:this]
+       mov      gword ptr [rbp-0x08], rax
+       cmp      gword ptr [rbp-0x08], 0
+       je       SHORT G_M000_IG05
+       mov      rcx, 0x7FFC1C95338C
+       call     CORINFO_HELP_COUNTPROFILE32
+       mov      rax, bword ptr [rbp+0x18]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x60], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x58], ecx
+       lea      rdx, [rbp-0x60]
+       movzx    r8, word  ptr [rbp+0x20]
+       mov      rcx, gword ptr [rbp-0x08]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.LeafNode`1[ushort]:SetValueOn(Tedd.OpenVDB.Math.Coord,ushort):this]
+       nop      
+ 
+G_M000_IG04:                ;; offset=0x00D8
+       add      rsp, 208
+       pop      rbp
+       ret      
+ 
+G_M000_IG05:                ;; offset=0x00E1
+       mov      rax, bword ptr [rbp+0x18]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x70], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x68], ecx
+       lea      rdx, [rbp-0x70]
+       lea      r8, [rbp-0x18]
+       mov      rcx, gword ptr [rbp+0x10]
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:Resolve(Tedd.OpenVDB.Math.Coord,byref):bool:this]
+       mov      dword ptr [rbp-0x0C], eax
+       mov      rax, gword ptr [rbp+0x10]
+       mov      rax, gword ptr [rax+0x10]
+       mov      gword ptr [rbp-0x08], rax
+       cmp      gword ptr [rbp-0x08], 0
+       jne      G_M000_IG10
+       cmp      dword ptr [rbp-0x0C], 0
+       je       SHORT G_M000_IG08
+       movzx    rdx, word  ptr [rbp+0x20]
+       movzx    rcx, word  ptr [rbp-0x18]
+       call     [Tedd.OpenVDB.Util.ValueEquality`1[ushort]:Equals(ushort,ushort):bool]
+       test     eax, eax
+       je       SHORT G_M000_IG07
+       mov      rcx, 0x7FFC1C953390
+       call     CORINFO_HELP_COUNTPROFILE32
+       nop      
+ 
+G_M000_IG06:                ;; offset=0x0146
+       add      rsp, 208
+       pop      rbp
+       ret      
+ 
+G_M000_IG07:                ;; offset=0x014F
+       mov      rcx, 0x7FFC1C953394
+       call     CORINFO_HELP_COUNTPROFILE32
+ 
+G_M000_IG08:                ;; offset=0x015E
+       mov      rax, gword ptr [rbp+0x10]
+       mov      rax, qword ptr [rax+0x18]
+       mov      qword ptr [rbp-0x38], rax
+       mov      rax, gword ptr [rbp+0x10]
+       mov      rcx, gword ptr [rax+0x08]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.VdbTree`1[ushort]:get_TopologyVersion():long:this]
+       cmp      rax, qword ptr [rbp-0x38]
+       je       SHORT G_M000_IG09
+       mov      rcx, 0x7FFC1C953398
+       call     CORINFO_HELP_COUNTPROFILE32
+       mov      rcx, gword ptr [rbp+0x10]
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:Clear():this]
+ 
+G_M000_IG09:                ;; offset=0x0199
+       mov      rcx, 0x7FFC1C95339C
+       call     CORINFO_HELP_COUNTPROFILE32
+       mov      rax, gword ptr [rbp+0x10]
+       mov      rax, gword ptr [rax+0x08]
+       mov      gword ptr [rbp-0x88], rax
+       mov      rax, bword ptr [rbp+0x18]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x80], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x78], ecx
+       mov      rcx, gword ptr [rbp-0x88]
+       lea      rdx, [rbp-0x80]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.VdbTree`1[ushort]:TouchLeaf(Tedd.OpenVDB.Math.Coord):Tedd.OpenVDB.Tree.LeafNode`1[ushort]:this]
+       mov      gword ptr [rbp-0x08], rax
+       mov      rax, gword ptr [rbp+0x10]
+       lea      rcx, bword ptr [rax+0x10]
+       mov      rdx, gword ptr [rbp-0x08]
+       call     CORINFO_HELP_ASSIGN_REF
+       mov      rax, gword ptr [rbp+0x10]
+       cmp      byte  ptr [rax], al
+       mov      rax, gword ptr [rbp+0x10]
+       lea      r8, bword ptr [rax+0x20]
+       lea      rcx, [rbp-0x28]
+       mov      rdx, 0x7FFC1C9195D8
+       mov      r9d, 64
+       call     [<PrivateImplementationDetails>:InlineArrayAsSpan[Tedd.OpenVDB.Tree.ValueAccessor`1+LeafCache[ushort],System.__Canon](byref,int):System.Span`1[System.__Canon]]
+       mov      rax, bword ptr [rbp+0x18]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x98], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x90], ecx
+       lea      rcx, [rbp-0x98]
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:CacheSlot(Tedd.OpenVDB.Math.Coord):int]
+       mov      dword ptr [rbp-0x3C], eax
+       mov      eax, dword ptr [rbp-0x20]
+       cmp      dword ptr [rbp-0x3C], eax
+       jae      SHORT G_M000_IG12
+       mov      eax, dword ptr [rbp-0x3C]
+       mov      rcx, bword ptr [rbp-0x28]
+       lea      rcx, bword ptr [rcx+8*rax]
+       mov      rdx, gword ptr [rbp-0x08]
+       call     CORINFO_HELP_CHECKED_ASSIGN_REF
+       mov      rax, gword ptr [rbp+0x10]
+       mov      rcx, gword ptr [rax+0x08]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.VdbTree`1[ushort]:get_TopologyVersion():long:this]
+       mov      rcx, gword ptr [rbp+0x10]
+       mov      qword ptr [rcx+0x18], rax
+ 
+G_M000_IG10:                ;; offset=0x0273
+       mov      rcx, 0x7FFC1C9533A0
+       call     CORINFO_HELP_COUNTPROFILE32
+       mov      rax, bword ptr [rbp+0x18]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0xA8], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0xA0], ecx
+       lea      rdx, [rbp-0xA8]
+       movzx    r8, word  ptr [rbp+0x20]
+       mov      rcx, gword ptr [rbp-0x08]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.LeafNode`1[ushort]:SetValueOn(Tedd.OpenVDB.Math.Coord,ushort):this]
+       nop      
+ 
+G_M000_IG11:                ;; offset=0x02B2
+       add      rsp, 208
+       pop      rbp
+       ret      
+ 
+G_M000_IG12:                ;; offset=0x02BB
+       call     CORINFO_HELP_RNGCHKFAIL
+       int3     
+ 
+; Total bytes of code 705
+
+; Assembly listing for method Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:ProbeValue(Tedd.OpenVDB.Math.Coord,byref):bool:this (Instrumented Tier0)
+; Emitting BLENDED_CODE for x64 + VEX on Windows
+; Instrumented Tier0 code
+; rbp based frame
+; partially interruptible
+; compiling with minopt
+
+G_M000_IG01:                ;; offset=0x0000
+       push     rbp
+       sub      rsp, 128
+       lea      rbp, [rsp+0x80]
+       vxorps   xmm4, xmm4, xmm4
+       vmovdqu  xmmword ptr [rbp-0x18], xmm4
+       xor      eax, eax
+       mov      qword ptr [rbp-0x08], rax
+       mov      gword ptr [rbp+0x10], rcx
+       mov      bword ptr [rbp+0x18], rdx
+       mov      bword ptr [rbp+0x20], r8
+ 
+G_M000_IG02:                ;; offset=0x002B
+       mov      rax, bword ptr [rbp+0x18]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x28], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x20], ecx
+       lea      rdx, [rbp-0x28]
+       mov      rcx, gword ptr [rbp+0x10]
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:Cached(Tedd.OpenVDB.Math.Coord):Tedd.OpenVDB.Tree.LeafNode`1[ushort]:this]
+       mov      gword ptr [rbp-0x10], rax
+       mov      rax, gword ptr [rbp-0x10]
+       mov      gword ptr [rbp-0x18], rax
+       cmp      gword ptr [rbp-0x10], 0
+       jne      SHORT G_M000_IG03
+       mov      rcx, 0x7FFC1C953428
+       call     CORINFO_HELP_COUNTPROFILE32
+       mov      rax, bword ptr [rbp+0x18]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x38], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x30], ecx
+       lea      rdx, [rbp-0x38]
+       mov      rcx, gword ptr [rbp+0x10]
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:CachedSecondary(Tedd.OpenVDB.Math.Coord):Tedd.OpenVDB.Tree.LeafNode`1[ushort]:this]
+       mov      gword ptr [rbp-0x18], rax
+ 
+G_M000_IG03:                ;; offset=0x008F
+       mov      rax, gword ptr [rbp-0x18]
+       mov      gword ptr [rbp-0x08], rax
+       cmp      gword ptr [rbp-0x08], 0
+       je       SHORT G_M000_IG05
+       mov      rcx, 0x7FFC1C95342C
+       call     CORINFO_HELP_COUNTPROFILE32
+       mov      rax, bword ptr [rbp+0x18]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x48], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x40], ecx
+       lea      rdx, [rbp-0x48]
+       mov      rcx, gword ptr [rbp-0x08]
+       mov      r8, bword ptr [rbp+0x20]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.LeafNode`1[ushort]:ProbeValue(Tedd.OpenVDB.Math.Coord,byref):bool:this]
+       nop      
+ 
+G_M000_IG04:                ;; offset=0x00D3
+       add      rsp, 128
+       pop      rbp
+       ret      
+ 
+G_M000_IG05:                ;; offset=0x00DC
+       mov      rcx, 0x7FFC1C953430
+       call     CORINFO_HELP_COUNTPROFILE32
+       mov      rax, bword ptr [rbp+0x18]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x58], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x50], ecx
+       lea      rdx, [rbp-0x58]
+       mov      rcx, gword ptr [rbp+0x10]
+       mov      r8, bword ptr [rbp+0x20]
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:Resolve(Tedd.OpenVDB.Math.Coord,byref):bool:this]
+       nop      
+ 
+G_M000_IG06:                ;; offset=0x010F
+       add      rsp, 128
+       pop      rbp
+       ret      
+ 
+; Total bytes of code 280
+
+; Assembly listing for method Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:Cached(Tedd.OpenVDB.Math.Coord):Tedd.OpenVDB.Tree.LeafNode`1[ushort]:this (Instrumented Tier0)
+; Emitting BLENDED_CODE for x64 + VEX on Windows
+; Instrumented Tier0 code
+; rbp based frame
+; partially interruptible
+; compiling with minopt
+
+G_M000_IG01:                ;; offset=0x0000
+       push     rbp
+       sub      rsp, 96
+       lea      rbp, [rsp+0x60]
+       vxorps   xmm4, xmm4, xmm4
+       vmovdqu  xmmword ptr [rbp-0x18], xmm4
+       xor      eax, eax
+       mov      qword ptr [rbp-0x08], rax
+       mov      gword ptr [rbp+0x10], rcx
+       mov      bword ptr [rbp+0x18], rdx
+ 
+G_M000_IG02:                ;; offset=0x0021
+       mov      rax, gword ptr [rbp+0x10]
+       mov      rax, qword ptr [rax+0x18]
+       mov      qword ptr [rbp-0x20], rax
+       mov      rax, gword ptr [rbp+0x10]
+       mov      rcx, gword ptr [rax+0x08]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.VdbTree`1[ushort]:get_TopologyVersion():long:this]
+       cmp      rax, qword ptr [rbp-0x20]
+       je       SHORT G_M000_IG04
+       mov      rcx, 0x7FFC1C953468
+       call     CORINFO_HELP_COUNTPROFILE32
+       mov      rcx, gword ptr [rbp+0x10]
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:Clear():this]
+       xor      rax, rax
+ 
+G_M000_IG03:                ;; offset=0x005E
+       add      rsp, 96
+       pop      rbp
+       ret      
+ 
+G_M000_IG04:                ;; offset=0x0064
+       mov      rax, gword ptr [rbp+0x10]
+       mov      rax, gword ptr [rax+0x10]
+       mov      gword ptr [rbp-0x08], rax
+       cmp      gword ptr [rbp-0x08], 0
+       jne      SHORT G_M000_IG06
+       mov      rcx, 0x7FFC1C95346C
+       call     CORINFO_HELP_COUNTPROFILE32
+       xor      rax, rax
+ 
+G_M000_IG05:                ;; offset=0x0088
+       add      rsp, 96
+       pop      rbp
+       ret      
+ 
+G_M000_IG06:                ;; offset=0x008E
+       lea      rdx, [rbp-0x18]
+       mov      rcx, gword ptr [rbp-0x08]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.LeafNode`1[ushort]:get_Origin():Tedd.OpenVDB.Math.Coord:this]
+       mov      rcx, bword ptr [rbp+0x18]
+       call     [Tedd.OpenVDB.Math.Coord:get_X():int:this]
+       mov      dword ptr [rbp-0x24], eax
+       lea      rcx, [rbp-0x18]
+       call     [Tedd.OpenVDB.Math.Coord:get_X():int:this]
+       xor      eax, dword ptr [rbp-0x24]
+       mov      dword ptr [rbp-0x28], eax
+       mov      rcx, bword ptr [rbp+0x18]
+       call     [Tedd.OpenVDB.Math.Coord:get_Y():int:this]
+       mov      dword ptr [rbp-0x2C], eax
+       lea      rcx, [rbp-0x18]
+       call     [Tedd.OpenVDB.Math.Coord:get_Y():int:this]
+       xor      eax, dword ptr [rbp-0x2C]
+       or       eax, dword ptr [rbp-0x28]
+       mov      dword ptr [rbp-0x30], eax
+       mov      rcx, bword ptr [rbp+0x18]
+       call     [Tedd.OpenVDB.Math.Coord:get_Z():int:this]
+       mov      dword ptr [rbp-0x34], eax
+       lea      rcx, [rbp-0x18]
+       call     [Tedd.OpenVDB.Math.Coord:get_Z():int:this]
+       xor      eax, dword ptr [rbp-0x34]
+       or       eax, dword ptr [rbp-0x30]
+       and      eax, -8
+       test     eax, eax
+       je       SHORT G_M000_IG08
+       mov      rcx, 0x7FFC1C953470
+       call     CORINFO_HELP_COUNTPROFILE32
+       xor      rax, rax
+ 
+G_M000_IG07:                ;; offset=0x0110
+       add      rsp, 96
+       pop      rbp
+       ret      
+ 
+G_M000_IG08:                ;; offset=0x0116
+       mov      rcx, 0x7FFC1C953474
+       call     CORINFO_HELP_COUNTPROFILE32
+       mov      rax, gword ptr [rbp-0x08]
+ 
+G_M000_IG09:                ;; offset=0x0129
+       add      rsp, 96
+       pop      rbp
+       ret      
+ 
+; Total bytes of code 303
+
+; Assembly listing for method Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:SetValueOn(Tedd.OpenVDB.Math.Coord,ushort):this (Instrumented Tier0)
+; Emitting BLENDED_CODE for x64 + VEX on Windows
+; Instrumented Tier0 code
+; rbp based frame
+; partially interruptible
+; compiling with minopt
+
+G_M000_IG01:                ;; offset=0x0000
+       push     rbp
+       sub      rsp, 128
+       lea      rbp, [rsp+0x80]
+       vxorps   xmm4, xmm4, xmm4
+       vmovdqu  xmmword ptr [rbp-0x18], xmm4
+       xor      eax, eax
+       mov      qword ptr [rbp-0x08], rax
+       mov      gword ptr [rbp+0x10], rcx
+       mov      bword ptr [rbp+0x18], rdx
+       mov      dword ptr [rbp+0x20], r8d
+ 
+G_M000_IG02:                ;; offset=0x002B
+       mov      rax, gword ptr [rbp+0x10]
+       mov      rax, gword ptr [rax+0x10]
+       mov      gword ptr [rbp-0x08], rax
+       cmp      gword ptr [rbp-0x08], 0
+       je       G_M000_IG07
+       mov      rax, gword ptr [rbp+0x10]
+       mov      rax, qword ptr [rax+0x18]
+       mov      qword ptr [rbp-0x20], rax
+       mov      rax, gword ptr [rbp+0x10]
+       mov      rcx, gword ptr [rax+0x08]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.VdbTree`1[ushort]:get_TopologyVersion():long:this]
+       cmp      rax, qword ptr [rbp-0x20]
+       jne      G_M000_IG06
+       lea      rdx, [rbp-0x18]
+       mov      rcx, gword ptr [rbp-0x08]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.LeafNode`1[ushort]:get_Origin():Tedd.OpenVDB.Math.Coord:this]
+       mov      rcx, bword ptr [rbp+0x18]
+       call     [Tedd.OpenVDB.Math.Coord:get_X():int:this]
+       mov      dword ptr [rbp-0x24], eax
+       lea      rcx, [rbp-0x18]
+       call     [Tedd.OpenVDB.Math.Coord:get_X():int:this]
+       xor      eax, dword ptr [rbp-0x24]
+       mov      dword ptr [rbp-0x28], eax
+       mov      rcx, bword ptr [rbp+0x18]
+       call     [Tedd.OpenVDB.Math.Coord:get_Y():int:this]
+       mov      dword ptr [rbp-0x2C], eax
+       lea      rcx, [rbp-0x18]
+       call     [Tedd.OpenVDB.Math.Coord:get_Y():int:this]
+       xor      eax, dword ptr [rbp-0x2C]
+       or       eax, dword ptr [rbp-0x28]
+       mov      dword ptr [rbp-0x30], eax
+       mov      rcx, bword ptr [rbp+0x18]
+       call     [Tedd.OpenVDB.Math.Coord:get_Z():int:this]
+       mov      dword ptr [rbp-0x34], eax
+       lea      rcx, [rbp-0x18]
+       call     [Tedd.OpenVDB.Math.Coord:get_Z():int:this]
+       xor      eax, dword ptr [rbp-0x34]
+       or       eax, dword ptr [rbp-0x30]
+       and      eax, -8
+       test     eax, eax
+       jne      SHORT G_M000_IG05
+       mov      rcx, 0x7FFC1C953890
+       call     CORINFO_HELP_COUNTPROFILE32
+       mov      rax, bword ptr [rbp+0x18]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x48], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x40], ecx
+       lea      rdx, [rbp-0x48]
+       movzx    r8, word  ptr [rbp+0x20]
+       mov      rcx, gword ptr [rbp-0x08]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.LeafNode`1[ushort]:SetValueOn(Tedd.OpenVDB.Math.Coord,ushort):this]
+ 
+G_M000_IG03:                ;; offset=0x010E
+       nop      
+ 
+G_M000_IG04:                ;; offset=0x010F
+       add      rsp, 128
+       pop      rbp
+       ret      
+ 
+G_M000_IG05:                ;; offset=0x0118
+       mov      rcx, 0x7FFC1C953894
+       call     CORINFO_HELP_COUNTPROFILE32
+       jmp      SHORT G_M000_IG07
+ 
+G_M000_IG06:                ;; offset=0x0129
+       mov      rcx, 0x7FFC1C953898
+       call     CORINFO_HELP_COUNTPROFILE32
+ 
+G_M000_IG07:                ;; offset=0x0138
+       mov      rcx, 0x7FFC1C95389C
+       call     CORINFO_HELP_COUNTPROFILE32
+       mov      rax, bword ptr [rbp+0x18]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x58], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x50], ecx
+       lea      rdx, [rbp-0x58]
+       movzx    r8, word  ptr [rbp+0x20]
+       mov      rcx, gword ptr [rbp+0x10]
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:SetValueOnUncached(Tedd.OpenVDB.Math.Coord,ushort):this]
+       nop      
+ 
+G_M000_IG08:                ;; offset=0x016C
+       add      rsp, 128
+       pop      rbp
+       ret      
+ 
+; Total bytes of code 373
+
+; Assembly listing for method Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:SetValueOnUncached(Tedd.OpenVDB.Math.Coord,ushort):this (Tier1)
+; Emitting BLENDED_CODE for x64 + VEX on Windows
+; Tier1 code
+; optimized code
+; optimized using Synthesized PGO
+; rsp based frame
+; partially interruptible
+; with Synthesized PGO: fgCalledCount is 590080
+; 4 inlinees with PGO data; 41 single block inlinees; 5 inlinees without PGO data
+
+G_M000_IG01:                ;; offset=0x0000
+       push     r15
+       push     r14
+       push     rdi
+       push     rsi
+       push     rbp
+       push     rbx
+       sub      rsp, 56
+       xor      eax, eax
+       mov      qword ptr [rsp+0x30], rax
+       mov      rbx, rcx
+       mov      esi, r8d
+ 
+G_M000_IG02:                ;; offset=0x0019
+       mov      edi, dword ptr [rdx]
+       mov      ebp, dword ptr [rdx+0x04]
+       mov      r14d, dword ptr [rdx+0x08]
+       mov      rcx, qword ptr [rbx+0x18]
+       mov      rax, gword ptr [rbx+0x08]
+       cmp      rcx, qword ptr [rax+0x10]
+       jne      G_M000_IG05
+ 
+G_M000_IG03:                ;; offset=0x0034
+       lea      rcx, bword ptr [rbx+0x20]
+       mov      edx, edi
+       sar      edx, 3
+       and      edx, 3
+       shl      edx, 4
+       mov      eax, ebp
+       sar      eax, 3
+       and      eax, 3
+       shl      eax, 2
+       or       edx, eax
+       mov      eax, r14d
+       sar      eax, 3
+       and      eax, 3
+       or       edx, eax
+       mov      r15, gword ptr [rcx+8*rdx]
+       test     r15, r15
+       je       G_M000_IG06
+       mov      ecx, dword ptr [r15+0x20]
+       mov      edx, dword ptr [r15+0x24]
+       mov      eax, dword ptr [r15+0x28]
+       mov      r8d, edi
+       and      r8d, -8
+       mov      r10d, ebp
+       and      r10d, -8
+       mov      r9d, r14d
+       and      r9d, -8
+       cmp      ecx, r8d
+       jne      G_M000_IG06
+       cmp      edx, r10d
+       jne      SHORT G_M000_IG06
+       cmp      eax, r9d
+       jne      SHORT G_M000_IG06
+       lea      rcx, bword ptr [rbx+0x10]
+       mov      rdx, r15
+       call     CORINFO_HELP_ASSIGN_REF
+       and      edi, 7
+       shl      edi, 6
+       and      ebp, 7
+       shl      ebp, 3
+       or       edi, ebp
+       and      r14d, 7
+       or       edi, r14d
+       mov      rdx, gword ptr [r15+0x08]
+       cmp      edi, dword ptr [rdx+0x08]
+       jae      G_M000_IG12
+       mov      r8d, edi
+       mov      word  ptr [rdx+2*r8+0x10], si
+       mov      rdx, gword ptr [r15+0x18]
+       mov      ebp, edi
+       sar      ebp, 6
+       cmp      ebp, dword ptr [rdx+0x08]
+       jae      G_M000_IG12
+       mov      r8d, ebp
+       lea      rdx, bword ptr [rdx+8*r8+0x10]
+       cmp      qword ptr [rdx], -1
+       jne      SHORT G_M000_IG07
+ 
+G_M000_IG04:                ;; offset=0x00F3
+       add      rsp, 56
+       pop      rbx
+       pop      rbp
+       pop      rsi
+       pop      rdi
+       pop      r14
+       pop      r15
+       ret      
+ 
+G_M000_IG05:                ;; offset=0x0100
+       mov      rcx, rbx
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:Clear():this]
+       jmp      G_M000_IG03
+ 
+G_M000_IG06:                ;; offset=0x010E
+       mov      dword ptr [rsp+0x20], edi
+       mov      dword ptr [rsp+0x24], ebp
+       mov      dword ptr [rsp+0x28], r14d
+       lea      rdx, [rsp+0x20]
+       lea      r8, [rsp+0x30]
+       mov      rcx, rbx
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:Resolve(Tedd.OpenVDB.Math.Coord,byref):bool:this]
+       mov      r15, gword ptr [rbx+0x10]
+       test     r15, r15
+       jne      G_M000_IG11
+       jmp      SHORT G_M000_IG08
+ 
+G_M000_IG07:                ;; offset=0x013D
+       mov      r8, qword ptr [rdx]
+       bts      r8, rdi
+       mov      qword ptr [rdx], r8
+       jmp      SHORT G_M000_IG04
+ 
+G_M000_IG08:                ;; offset=0x0149
+       test     eax, eax
+       je       SHORT G_M000_IG09
+       movzx    rcx, word  ptr [rsp+0x30]
+       movzx    rax, si
+       cmp      ecx, eax
+       je       SHORT G_M000_IG04
+ 
+G_M000_IG09:                ;; offset=0x0159
+       mov      rcx, qword ptr [rbx+0x18]
+       mov      rax, gword ptr [rbx+0x08]
+       cmp      rcx, qword ptr [rax+0x10]
+       je       SHORT G_M000_IG10
+       mov      rcx, rbx
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:Clear():this]
+ 
+G_M000_IG10:                ;; offset=0x0170
+       mov      rcx, gword ptr [rbx+0x08]
+       mov      dword ptr [rsp+0x20], edi
+       mov      dword ptr [rsp+0x24], ebp
+       mov      dword ptr [rsp+0x28], r14d
+       lea      rdx, [rsp+0x20]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.VdbTree`1[ushort]:TouchLeaf(Tedd.OpenVDB.Math.Coord):Tedd.OpenVDB.Tree.LeafNode`1[ushort]:this]
+       mov      r15, rax
+       lea      rcx, bword ptr [rbx+0x10]
+       mov      rdx, r15
+       call     CORINFO_HELP_ASSIGN_REF
+       lea      rcx, bword ptr [rbx+0x20]
+       mov      edx, edi
+       sar      edx, 3
+       and      edx, 3
+       shl      edx, 4
+       mov      eax, ebp
+       sar      eax, 3
+       and      eax, 3
+       shl      eax, 2
+       or       edx, eax
+       mov      eax, r14d
+       sar      eax, 3
+       and      eax, 3
+       or       edx, eax
+       lea      rcx, bword ptr [rcx+8*rdx]
+       mov      rdx, r15
+       call     CORINFO_HELP_CHECKED_ASSIGN_REF
+       mov      rax, gword ptr [rbx+0x08]
+       mov      rax, qword ptr [rax+0x10]
+       mov      qword ptr [rbx+0x18], rax
+ 
+G_M000_IG11:                ;; offset=0x01DC
+       mov      eax, edi
+       and      eax, 7
+       shl      eax, 6
+       mov      ecx, ebp
+       and      ecx, 7
+       shl      ecx, 3
+       or       eax, ecx
+       mov      ecx, r14d
+       and      ecx, 7
+       or       eax, ecx
+       mov      rcx, gword ptr [r15+0x08]
+       cmp      eax, dword ptr [rcx+0x08]
+       jae      SHORT G_M000_IG12
+       mov      edx, eax
+       mov      word  ptr [rcx+2*rdx+0x10], si
+       mov      rcx, gword ptr [r15+0x18]
+       mov      ebp, eax
+       sar      ebp, 6
+       cmp      ebp, dword ptr [rcx+0x08]
+       jae      SHORT G_M000_IG12
+       mov      edx, ebp
+       lea      rcx, bword ptr [rcx+8*rdx+0x10]
+       cmp      qword ptr [rcx], -1
+       je       G_M000_IG04
+       mov      rdx, qword ptr [rcx]
+       bts      rdx, rax
+       mov      qword ptr [rcx], rdx
+       jmp      G_M000_IG04
+ 
+G_M000_IG12:                ;; offset=0x0234
+       call     CORINFO_HELP_RNGCHKFAIL
+       int3     
+ 
+; Total bytes of code 570
+
+; Assembly listing for method Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:SetValueOn(Tedd.OpenVDB.Math.Coord,ushort):this (Tier1)
+; Emitting BLENDED_CODE for x64 + VEX on Windows
+; Tier1 code
+; optimized code
+; optimized using Dynamic PGO
+; rsp based frame
+; partially interruptible
+; with Dynamic PGO: fgCalledCount is 4995
+; 1 inlinees with PGO data; 12 single block inlinees; 0 inlinees without PGO data
+
+G_M000_IG01:                ;; offset=0x0000
+       push     rsi
+       push     rbx
+       sub      rsp, 56
+ 
+G_M000_IG02:                ;; offset=0x0006
+       mov      eax, dword ptr [rdx]
+       mov      r10d, dword ptr [rdx+0x04]
+       mov      edx, dword ptr [rdx+0x08]
+       mov      r9, gword ptr [rcx+0x10]
+       test     r9, r9
+       je       SHORT G_M000_IG05
+       mov      r11, qword ptr [rcx+0x18]
+       mov      rbx, gword ptr [rcx+0x08]
+       cmp      r11, qword ptr [rbx+0x10]
+       jne      SHORT G_M000_IG05
+       mov      r11d, dword ptr [r9+0x20]
+       mov      ebx, dword ptr [r9+0x24]
+       mov      esi, dword ptr [r9+0x28]
+       xor      r11d, eax
+       xor      ebx, r10d
+       or       r11d, ebx
+       xor      esi, edx
+       or       r11d, esi
+       test     r11d, -8
+       jne      SHORT G_M000_IG05
+ 
+G_M000_IG03:                ;; offset=0x0049
+       and      eax, 7
+       shl      eax, 6
+       and      r10d, 7
+       shl      r10d, 3
+       or       eax, r10d
+       and      edx, 7
+       or       edx, eax
+       mov      rcx, gword ptr [r9+0x08]
+       cmp      edx, dword ptr [rcx+0x08]
+       jae      SHORT G_M000_IG07
+       mov      eax, edx
+       mov      word  ptr [rcx+2*rax+0x10], r8w
+       mov      r8, gword ptr [r9+0x18]
+       mov      ecx, edx
+       sar      ecx, 6
+       cmp      ecx, dword ptr [r8+0x08]
+       jae      SHORT G_M000_IG07
+       lea      r8, bword ptr [r8+8*rcx+0x10]
+       cmp      qword ptr [r8], -1
+       jne      SHORT G_M000_IG06
+ 
+G_M000_IG04:                ;; offset=0x008A
+       add      rsp, 56
+       pop      rbx
+       pop      rsi
+       ret      
+ 
+G_M000_IG05:                ;; offset=0x0091
+       mov      dword ptr [rsp+0x28], eax
+       mov      dword ptr [rsp+0x2C], r10d
+       mov      dword ptr [rsp+0x30], edx
+       lea      rdx, [rsp+0x28]
+       movzx    r8, r8w
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:SetValueOnUncached(Tedd.OpenVDB.Math.Coord,ushort):this]
+       jmp      SHORT G_M000_IG04
+ 
+G_M000_IG06:                ;; offset=0x00AF
+       mov      rcx, qword ptr [r8]
+       bts      rcx, rdx
+       mov      qword ptr [r8], rcx
+       jmp      SHORT G_M000_IG04
+ 
+G_M000_IG07:                ;; offset=0x00BB
+       call     CORINFO_HELP_RNGCHKFAIL
+       int3     
+ 
+; Total bytes of code 193
+
+; Assembly listing for method Program:<<Main>$>g__Write|0_4(Tedd.OpenVDB.Tree.ValueAccessor`1[ushort],Tedd.OpenVDB.Math.Coord[],int,int) (Instrumented Tier0)
+; Emitting BLENDED_CODE for x64 + VEX on Windows
+; Instrumented Tier0 code
+; rbp based frame
+; partially interruptible
+; compiling with minopt
+
+G_M000_IG01:                ;; offset=0x0000
+       push     rbp
+       sub      rsp, 112
+       lea      rbp, [rsp+0x70]
+       xor      eax, eax
+       mov      dword ptr [rbp-0x3C], eax
+       mov      gword ptr [rbp+0x10], rcx
+       mov      gword ptr [rbp+0x18], rdx
+       mov      dword ptr [rbp+0x20], r8d
+       mov      dword ptr [rbp+0x28], r9d
+ 
+G_M000_IG02:                ;; offset=0x001F
+       mov      dword ptr [rbp-0x40], 0x3E8
+       xor      eax, eax
+       mov      dword ptr [rbp-0x3C], eax
+       jmp      SHORT G_M000_IG04
+ 
+G_M000_IG03:                ;; offset=0x002D
+       mov      rcx, 0x7FFC1C953308
+       call     CORINFO_HELP_COUNTPROFILE32
+       mov      rax, gword ptr [rbp+0x18]
+       mov      ecx, dword ptr [rbp-0x3C]
+       and      ecx, 0x7FFF
+       cmp      ecx, dword ptr [rax+0x08]
+       jae      G_M000_IG08
+       mov      edx, ecx
+       imul     rdx, rdx, 12
+       lea      rax, bword ptr [rax+rdx+0x10]
+       mov      rcx, qword ptr [rax]
+       mov      qword ptr [rbp-0x50], rcx
+       mov      ecx, dword ptr [rax+0x08]
+       mov      dword ptr [rbp-0x48], ecx
+       lea      rdx, [rbp-0x50]
+       mov      eax, dword ptr [rbp-0x3C]
+       add      eax, dword ptr [rbp+0x28]
+       and      eax, 7
+       inc      eax
+       movzx    r8, ax
+       mov      rcx, gword ptr [rbp+0x10]
+       cmp      dword ptr [rcx], ecx
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:SetValueOn(Tedd.OpenVDB.Math.Coord,ushort):this]
+       mov      eax, dword ptr [rbp-0x3C]
+       inc      eax
+       mov      dword ptr [rbp-0x3C], eax
+ 
+G_M000_IG04:                ;; offset=0x0091
+       mov      eax, dword ptr [rbp-0x40]
+       dec      eax
+       mov      dword ptr [rbp-0x40], eax
+       cmp      dword ptr [rbp-0x40], 0
+       jg       SHORT G_M000_IG06
+ 
+G_M000_IG05:                ;; offset=0x009F
+       lea      rcx, [rbp-0x40]
+       mov      edx, 35
+       call     CORINFO_HELP_PATCHPOINT
+       jmp      rax
+ 
+G_M000_IG06:                ;; offset=0x00AF
+       mov      eax, dword ptr [rbp-0x3C]
+       cmp      eax, dword ptr [rbp+0x20]
+       jl       G_M000_IG03
+       mov      rcx, 0x7FFC1C95330C
+       call     CORINFO_HELP_COUNTPROFILE32
+       nop      
+ 
+G_M000_IG07:                ;; offset=0x00CB
+       add      rsp, 112
+       pop      rbp
+       ret      
+ 
+G_M000_IG08:                ;; offset=0x00D1
+       call     CORINFO_HELP_RNGCHKFAIL
+       int3     
+ 
+; Total bytes of code 215
+
+; Assembly listing for method Program:<<Main>$>g__Write|0_4(Tedd.OpenVDB.Tree.ValueAccessor`1[ushort],Tedd.OpenVDB.Math.Coord[],int,int) (Tier1-OSR)
+; Emitting BLENDED_CODE for x64 + VEX on Windows
+; Tier1-OSR code
+; OSR variant for entry point 0x23
+; optimized code
+; optimized using Synthesized PGO
+; rsp based frame
+; fully interruptible
+; with Synthesized PGO: fgCalledCount is 1
+; 2 inlinees with PGO data; 12 single block inlinees; 0 inlinees without PGO data
+
+G_M000_IG01:                ;; offset=0x0000
+       push     rax
+       sub      rsp, 104
+       mov      qword ptr [rsp+0xD8], r15
+       mov      qword ptr [rsp+0xD0], r14
+       mov      qword ptr [rsp+0xC8], rdi
+       mov      qword ptr [rsp+0xC0], rsi
+       mov      qword ptr [rsp+0xB8], rbx
+       mov      rbx, gword ptr [rsp+0xF0]
+       mov      rsi, gword ptr [rsp+0xF8]
+       mov      edi, dword ptr [rsp+0x100]
+       mov      ebp, dword ptr [rsp+0x108]
+       mov      r14d, dword ptr [rsp+0xA4]
+ 
+G_M000_IG02:                ;; offset=0x0053
+       cmp      r14d, edi
+       jl       SHORT G_M000_IG06
+ 
+G_M000_IG03:                ;; offset=0x0058
+       add      rsp, 184
+       pop      rbx
+       pop      rsi
+       pop      rdi
+       pop      r14
+       pop      r15
+       pop      rbp
+       ret      
+ 
+G_M000_IG04:                ;; offset=0x0068
+       and      ecx, 7
+       shl      ecx, 6
+       and      r8d, 7
+       shl      r8d, 3
+       or       ecx, r8d
+       and      edx, 7
+       or       edx, ecx
+       mov      rcx, gword ptr [r10+0x08]
+       cmp      edx, dword ptr [rcx+0x08]
+       jae      G_M000_IG09
+       mov      r8d, edx
+       mov      word  ptr [rcx+2*r8+0x10], ax
+       mov      rcx, gword ptr [r10+0x18]
+       mov      eax, edx
+       sar      eax, 6
+       cmp      eax, dword ptr [rcx+0x08]
+       jae      G_M000_IG09
+       mov      r8d, eax
+       lea      rcx, bword ptr [rcx+8*r8+0x10]
+       cmp      qword ptr [rcx], -1
+       jne      G_M000_IG08
+ 
+G_M000_IG05:                ;; offset=0x00B8
+       inc      r14d
+       cmp      r14d, edi
+       jge      SHORT G_M000_IG03
+ 
+G_M000_IG06:                ;; offset=0x00C0
+       mov      edx, r14d
+       and      edx, 0x7FFF
+       cmp      edx, dword ptr [rsi+0x08]
+       jae      G_M000_IG09
+       lea      rdx, [rdx+2*rdx]
+       lea      rdx, bword ptr [rsi+4*rdx+0x10]
+       mov      ecx, dword ptr [rdx]
+       mov      r8d, dword ptr [rdx+0x04]
+       mov      edx, dword ptr [rdx+0x08]
+       lea      eax, [r14+rbp]
+       and      eax, 7
+       inc      eax
+       movzx    rax, ax
+       mov      r10, gword ptr [rbx+0x10]
+       test     r10, r10
+       je       SHORT G_M000_IG07
+       mov      r9, qword ptr [rbx+0x18]
+       mov      r11, gword ptr [rbx+0x08]
+       cmp      r9, qword ptr [r11+0x10]
+       jne      SHORT G_M000_IG07
+       mov      r9d, dword ptr [r10+0x20]
+       mov      r11d, dword ptr [r10+0x24]
+       mov      r15d, dword ptr [r10+0x28]
+       xor      r9d, ecx
+       xor      r11d, r8d
+       or       r9d, r11d
+       xor      r15d, edx
+       or       r9d, r15d
+       test     r9d, -8
+       je       G_M000_IG04
+ 
+G_M000_IG07:                ;; offset=0x012F
+       mov      dword ptr [rsp+0x28], ecx
+       mov      dword ptr [rsp+0x2C], r8d
+       mov      dword ptr [rsp+0x30], edx
+       lea      rdx, [rsp+0x28]
+       mov      rcx, rbx
+       mov      r8d, eax
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:SetValueOnUncached(Tedd.OpenVDB.Math.Coord,ushort):this]
+       jmp      G_M000_IG05
+ 
+G_M000_IG08:                ;; offset=0x0152
+       mov      r8, qword ptr [rcx]
+       bts      r8, rdx
+       mov      qword ptr [rcx], r8
+       jmp      G_M000_IG05
+ 
+G_M000_IG09:                ;; offset=0x0161
+       call     CORINFO_HELP_RNGCHKFAIL
+       int3     
+ 
+; Total bytes of code 359
+
+; Assembly listing for method Program:<<Main>$>g__Write|0_4(Tedd.OpenVDB.Tree.ValueAccessor`1[ushort],Tedd.OpenVDB.Math.Coord[],int,int) (Tier1)
+; Emitting BLENDED_CODE for x64 + VEX on Windows
+; Tier1 code
+; optimized code
+; optimized using Dynamic PGO
+; rsp based frame
+; fully interruptible
+; with Dynamic PGO: fgCalledCount is 100
+; 2 inlinees with PGO data; 12 single block inlinees; 0 inlinees without PGO data
+
+G_M000_IG01:                ;; offset=0x0000
+       push     r15
+       push     r14
+       push     rdi
+       push     rsi
+       push     rbp
+       push     rbx
+       sub      rsp, 56
+       mov      rbx, rcx
+       mov      rsi, rdx
+       mov      edi, r8d
+       mov      ebp, r9d
+ 
+G_M000_IG02:                ;; offset=0x0018
+       xor      r14d, r14d
+       test     edi, edi
+       jg       SHORT G_M000_IG06
+ 
+G_M000_IG03:                ;; offset=0x001F
+       add      rsp, 56
+       pop      rbx
+       pop      rbp
+       pop      rsi
+       pop      rdi
+       pop      r14
+       pop      r15
+       ret      
+ 
+G_M000_IG04:                ;; offset=0x002C
+       and      ecx, 7
+       shl      ecx, 6
+       and      r8d, 7
+       shl      r8d, 3
+       or       ecx, r8d
+       and      edx, 7
+       or       edx, ecx
+       mov      rcx, gword ptr [r10+0x08]
+       cmp      edx, dword ptr [rcx+0x08]
+       jae      G_M000_IG09
+       mov      r8d, edx
+       mov      word  ptr [rcx+2*r8+0x10], ax
+       mov      rcx, gword ptr [r10+0x18]
+       mov      eax, edx
+       sar      eax, 6
+       cmp      eax, dword ptr [rcx+0x08]
+       jae      G_M000_IG09
+       mov      r8d, eax
+       lea      rcx, bword ptr [rcx+8*r8+0x10]
+       cmp      qword ptr [rcx], -1
+       jne      G_M000_IG08
+ 
+G_M000_IG05:                ;; offset=0x007C
+       inc      r14d
+       cmp      r14d, edi
+       jge      SHORT G_M000_IG03
+ 
+G_M000_IG06:                ;; offset=0x0084
+       mov      edx, r14d
+       and      edx, 0x7FFF
+       cmp      edx, dword ptr [rsi+0x08]
+       jae      G_M000_IG09
+       lea      rdx, [rdx+2*rdx]
+       lea      rdx, bword ptr [rsi+4*rdx+0x10]
+       mov      ecx, dword ptr [rdx]
+       mov      r8d, dword ptr [rdx+0x04]
+       mov      edx, dword ptr [rdx+0x08]
+       lea      eax, [r14+rbp]
+       and      eax, 7
+       inc      eax
+       movzx    rax, ax
+       mov      r10, gword ptr [rbx+0x10]
+       test     r10, r10
+       je       SHORT G_M000_IG07
+       mov      r9, qword ptr [rbx+0x18]
+       mov      r11, gword ptr [rbx+0x08]
+       cmp      r9, qword ptr [r11+0x10]
+       jne      SHORT G_M000_IG07
+       mov      r9d, dword ptr [r10+0x20]
+       mov      r11d, dword ptr [r10+0x24]
+       mov      r15d, dword ptr [r10+0x28]
+       xor      r9d, ecx
+       xor      r11d, r8d
+       or       r9d, r11d
+       xor      r15d, edx
+       or       r9d, r15d
+       test     r9d, -8
+       je       G_M000_IG04
+ 
+G_M000_IG07:                ;; offset=0x00F3
+       mov      dword ptr [rsp+0x28], ecx
+       mov      dword ptr [rsp+0x2C], r8d
+       mov      dword ptr [rsp+0x30], edx
+       lea      rdx, [rsp+0x28]
+       mov      rcx, rbx
+       mov      r8d, eax
+       call     [Tedd.OpenVDB.Tree.ValueAccessor`1[ushort]:SetValueOnUncached(Tedd.OpenVDB.Math.Coord,ushort):this]
+       jmp      G_M000_IG05
+ 
+G_M000_IG08:                ;; offset=0x0116
+       mov      r8, qword ptr [rcx]
+       bts      r8, rdx
+       mov      qword ptr [rcx], r8
+       jmp      G_M000_IG05
+ 
+G_M000_IG09:                ;; offset=0x0125
+       call     CORINFO_HELP_RNGCHKFAIL
+       int3     
+ 
+; Total bytes of code 299

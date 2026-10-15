@@ -1,0 +1,262 @@
+{
+  "retained": false,
+  "reason": "Mandatory regression limit exceeded; library implementation restored.",
+  "regressionLimitPercent": 5,
+  "failedMetrics": [
+    "accessor.read.partial"
+  ],
+  "steadyStateAllocationFailures": [],
+  "confirmationProcesses": 46,
+  "sourceBaseline": "3e9e35c7713a5ac7164b32e712646ec8a9ebb34e",
+  "results": [
+    {
+      "pattern": "coherent",
+      "method": "accessor.read.coherent",
+      "originalNs": 4.414513664195609,
+      "portNs": 3.115924720214204,
+      "elapsedChangePercent": -29.416353482236367,
+      "throughputChangePercent": 41.67587668459891,
+      "originalLaunchMedians": [
+        4.414513664195609,
+        3.180385604598419,
+        5.264738190377211,
+        5.175301288089777,
+        3.6696007804820607
+      ],
+      "portLaunchMedians": [
+        3.096046297765809,
+        3.0327133238706176,
+        4.380778341430824,
+        3.115924720214204,
+        3.1332553448558325
+      ]
+    },
+    {
+      "pattern": "coherent",
+      "method": "accessor.write.coherent",
+      "originalNs": 3.9237346124211583,
+      "portNs": 3.852828239550909,
+      "elapsedChangePercent": -1.8071143916253862,
+      "throughputChangePercent": 1.8403720192446071,
+      "originalLaunchMedians": [
+        3.8394992973357636,
+        4.153978340278916,
+        3.9237346124211583,
+        4.554690539758765,
+        3.8284221764160797
+      ],
+      "portLaunchMedians": [
+        3.7865335007013843,
+        3.852828239550909,
+        3.8121834651202082,
+        3.8544181133785225,
+        4.022652762276786
+      ]
+    },
+    {
+      "pattern": "random",
+      "method": "accessor.read.random",
+      "originalNs": 7.32653856589941,
+      "portNs": 7.596921108340842,
+      "elapsedChangePercent": 3.6904540938322183,
+      "throughputChangePercent": -3.5591068879808785,
+      "originalLaunchMedians": [
+        7.40314848613614,
+        7.23718965662885,
+        7.32653856589941
+      ],
+      "portLaunchMedians": [
+        12.069970127170707,
+        7.596921108340842,
+        7.593553375604112
+      ]
+    },
+    {
+      "pattern": "random",
+      "method": "accessor.write.random",
+      "originalNs": 9.357669375358372,
+      "portNs": 9.105573381696429,
+      "elapsedChangePercent": -2.694004068211564,
+      "throughputChangePercent": 2.7685899953175275,
+      "originalLaunchMedians": [
+        9.357669375358372,
+        9.104417473429308,
+        9.420696373535796
+      ],
+      "portLaunchMedians": [
+        9.907833714316432,
+        9.105573381696429,
+        9.004505402451262
+      ]
+    },
+    {
+      "pattern": "partial",
+      "method": "accessor.read.partial",
+      "originalNs": 3.036794999948804,
+      "portNs": 5.229344999180865,
+      "elapsedChangePercent": 72.19947343396653,
+      "throughputChangePercent": -41.9278131310041,
+      "originalLaunchMedians": [
+        3.0369429882044563,
+        2.989962716558814,
+        3.036794999948804
+      ],
+      "portLaunchMedians": [
+        5.621953841743119,
+        5.229344999180865,
+        3.2507060239699377
+      ]
+    },
+    {
+      "pattern": "partial",
+      "method": "accessor.write.partial",
+      "originalNs": 5.20713076210272,
+      "portNs": 5.287372394126802,
+      "elapsedChangePercent": 1.5409951408955846,
+      "throughputChangePercent": -1.5176088620732275,
+      "originalLaunchMedians": [
+        5.466394186957323,
+        5.20713076210272,
+        4.820121475159731
+      ],
+      "portLaunchMedians": [
+        5.287372394126802,
+        5.8980999267898095,
+        5.1217335392263275
+      ]
+    },
+    {
+      "pattern": "large",
+      "method": "accessor.read.large",
+      "originalNs": 3.460841347630652,
+      "portNs": 3.4289198809182504,
+      "elapsedChangePercent": -0.9223614579806028,
+      "throughputChangePercent": 0.930948165048795,
+      "originalLaunchMedians": [
+        3.4366512673554226,
+        3.460841347630652,
+        3.5736203974852554
+      ],
+      "portLaunchMedians": [
+        3.4289198809182504,
+        3.435203382259584,
+        3.4268880421649737
+      ]
+    },
+    {
+      "pattern": "large",
+      "method": "accessor.write.large",
+      "originalNs": 5.732649056970839,
+      "portNs": 5.617038231845921,
+      "elapsedChangePercent": -2.016708575319759,
+      "throughputChangePercent": 2.058216810230351,
+      "originalLaunchMedians": [
+        5.68698868057831,
+        5.806091228600098,
+        5.732649056970839
+      ],
+      "portLaunchMedians": [
+        4.150202639918496,
+        5.789128574756307,
+        5.617038231845921
+      ]
+    },
+    {
+      "pattern": "large-random",
+      "method": "accessor.read.large-random",
+      "originalNs": 45.65718064614392,
+      "portNs": 46.19484597702326,
+      "elapsedChangePercent": 1.1776139552864606,
+      "throughputChangePercent": -1.1639076167648033,
+      "originalLaunchMedians": [
+        45.793489828647196,
+        45.65718064614392,
+        45.44234169576303
+      ],
+      "portLaunchMedians": [
+        46.00632493805291,
+        46.19484597702326,
+        47.15398585968217
+      ]
+    },
+    {
+      "pattern": "large-random",
+      "method": "accessor.write.large-random",
+      "originalNs": 49.13273682600549,
+      "portNs": 50.93436984840883,
+      "elapsedChangePercent": 3.66686885117653,
+      "throughputChangePercent": -3.5371656266002027,
+      "originalLaunchMedians": [
+        48.98976817199787,
+        49.16566221304677,
+        49.13273682600549
+      ],
+      "portLaunchMedians": [
+        49.6925284009461,
+        50.93436984840883,
+        54.66173004510362
+      ]
+    },
+    {
+      "pattern": "collisions",
+      "method": "accessor.read.collisions",
+      "originalNs": 67.30524665562541,
+      "portNs": 59.464152924823885,
+      "elapsedChangePercent": -11.650048280665736,
+      "throughputChangePercent": 13.186253137607862,
+      "originalLaunchMedians": [
+        53.89047125220142,
+        71.84071872056234,
+        67.30524665562541
+      ],
+      "portLaunchMedians": [
+        59.464152924823885,
+        69.71879911610215,
+        53.566928928520234
+      ]
+    },
+    {
+      "pattern": "collisions",
+      "method": "accessor.write.collisions",
+      "originalNs": 71.82368007274943,
+      "portNs": 73.89861940556398,
+      "elapsedChangePercent": 2.8889348620299904,
+      "throughputChangePercent": -2.807818805689788,
+      "originalLaunchMedians": [
+        58.764012487968955,
+        71.82368007274943,
+        74.23822445450729
+      ],
+      "portLaunchMedians": [
+        79.2563662147772,
+        73.89861940556398,
+        67.8502714024615
+      ]
+    },
+    {
+      "pattern": "churn",
+      "method": "accessor.topology.churn",
+      "originalNs": 551.6876220703125,
+      "portNs": 453.948974609375,
+      "elapsedChangePercent": -17.716302405726392,
+      "throughputChangePercent": 21.530756302521013,
+      "originalLaunchMedians": [
+        426.3458251953125,
+        680.938720703125,
+        551.6876220703125
+      ],
+      "portLaunchMedians": [
+        453.948974609375,
+        480.0567626953125,
+        425.5706787109375
+      ]
+    }
+  ],
+  "retainedSourceTests": {
+    "failed": 0,
+    "passed": 21008,
+    "skipped": 0,
+    "total": 21008
+  },
+  "processor": "AMD Ryzen 9 5950X 16-Core Processor"
+}

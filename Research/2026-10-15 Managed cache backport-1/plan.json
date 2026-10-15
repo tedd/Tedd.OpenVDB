@@ -1,0 +1,38 @@
+{
+  "sourceRevision": "3e9e35c7713a5ac7164b32e712646ec8a9ebb34e",
+  "variants": [
+    "base",
+    "hot",
+    "keys",
+    "nomask"
+  ],
+  "hypotheses": {
+    "hot": "Flatten primary hit check to one cold exit; retain topology checks.",
+    "keys": "Store primary origin inline as native does; retain managed leaf buffer indirection.",
+    "nomask": "Use unconditional activity OR as selected native variant does."
+  },
+  "alreadyPresent": [
+    "64-entry leaf cache",
+    "non-inlined miss paths",
+    "inlined primary hits"
+  ],
+  "excluded": {
+    "bufferPointer": "LeafManager swaps value arrays without topology changes; stale buffer risk.",
+    "versionRemoval": "Managed references require existing topology invalidation; earlier churn cost rejected callbacks."
+  },
+  "threshold": "Screen: >=5% throughput gain in either coherent read/write; other coherent metric <=3% time regression. Confirmation: >=3% gain and all mandatory guardrails <=5% time regression.",
+  "guardrails": [
+    "random",
+    "partial",
+    "large",
+    "large-random",
+    "collisions",
+    "churn",
+    "full correctness suite",
+    "buffer swaps"
+  ],
+  "budget": "Screen 3 launches x 5 samples x 25,001,984 operations; 1500ms warmup, CPU8. Confirmation 5 launches; all samples retained. Churn 32768 operations.",
+  "lock": "C:\\Users\\tedd\\.codex\\locks\\performance-measurement.lock",
+  "observer": "No profiler in timing runs; disassembly separate. Shared-host load uncontrolled.",
+  "statistics": "Median of per-launch medians, descriptive comparisons; no independence/significance claim."
+}

@@ -7,6 +7,36 @@ namespace Tedd.OpenVDB.Tests;
 public sealed class AccessorPathCacheTests
 {
     [Fact]
+    public void PrimaryAndSecondaryHitsFollowSwappedBuffersForReadsAndWrites()
+    {
+        var tree = new VdbTree<int>();
+        var first = new Coord(-8, 0, 0);
+        var second = new Coord(0, 0, 0);
+        tree.SetValueOn(first, 7);
+        tree.SetValueOn(second, 9);
+        var accessor = tree.GetAccessor();
+        Assert.Equal(7, accessor.GetValue(first));
+        Assert.Equal(9, accessor.GetValue(second));
+        var manager = new LeafManager<int>(tree, 1);
+        for (int i = 0; i < manager.LeafCount; ++i) manager.GetBuffer(i, 1).Fill(42);
+        manager.SwapBuffer(1);
+        GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, blocking: true, compacting: true);
+        Assert.Equal(42, accessor.GetValue(second)); // Primary hit.
+        Assert.Equal(42, accessor.GetValue(first)); // Secondary hit.
+        accessor.SetValueOn(first, 31);
+        accessor.SetValueOn(second, 41);
+        Assert.Equal(31, tree.GetValue(first));
+        Assert.Equal(41, tree.GetValue(second));
+        manager.SwapBuffer(1);
+        Assert.Equal(7, accessor.GetValue(first));
+        Assert.Equal(9, accessor.GetValue(second));
+        manager.SwapBuffer(1);
+        Assert.Equal(31, accessor.GetValue(first));
+        Assert.Equal(41, accessor.GetValue(second));
+        Assert.Equal(2UL, tree.ActiveVoxelCount);
+    }
+
+    [Fact]
     public void ValueEqualityMutationCannotLeaveSecondaryLeavesAttachedToOldTopology()
     {
         var tree = new VdbTree<ReentrantValue>();

@@ -1,0 +1,11 @@
+--- a/src/Tedd.OpenVDB/Tree/LeafNode.cs
++++ b/src/Tedd.OpenVDB/Tree/LeafNode.cs
+@@ -116,7 +116,7 @@
+         int offset = CoordToOffset(coordinate);
+         _values[offset] = value;
+         ref ulong word = ref _activityWords[offset >> 6];
+-        if (word != ulong.MaxValue) word |= 1UL << (offset & 63);
++        word |= 1UL << (offset & 63);
+     }
+ 
+     public void SetValueOn(int offset, T value)

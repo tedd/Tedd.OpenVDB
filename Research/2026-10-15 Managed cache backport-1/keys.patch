@@ -1,0 +1,44 @@
+--- a/src/Tedd.OpenVDB/Tree/ValueAccessor.cs
++++ b/src/Tedd.OpenVDB/Tree/ValueAccessor.cs
+@@ -16,6 +16,7 @@
+ {
+     private readonly VdbTree<T> _tree;
+     private LeafNode<T>? _leaf;
++    private Coord _leafOrigin;
+     [InlineArray(64)]
+     private struct LeafCache
+     {
+@@ -38,7 +39,7 @@
+         if (_version != _tree.TopologyVersion) { Clear(); return null; }
+         var leaf = _leaf;
+         if (leaf is null) return null;
+-        var origin = leaf.Origin;
++        var origin = _leafOrigin;
+         return (((coordinate.X ^ origin.X) | (coordinate.Y ^ origin.Y) | (coordinate.Z ^ origin.Z)) & -8) == 0
+             ? leaf : null;
+     }
+@@ -89,6 +90,7 @@
+             if (_version != _tree.TopologyVersion) Clear();
+             leaf = _tree.TouchLeaf(coordinate);
+             _leaf = leaf;
++            _leafOrigin = leaf.Origin;
+             _leaves[CacheSlot(coordinate)] = leaf;
+             _version = _tree.TopologyVersion;
+         }
+@@ -126,6 +128,7 @@
+         var leaf = _leaves[CacheSlot(coordinate)];
+         if (leaf is null || leaf.Origin != VdbTree<T>.Align(coordinate, 3)) return null;
+         _leaf = leaf;
++        _leafOrigin = leaf.Origin;
+         return leaf;
+     }
+ 
+@@ -139,7 +142,7 @@
+     private bool Resolve(Coord coordinate, out T value)
+     {
+         bool active = _tree.Probe(coordinate, out value, out _leaf, out _);
+-        if (_leaf is { } leaf) _leaves[CacheSlot(coordinate)] = leaf;
++        if (_leaf is { } leaf) { _leaves[CacheSlot(coordinate)] = leaf; _leafOrigin = leaf.Origin; }
+         return active;
+     }
+ }

@@ -1,0 +1,26 @@
+{
+  "final_base": {
+    "accessor.topology.churn": {
+      "nsPerOperation": 551.6876220703125,
+      "launchMedians": [
+        426.3458251953125,
+        680.938720703125,
+        551.6876220703125
+      ],
+      "minimum": 426.3458251953125,
+      "maximum": 680.938720703125
+    }
+  },
+  "final_hot": {
+    "accessor.topology.churn": {
+      "nsPerOperation": 453.948974609375,
+      "launchMedians": [
+        453.948974609375,
+        480.0567626953125,
+        425.5706787109375
+      ],
+      "minimum": 425.5706787109375,
+      "maximum": 480.0567626953125
+    }
+  }
+}

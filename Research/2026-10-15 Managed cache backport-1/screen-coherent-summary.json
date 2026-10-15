@@ -1,0 +1,90 @@
+{
+  "base": {
+    "accessor.read.coherent": {
+      "nsPerOperation": 3.0583092925745414,
+      "launchMedians": [
+        3.030315514160796,
+        5.4087587609047345,
+        3.0583092925745414
+      ],
+      "minimum": 3.030315514160796,
+      "maximum": 5.4087587609047345
+    },
+    "accessor.write.coherent": {
+      "nsPerOperation": 6.792344959504014,
+      "launchMedians": [
+        6.792344959504014,
+        3.9735606582261633,
+        6.947440651109928
+      ],
+      "minimum": 3.9735606582261633,
+      "maximum": 6.947440651109928
+    }
+  },
+  "hot": {
+    "accessor.read.coherent": {
+      "nsPerOperation": 3.112245012235829,
+      "launchMedians": [
+        3.0866590427383684,
+        3.195066439527359,
+        3.112245012235829
+      ],
+      "minimum": 3.0866590427383684,
+      "maximum": 3.195066439527359
+    },
+    "accessor.write.coherent": {
+      "nsPerOperation": 4.034931787813319,
+      "launchMedians": [
+        7.164947389775147,
+        3.913653412465187,
+        4.034931787813319
+      ],
+      "minimum": 3.913653412465187,
+      "maximum": 7.164947389775147
+    }
+  },
+  "keys": {
+    "accessor.read.coherent": {
+      "nsPerOperation": 3.19560639667636,
+      "launchMedians": [
+        3.107177414400393,
+        3.3081334665280964,
+        3.19560639667636
+      ],
+      "minimum": 3.107177414400393,
+      "maximum": 3.3081334665280964
+    },
+    "accessor.write.coherent": {
+      "nsPerOperation": 5.510350698568562,
+      "launchMedians": [
+        6.648748355330521,
+        3.96065768220634,
+        5.510350698568562
+      ],
+      "minimum": 3.96065768220634,
+      "maximum": 6.648748355330521
+    }
+  },
+  "nomask": {
+    "accessor.read.coherent": {
+      "nsPerOperation": 3.059149225917431,
+      "launchMedians": [
+        3.0347431627826014,
+        3.214360908318316,
+        3.059149225917431
+      ],
+      "minimum": 3.0347431627826014,
+      "maximum": 3.214360908318316
+    },
+    "accessor.write.coherent": {
+      "nsPerOperation": 4.431732297724853,
+      "launchMedians": [
+        6.233969272198558,
+        4.27476475466907,
+        4.431732297724853
+      ],
+      "minimum": 4.27476475466907,
+      "maximum": 6.233969272198558
+    }
+  }
+}
