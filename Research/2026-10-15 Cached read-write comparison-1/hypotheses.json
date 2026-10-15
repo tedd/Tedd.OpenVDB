@@ -1,0 +1,48 @@
+[
+  {
+    "id": "H-001",
+    "claim": "Native OpenVDB has lower elapsed time per coherent cached read on the matched fixture.",
+    "mechanism": "Direct implementation comparison; no causal explanation is asserted.",
+    "prediction": "All paired managed/native launch-median read ratios exceed one.",
+    "falsification": "Ratios below one contradict native leadership; mixed directions are inconclusive.",
+    "state": "rejected",
+    "scope": "Cached reads of existing UInt16 voxels. Only two comparison questions are in scope; no optimization search or application speedup claim.",
+    "decision": "Rejected",
+    "change": "Reused the existing matched managed and native benchmark harnesses; no library or harness changes.",
+    "changeScope": "local",
+    "maintainability": "No implementation delta; raw measurements and reproduction metadata are retained.",
+    "codeComments": "Harness comments identify setup exclusion and checksum/anti-elimination controls.",
+    "result": "Managed/native ratio of launch medians 0.867; paired ratio median 0.867, range 0.801\u20130.872.",
+    "effectPercent": -13.259910887440896,
+    "decisionRationale": "Classifies the observed comparison only; no library optimization or application-speed claim is adopted.",
+    "evidence": [
+      "comparison.json",
+      "raw/validation.json",
+      "raw/environment.json"
+    ],
+    "risks": []
+  },
+  {
+    "id": "H-002",
+    "claim": "Native OpenVDB has lower elapsed time per coherent cached write on the matched fixture.",
+    "mechanism": "Direct implementation comparison; no causal explanation is asserted.",
+    "prediction": "All paired managed/native launch-median write ratios exceed one.",
+    "falsification": "Ratios below one contradict native leadership; mixed directions are inconclusive.",
+    "state": "rejected",
+    "scope": "Changing existing active UInt16 values without topology changes. The authorized scope contains two comparison questions, not an optimization catalogue.",
+    "decision": "Rejected",
+    "change": "Reused the existing matched managed and native benchmark harnesses; no library or harness changes.",
+    "changeScope": "local",
+    "maintainability": "No implementation delta; raw measurements and reproduction metadata are retained.",
+    "codeComments": "Harness comments identify setup exclusion and checksum/anti-elimination controls.",
+    "result": "Managed/native ratio of launch medians 0.919; paired ratio median 0.897, range 0.833\u20130.944.",
+    "effectPercent": -8.11346507420473,
+    "decisionRationale": "Classifies the observed comparison only; no library optimization or application-speed claim is adopted.",
+    "evidence": [
+      "comparison.json",
+      "raw/validation.json",
+      "raw/environment.json"
+    ],
+    "risks": []
+  }
+]

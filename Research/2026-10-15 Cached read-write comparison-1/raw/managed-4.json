@@ -1,0 +1,79 @@
+{
+  "implementation": "managed",
+  "valueType": "UInt16",
+  "coordinates": 32768,
+  "pattern": "coherent",
+  "setupMilliseconds": 6.9217,
+  "setupAllocatedBytes": 719320,
+  "accessorAllocatedBytes": 552,
+  "coordinateHash": "0b6895be43c67b25",
+  "checksum": 147456,
+  "activeVoxelCount": 32768,
+  "leafCount": 64,
+  "runtime": ".NET 11.0.0-rc.1.26425.128",
+  "os": "Microsoft Windows 10.0.26200",
+  "architecture": "X64",
+  "serverGc": true,
+  "vectorBytes": 32,
+  "cpu": 8,
+  "affinityMask": "100",
+  "tieredCompilation": "1",
+  "tieredPgo": "1",
+  "warmupMilliseconds": 2000,
+  "sink": 225017856,
+  "results": [
+    {
+      "name": "accessor.write.coherent",
+      "operations": 50003968,
+      "elapsedMilliseconds": [
+        192.256,
+        193.4824,
+        189.8107,
+        191.0926,
+        208.1753,
+        204.3273,
+        225.6995,
+        208.3135,
+        213.9232
+      ],
+      "allocatedBytes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "accessor.read.coherent",
+      "operations": 50003968,
+      "elapsedMilliseconds": [
+        163.5848,
+        161.7771,
+        171.04,
+        195.4741,
+        162.9344,
+        168.9451,
+        160.7138,
+        175.3028,
+        167.7593
+      ],
+      "allocatedBytes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "launch": 4
+}

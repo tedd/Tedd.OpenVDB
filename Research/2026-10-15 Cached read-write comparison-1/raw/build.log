@@ -1,0 +1,35 @@
+COMMAND: ['dotnet', 'build', 'D:\\SourceCode\\Tedd.OpenVDB\\benchmarks\\CachedAccess.Managed\\CachedAccess.Managed.csproj', '-c', 'Release', '--artifacts-path', 'D:\\Workspaces\\AI\\openvdb-cached-comparison-20261015\\managed', '-p:GeneratePackageOnBuild=false']
+  Determining projects to restore...
+  Restored D:\SourceCode\Tedd.OpenVDB\src\Tedd.OpenVDB\Tedd.OpenVDB.csproj (in 93 ms).
+  Restored D:\SourceCode\Tedd.OpenVDB\benchmarks\CachedAccess.Managed\CachedAccess.Managed.csproj (in 102 ms).
+C:\Program Files\dotnet\sdk\11.0.100-rc.1.26425.128\Sdks\Microsoft.NET.Sdk\targets\Microsoft.NET.RuntimeIdentifierInference.targets(385,5): message NETSDK1057: You are using a preview version of .NET. See: https://aka.ms/dotnet-support-policy [D:\SourceCode\Tedd.OpenVDB\benchmarks\CachedAccess.Managed\CachedAccess.Managed.csproj]
+  Tedd.OpenVDB -> D:\Workspaces\AI\openvdb-cached-comparison-20261015\managed\bin\Tedd.OpenVDB\release\Tedd.OpenVDB.dll
+  CachedAccess.Managed -> D:\Workspaces\AI\openvdb-cached-comparison-20261015\managed\bin\CachedAccess.Managed\release\CachedAccess.Managed.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:05.44
+Checking the state of installed workloads...
+The machine has a pending reboot. The workload operation will continue, but you may need to restart.
+----------------
+COMMAND: ['C:\\Program Files\\Microsoft Visual Studio\\18\\Insiders\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin\\cmake.exe', '-S', 'D:\\SourceCode\\Tedd.OpenVDB\\benchmarks\\CachedAccess.Native', '-B', 'D:\\Workspaces\\AI\\openvdb-cached-comparison-20261015\\native', '-G', 'Visual Studio 18 2026', '-A', 'x64', '-DOPENVDB_SOURCE_DIR=D:\\source\\openvdb', '-DOPENVDB_BUILD_DIR=D:\\SourceCode\\Tedd.OpenVDB\\reference\\build-upstream-zlib', '-DTBB_ROOT=D:\\Workspaces\\AI\\openvdb-cached-comparison-20261015\\oneapi-tbb-2022.2.0', '-DZLIB_LIBRARY=D:\\SourceCode\\Tedd.OpenVDB\\reference\\build-zlib\\Release\\zs.lib']
+-- Selecting Windows SDK version 10.0.26100.0 to target Windows 10.0.26200.
+-- The CXX compiler identification is MSVC 19.51.36260.0
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: C:/Program Files/Microsoft Visual Studio/18/Insiders/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/cl.exe - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Configuring done (3.8s)
+-- Generating done (0.0s)
+-- Build files have been written to: D:/Workspaces/AI/openvdb-cached-comparison-20261015/native
+COMMAND: ['C:\\Program Files\\Microsoft Visual Studio\\18\\Insiders\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin\\cmake.exe', '--build', 'D:\\Workspaces\\AI\\openvdb-cached-comparison-20261015\\native', '--config', 'Release', '--parallel', '2']
+MSBuild version 18.11.0-1.26427.13+9353559c2 for .NET Framework
+
+  1>Checking Build System
+  Building Custom Rule D:/SourceCode/Tedd.OpenVDB/benchmarks/CachedAccess.Native/CMakeLists.txt
+  main.cpp
+  cached-access-native.vcxproj -> D:\Workspaces\AI\openvdb-cached-comparison-20261015\native\Release\cached-access-native.exe
+  Building Custom Rule D:/SourceCode/Tedd.OpenVDB/benchmarks/CachedAccess.Native/CMakeLists.txt
