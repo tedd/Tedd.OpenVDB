@@ -1,0 +1,86 @@
+{
+  "base": {
+    "CachedAccess.Managed/release/CachedAccess.Managed.dll": {
+      "sha256": "0c145d4b3e4a829234f15b70476b165ff7b1c22cc78006226fe0bdeb0d90b25c",
+      "bytes": 22016
+    },
+    "CachedAccess.Managed/release/CachedAccess.Managed.runtimeconfig.json": {
+      "sha256": "bbfb42eb807421b5f3dbf03e8605e24eaa2f190489b312ec9ee9ede67173b37c",
+      "bytes": 390
+    },
+    "Tedd.OpenVDB/release/Tedd.OpenVDB.dll": {
+      "sha256": "8136d63cfd0328f7b16aacf6ab7ccb25260d6a974b021a5b5b87cb3a1fc1e0d9",
+      "bytes": 1056256
+    }
+  },
+  "hot": {
+    "CachedAccess.Managed/release/CachedAccess.Managed.dll": {
+      "sha256": "e4068027ac438bd6212f26fe008d67c9a62085bec5b20bd71cc5f5206ecd6a81",
+      "bytes": 22016
+    },
+    "CachedAccess.Managed/release/CachedAccess.Managed.runtimeconfig.json": {
+      "sha256": "bbfb42eb807421b5f3dbf03e8605e24eaa2f190489b312ec9ee9ede67173b37c",
+      "bytes": 390
+    },
+    "Tedd.OpenVDB/release/Tedd.OpenVDB.dll": {
+      "sha256": "ca636fee04b8433efe2f8bc8c828aba97ce534ee3834e64b621a4b39b51ba6e5",
+      "bytes": 1056256
+    }
+  },
+  "keys": {
+    "CachedAccess.Managed/release/CachedAccess.Managed.dll": {
+      "sha256": "90b04867a63a4d542d8f14a7f1300cb3919906987b19e23af430b9402b4b4adf",
+      "bytes": 22016
+    },
+    "CachedAccess.Managed/release/CachedAccess.Managed.runtimeconfig.json": {
+      "sha256": "bbfb42eb807421b5f3dbf03e8605e24eaa2f190489b312ec9ee9ede67173b37c",
+      "bytes": 390
+    },
+    "Tedd.OpenVDB/release/Tedd.OpenVDB.dll": {
+      "sha256": "7aa2cb91c4192099331e5426f9198b9406d48d6eee6a9baaa127c4f6d5efa0e0",
+      "bytes": 1056256
+    }
+  },
+  "nomask": {
+    "CachedAccess.Managed/release/CachedAccess.Managed.dll": {
+      "sha256": "0c6cec5790a3920a11ecf09856c6ba36d475f4346d7ad556bb090ccedb1915fb",
+      "bytes": 22016
+    },
+    "CachedAccess.Managed/release/CachedAccess.Managed.runtimeconfig.json": {
+      "sha256": "bbfb42eb807421b5f3dbf03e8605e24eaa2f190489b312ec9ee9ede67173b37c",
+      "bytes": 390
+    },
+    "Tedd.OpenVDB/release/Tedd.OpenVDB.dll": {
+      "sha256": "e39b361b388ad9ad66e510bf30b302d37b8194ac5ccdbea626bfe2257d197570",
+      "bytes": 1056256
+    }
+  },
+  "final_base": {
+    "CachedAccess.Managed/release/CachedAccess.Managed.dll": {
+      "sha256": "4c3cb159a0743f0752de29497e3b70aed429ce2f1b49209af1ec89edae5bcda5",
+      "bytes": 22016
+    },
+    "CachedAccess.Managed/release/CachedAccess.Managed.runtimeconfig.json": {
+      "sha256": "bbfb42eb807421b5f3dbf03e8605e24eaa2f190489b312ec9ee9ede67173b37c",
+      "bytes": 390
+    },
+    "Tedd.OpenVDB/release/Tedd.OpenVDB.dll": {
+      "sha256": "db039015daab86fa85d8a8c90d4fbab75ae14783132fb5dcd20aab60ee809693",
+      "bytes": 1056256
+    }
+  },
+  "final_hot": {
+    "CachedAccess.Managed/release/CachedAccess.Managed.dll": {
+      "sha256": "e5e720d10add66c32156564fa4c6cbb934820a08238b95da53c404e7d2e38971",
+      "bytes": 22016
+    },
+    "CachedAccess.Managed/release/CachedAccess.Managed.runtimeconfig.json": {
+      "sha256": "bbfb42eb807421b5f3dbf03e8605e24eaa2f190489b312ec9ee9ede67173b37c",
+      "bytes": 390
+    },
+    "Tedd.OpenVDB/release/Tedd.OpenVDB.dll": {
+      "sha256": "fa56d205db2d892732b89b3a4b24b5a0355fc1af06f711b7e7a073dda6e5968d",
+      "bytes": 1056256
+    }
+  }
+}

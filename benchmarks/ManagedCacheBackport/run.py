@@ -111,6 +111,12 @@ def build(tag, env):
     rig.run(['dotnet', 'build', str(source / 'benchmarks/CachedAccess.Managed/CachedAccess.Managed.csproj'),
         '-c', 'Release', '--artifacts-path', str(WORK / tag / 'artifacts'), '-p:GeneratePackageOnBuild=false'],
         env, EVIDENCE / 'raw' / (tag + '-build.log'))
+    binaries = WORK / tag / 'artifacts/bin'
+    rig.save(EVIDENCE / 'raw' / (tag + '-binaries.json'), {
+        name: hashlib.sha256((binaries / name).read_bytes()).hexdigest()
+        for name in ('CachedAccess.Managed/release/CachedAccess.Managed.dll',
+                     'CachedAccess.Managed/release/CachedAccess.Managed.runtimeconfig.json',
+                     'Tedd.OpenVDB/release/Tedd.OpenVDB.dll')})
     for pattern in ('coherent', 'random', 'partial', 'large', 'large-random', 'collisions'):
         data = json.loads(rig.run(rig.command(tag) + ['--validate', '--pattern', pattern], env, WORK / 'validation.log'))
         rig.save(EVIDENCE / 'raw' / (tag + '-' + pattern + '-validation.json'), data)
