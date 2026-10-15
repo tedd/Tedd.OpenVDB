@@ -1,0 +1,171 @@
+--- a/openvdb/openvdb/tree/ValueAccessor.h
++++ b/openvdb/openvdb/tree/ValueAccessor.h
+@@ -452,7 +452,28 @@
+ 
+     /// @brief Return the value of the voxel at the given coordinates.
+     /// @param xyz  The index space coordinate to query
++#ifdef EXPERIMENT_SPLIT_CACHE
++    OPENVDB_FORCE_INLINE const ValueType& getValue(const Coord& xyz) const
++    {
++        if constexpr (BypassLeafAPI && std::is_same<MutexT, void>::value) {
++            if (this->template isHashed<LeafNodeT>(xyz))
++                return LeafCacheT::buffer()[LeafNodeT::coordToOffset(xyz)];
++            return this->getValueSecondary(xyz);
++        } else return this->getValueNative(xyz);
++    }
++    __declspec(noinline) const ValueType& getValueSecondary(const Coord& xyz) const
++    {
++        const auto leaf = mSecondaryLeaves[secondarySlot(xyz)];
++        if (leaf && leaf->origin() == (xyz & ~Coord::ValueType(LeafNodeT::DIM-1))) {
++            this->insert(xyz, leaf);
++            return LeafCacheT::buffer()[LeafNodeT::coordToOffset(xyz)];
++        }
++        return this->getValueNative(xyz);
++    }
++    const ValueType& getValueNative(const Coord& xyz) const
++#else
+     const ValueType& getValue(const Coord& xyz) const
++#endif
+     {
+         // Don't use evalFirstCached as we don't access the node when
+         // IsLeafAndBypassLeafAPI<NodeType> is true.
+@@ -547,7 +568,46 @@
+     ///   different to the tiles
+     /// @param xyz    The index space coordinate to set
+     /// @param value  The value to set
++#ifdef EXPERIMENT_SPLIT_CACHE
++    OPENVDB_FORCE_INLINE void setValue(const Coord& xyz, const ValueType& value)
++    {
++        static_assert(!BaseT::IsConstTree, "can't modify a const tree's values");
++        if constexpr (BypassLeafAPI && std::is_same<MutexT, void>::value) {
++            if (this->template isHashed<LeafNodeT>(xyz)) {
++                this->setCachedLeafValue(xyz, value);
++                return;
++            }
++            this->setValueSecondary(xyz, value);
++        } else this->setValueNative(xyz, value);
++    }
++    OPENVDB_FORCE_INLINE void setCachedLeafValue(const Coord& xyz, const ValueType& value)
++    {
++        const auto offset = LeafNodeT::coordToOffset(xyz);
++        const_cast<ValueType&>(LeafCacheT::buffer()[offset]) = value;
++        auto leaf = mNodes.template get<0>();
++#ifdef EXPERIMENT_DENSE_MASK
++        if constexpr (LeafNodeT::LOG2DIM >= 2) {
++            if (leaf->getValueMask().template getWord<Index64>(offset >> 6) != ~Index64(0))
++                leaf->setValueOn(offset);
++        } else leaf->setValueOn(offset);
++#else
++        leaf->setValueOn(offset);
++#endif
++    }
++    __declspec(noinline) void setValueSecondary(const Coord& xyz, const ValueType& value)
++    {
++        const auto leaf = mSecondaryLeaves[secondarySlot(xyz)];
++        if (leaf && leaf->origin() == (xyz & ~Coord::ValueType(LeafNodeT::DIM-1))) {
++            this->insert(xyz, leaf);
++            this->setCachedLeafValue(xyz, value);
++            return;
++        }
++        this->setValueNative(xyz, value);
++    }
++    void setValueNative(const Coord& xyz, const ValueType& value)
++#else
+     void setValue(const Coord& xyz, const ValueType& value)
++#endif
+     {
+         static_assert(!BaseT::IsConstTree, "can't modify a const tree's values");
+         this->evalFirstCached(xyz, [&](const auto node) -> void
+@@ -558,7 +618,18 @@
+                 if constexpr(IsLeafAndBypassLeafAPI<NodeType>) {
+                     const auto offset = LeafNodeT::coordToOffset(xyz);
+                     const_cast<ValueType&>(LeafCacheT::buffer()[offset]) = value;
++#ifdef EXPERIMENT_DENSE_MASK
++                    // This experiment targets ordinary leaves with at least 64 voxels.
++                    // Smaller leaves retain their original mask API and behavior.
++                    if constexpr (NodeType::LOG2DIM >= 2) {
++                        if (node->getValueMask().template getWord<Index64>(offset >> 6) != ~Index64(0))
++                            const_cast<NodeType*>(node)->setValueOn(offset);
++                    } else {
++                        const_cast<NodeType*>(node)->setValueOn(offset);
++                    }
++#else
+                     const_cast<NodeType*>(node)->setValueOn(offset);
++#endif
+                 }
+                 else {
+                     const_cast<NodeType*>(node)->setValueAndCache(xyz, value, *this);
+@@ -868,6 +939,9 @@
+     template<typename NodeT>
+     void eraseNode()
+     {
++#ifdef EXPERIMENT_LEAF_CACHE
++        if constexpr (std::is_same<NodeT, LeafNodeT>::value) mSecondaryLeaves.fill(nullptr);
++#endif
+         static constexpr int64_t Idx = NodeLevelList::template Index<NodeT>;
+         if constexpr (Idx >= 0) {
+             mKeys[Idx] = Coord::max();
+@@ -879,6 +953,9 @@
+     ///   hash-keys.
+     void clear() override final
+     {
++#ifdef EXPERIMENT_LEAF_CACHE
++        mSecondaryLeaves.fill(nullptr);
++#endif
+         mKeys.fill(Coord::max());
+         mNodes.foreach([](auto& node) { node = nullptr; });
+         if constexpr (BypassLeafAPI) {
+@@ -927,6 +1004,10 @@
+             static_assert(Idx < NumCacheLevels);
+             mKeys[Idx] = xyz & ~(NodeT::DIM-1);
+             mNodes.template get<Idx>() = const_cast<NodeT*>(node);
++#ifdef EXPERIMENT_LEAF_CACHE
++            if constexpr (std::is_same<NodeT, LeafNodeT>::value)
++                mSecondaryLeaves[secondarySlot(xyz)] = node;
++#endif
+             if constexpr(IsLeafAndBypassLeafAPI<NodeT>) {
+                 LeafCacheT::setBuffer(node->buffer().data());
+             }
+@@ -944,9 +1025,22 @@
+             constexpr uint64_t Idx = uint64_t(NodeLevelList::template Index<NodeT>);
+             static_assert(NodeLevelList::template Contains<NodeT>);
+             static_assert(Idx < NumCacheLevels + 1);
+-            return (xyz[0] & ~Coord::ValueType(NodeT::DIM-1)) == mKeys[Idx][0]
++            const bool matches = (xyz[0] & ~Coord::ValueType(NodeT::DIM-1)) == mKeys[Idx][0]
+                 && (xyz[1] & ~Coord::ValueType(NodeT::DIM-1)) == mKeys[Idx][1]
+                 && (xyz[2] & ~Coord::ValueType(NodeT::DIM-1)) == mKeys[Idx][2];
++#if defined(EXPERIMENT_LEAF_CACHE) && !defined(EXPERIMENT_SPLIT_CACHE)
++            if (!matches) {
++                if constexpr (std::is_same<NodeT, LeafNodeT>::value) {
++                    const auto leaf = mSecondaryLeaves[secondarySlot(xyz)];
++                    // Full origin equality rejects collisions, including signed coordinates.
++                    if (leaf && leaf->origin() == (xyz & ~Coord::ValueType(NodeT::DIM-1))) {
++                        this->insert(xyz, leaf);
++                        return true;
++                    }
++                }
++            }
++#endif
++            return matches;
+         }
+     }
+ 
+@@ -1006,6 +1100,18 @@
+     }
+ 
+ private:
++#ifdef EXPERIMENT_LEAF_CACHE
++    // Experimental 64-leaf direct-mapped cache. The normal tree callbacks clear
++    // it with the existing cache, before detached leaves can be reused.
++    mutable std::array<const LeafNodeT*, 64> mSecondaryLeaves{};
++    static size_t secondarySlot(const Coord& xyz)
++    {
++        constexpr auto shift = LeafNodeT::LOG2DIM;
++        return (((uint32_t(xyz[0]) >> shift) & 3) << 4)
++             | (((uint32_t(xyz[1]) >> shift) & 3) << 2)
++             | ((uint32_t(xyz[2]) >> shift) & 3);
++    }
++#endif
+     mutable std::array<Coord, NumCacheLevels> mKeys;
+     mutable typename NodePtrList::AsTupleList mNodes;
+ }; // ValueAccessorImpl

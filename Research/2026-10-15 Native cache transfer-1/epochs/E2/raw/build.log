@@ -1,0 +1,29 @@
+['C:\\Program Files\\Microsoft Visual Studio\\18\\Insiders\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin\\cmake.exe', '-S', 'D:\\SourceCode\\Tedd.OpenVDB\\benchmarks\\NativeCacheTransfer', '-B', 'D:\\Workspaces\\AI\\openvdb-native-cache-transfer-20261015\\build', '-G', 'Visual Studio 18 2026', '-A', 'x64', '-DPATCH_ROOT=D:\\Workspaces\\AI\\openvdb-native-cache-transfer-20261015\\overlay', '-DOPENVDB_SOURCE_DIR=D:\\source\\openvdb', '-DOPENVDB_BUILD_DIR=D:\\SourceCode\\Tedd.OpenVDB\\reference\\build-upstream-zlib', '-DTBB_ROOT=D:\\Workspaces\\AI\\openvdb-native-cache-transfer-20261015\\oneapi-tbb-2022.2.0', '-DZLIB_LIBRARY=D:\\SourceCode\\Tedd.OpenVDB\\reference\\build-zlib\\Release\\zs.lib']
+-- Selecting Windows SDK version 10.0.26100.0 to target Windows 10.0.26200.
+-- Configuring done (0.0s)
+-- Generating done (0.1s)
+-- Build files have been written to: D:/Workspaces/AI/openvdb-native-cache-transfer-20261015/build
+
+['C:\\Program Files\\Microsoft Visual Studio\\18\\Insiders\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin\\cmake.exe', '--build', 'D:\\Workspaces\\AI\\openvdb-native-cache-transfer-20261015\\build', '--config', 'Release', '--parallel', '2']
+MSBuild version 18.11.0-1.26427.13+9353559c2 for .NET Framework
+
+  1>Checking Build System
+  Building Custom Rule D:/SourceCode/Tedd.OpenVDB/benchmarks/NativeCacheTransfer/CMakeLists.txt
+  Building Custom Rule D:/SourceCode/Tedd.OpenVDB/benchmarks/NativeCacheTransfer/CMakeLists.txt
+  Building Custom Rule D:/SourceCode/Tedd.OpenVDB/benchmarks/NativeCacheTransfer/CMakeLists.txt
+  main.cpp
+  main.cpp
+  main.cpp
+  cache.vcxproj -> D:\Workspaces\AI\openvdb-native-cache-transfer-20261015\build\Release\cache.exe
+  Building Custom Rule D:/SourceCode/Tedd.OpenVDB/benchmarks/NativeCacheTransfer/CMakeLists.txt
+  main.cpp
+  both.vcxproj -> D:\Workspaces\AI\openvdb-native-cache-transfer-20261015\build\Release\both.exe
+  mask.vcxproj -> D:\Workspaces\AI\openvdb-native-cache-transfer-20261015\build\Release\mask.exe
+  Building Custom Rule D:/SourceCode/Tedd.OpenVDB/benchmarks/NativeCacheTransfer/CMakeLists.txt
+  Building Custom Rule D:/SourceCode/Tedd.OpenVDB/benchmarks/NativeCacheTransfer/CMakeLists.txt
+  main.cpp
+  main.cpp
+  split.vcxproj -> D:\Workspaces\AI\openvdb-native-cache-transfer-20261015\build\Release\split.exe
+  split_both.vcxproj -> D:\Workspaces\AI\openvdb-native-cache-transfer-20261015\build\Release\split_both.exe
+  stock.vcxproj -> D:\Workspaces\AI\openvdb-native-cache-transfer-20261015\build\Release\stock.exe
+  Building Custom Rule D:/SourceCode/Tedd.OpenVDB/benchmarks/NativeCacheTransfer/CMakeLists.txt

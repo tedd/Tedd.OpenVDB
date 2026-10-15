@@ -1,0 +1,8 @@
+{
+  "pattern": "churn",
+  "variant": "stock",
+  "exitCode": 1,
+  "message": "Correctness check failed after first churn sample; no churn timing accepted.",
+  "cause": "Direct Tree.addTile does not clear accessors. Corrected to use stealNode for the timed mutation workload.",
+  "disposition": "All E2 measurements superseded by E3."
+}

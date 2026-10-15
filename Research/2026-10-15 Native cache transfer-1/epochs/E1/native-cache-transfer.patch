@@ -1,0 +1,95 @@
+--- a/openvdb/openvdb/tree/ValueAccessor.h
++++ b/openvdb/openvdb/tree/ValueAccessor.h
+@@ -558,7 +558,18 @@
+                 if constexpr(IsLeafAndBypassLeafAPI<NodeType>) {
+                     const auto offset = LeafNodeT::coordToOffset(xyz);
+                     const_cast<ValueType&>(LeafCacheT::buffer()[offset]) = value;
++#ifdef EXPERIMENT_DENSE_MASK
++                    // This experiment targets ordinary leaves with at least 64 voxels.
++                    // Smaller leaves retain their original mask API and behavior.
++                    if constexpr (NodeType::LOG2DIM >= 2) {
++                        if (node->getValueMask().template getWord<Index64>(offset >> 6) != ~Index64(0))
++                            const_cast<NodeType*>(node)->setValueOn(offset);
++                    } else {
++                        const_cast<NodeType*>(node)->setValueOn(offset);
++                    }
++#else
+                     const_cast<NodeType*>(node)->setValueOn(offset);
++#endif
+                 }
+                 else {
+                     const_cast<NodeType*>(node)->setValueAndCache(xyz, value, *this);
+@@ -868,6 +879,9 @@
+     template<typename NodeT>
+     void eraseNode()
+     {
++#ifdef EXPERIMENT_LEAF_CACHE
++        if constexpr (std::is_same<NodeT, LeafNodeT>::value) mSecondaryLeaves.fill(nullptr);
++#endif
+         static constexpr int64_t Idx = NodeLevelList::template Index<NodeT>;
+         if constexpr (Idx >= 0) {
+             mKeys[Idx] = Coord::max();
+@@ -879,6 +893,9 @@
+     ///   hash-keys.
+     void clear() override final
+     {
++#ifdef EXPERIMENT_LEAF_CACHE
++        mSecondaryLeaves.fill(nullptr);
++#endif
+         mKeys.fill(Coord::max());
+         mNodes.foreach([](auto& node) { node = nullptr; });
+         if constexpr (BypassLeafAPI) {
+@@ -927,6 +944,10 @@
+             static_assert(Idx < NumCacheLevels);
+             mKeys[Idx] = xyz & ~(NodeT::DIM-1);
+             mNodes.template get<Idx>() = const_cast<NodeT*>(node);
++#ifdef EXPERIMENT_LEAF_CACHE
++            if constexpr (std::is_same<NodeT, LeafNodeT>::value)
++                mSecondaryLeaves[secondarySlot(xyz)] = node;
++#endif
+             if constexpr(IsLeafAndBypassLeafAPI<NodeT>) {
+                 LeafCacheT::setBuffer(node->buffer().data());
+             }
+@@ -944,9 +965,22 @@
+             constexpr uint64_t Idx = uint64_t(NodeLevelList::template Index<NodeT>);
+             static_assert(NodeLevelList::template Contains<NodeT>);
+             static_assert(Idx < NumCacheLevels + 1);
+-            return (xyz[0] & ~Coord::ValueType(NodeT::DIM-1)) == mKeys[Idx][0]
++            const bool matches = (xyz[0] & ~Coord::ValueType(NodeT::DIM-1)) == mKeys[Idx][0]
+                 && (xyz[1] & ~Coord::ValueType(NodeT::DIM-1)) == mKeys[Idx][1]
+                 && (xyz[2] & ~Coord::ValueType(NodeT::DIM-1)) == mKeys[Idx][2];
++#ifdef EXPERIMENT_LEAF_CACHE
++            if (!matches) {
++                if constexpr (std::is_same<NodeT, LeafNodeT>::value) {
++                    const auto leaf = mSecondaryLeaves[secondarySlot(xyz)];
++                    // Full origin equality rejects collisions, including signed coordinates.
++                    if (leaf && leaf->origin() == (xyz & ~Coord::ValueType(NodeT::DIM-1))) {
++                        this->insert(xyz, leaf);
++                        return true;
++                    }
++                }
++            }
++#endif
++            return matches;
+         }
+     }
+ 
+@@ -1006,6 +1040,18 @@
+     }
+ 
+ private:
++#ifdef EXPERIMENT_LEAF_CACHE
++    // Experimental 64-leaf direct-mapped cache. The normal tree callbacks clear
++    // it with the existing cache, before detached leaves can be reused.
++    mutable std::array<const LeafNodeT*, 64> mSecondaryLeaves{};
++    static size_t secondarySlot(const Coord& xyz)
++    {
++        constexpr auto shift = LeafNodeT::LOG2DIM;
++        return (((uint32_t(xyz[0]) >> shift) & 3) << 4)
++             | (((uint32_t(xyz[1]) >> shift) & 3) << 2)
++             | ((uint32_t(xyz[2]) >> shift) & 3);
++    }
++#endif
+     mutable std::array<Coord, NumCacheLevels> mKeys;
+     mutable typename NodePtrList::AsTupleList mNodes;
+ }; // ValueAccessorImpl

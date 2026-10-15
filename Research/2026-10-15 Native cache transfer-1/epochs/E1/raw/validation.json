@@ -1,0 +1,18 @@
+{
+  "stock": {
+    "correctness": true,
+    "accessorBytes": 96
+  },
+  "cache": {
+    "correctness": true,
+    "accessorBytes": 608
+  },
+  "mask": {
+    "correctness": true,
+    "accessorBytes": 96
+  },
+  "both": {
+    "correctness": true,
+    "accessorBytes": 608
+  }
+}

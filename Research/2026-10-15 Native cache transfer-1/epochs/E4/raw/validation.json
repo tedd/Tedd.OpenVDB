@@ -1,0 +1,14 @@
+{
+  "stock": {
+    "correctness": true,
+    "accessorBytes": 96
+  },
+  "split_only": {
+    "correctness": true,
+    "accessorBytes": 96
+  },
+  "split": {
+    "correctness": true,
+    "accessorBytes": 608
+  }
+}

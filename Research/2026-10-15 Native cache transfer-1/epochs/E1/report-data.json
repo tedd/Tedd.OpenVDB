@@ -1,0 +1,1018 @@
+{
+  "title": "Transferring managed cache choices to native OpenVDB",
+  "generatedAt": "2026-10-15T08:48:55.954116+02:00",
+  "status": "partial",
+  "scope": "Local C++ UInt16 Tree4 5/4/3 experiment. Stock upstream headers versus 64-leaf cache, saturated activity-word guard, and their combination.",
+  "question": "Do the two managed implementation choices improve native C++ cached access, and where do they regress?",
+  "primaryMetric": "ns/op; median of process-launch medians",
+  "summary": {
+    "baseline": 4.941901810672305,
+    "final": 4.540069700068603,
+    "unit": "ns/op",
+    "changePercent": -8.131122915795775,
+    "headline": "Superseded preliminary epoch: a direct tile-replacement preflight omitted required accessor invalidation. These timings are excluded from final conclusions."
+  },
+  "scorecards": [
+    {
+      "title": "coherent64 read",
+      "value": 3.955542088179882,
+      "baseline": 3.2785298158738123,
+      "unit": "ns/op",
+      "wallChangePercent": 20.649873886403203
+    },
+    {
+      "title": "coherent64 write",
+      "value": 4.540069700068603,
+      "baseline": 4.941901810672305,
+      "unit": "ns/op",
+      "wallChangePercent": -8.131122915795775
+    }
+  ],
+  "environment": [
+    {
+      "label": "started",
+      "value": "2026-10-15T08:40:19.410295+02:00"
+    },
+    {
+      "label": "cpu",
+      "value": "AMD Ryzen 9 5950X 16-Core Processor"
+    },
+    {
+      "label": "platform",
+      "value": "Windows-11-10.0.26200-SP0"
+    },
+    {
+      "label": "managedRevision",
+      "value": "9d0811b7640be49453bd4e7f5c0f4c61be795bf2"
+    },
+    {
+      "label": "nativeRevision",
+      "value": "f42248c35a9f7bb30641a8a74d9075ce7d1ddcaf"
+    },
+    {
+      "label": "affinityCpu",
+      "value": "8"
+    },
+    {
+      "label": "lockPath",
+      "value": "C:\\Users\\tedd\\.codex\\locks\\performance-measurement.lock"
+    },
+    {
+      "label": "powerScheme",
+      "value": "Power Scheme GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c  (High performance)"
+    },
+    {
+      "label": "protocol",
+      "value": "E1; fixed workload and variant orders before measurements"
+    },
+    {
+      "label": "nativeLibrarySha256",
+      "value": "fbf4bed50138f292816ed4f123c34e3f39c87b56a7344c3122dc788ab9730b3c"
+    },
+    {
+      "label": "completed",
+      "value": "2026-10-15T08:48:55.954116+02:00"
+    }
+  ],
+  "hotspots": [
+    {
+      "name": "Native cached voxel access",
+      "location": "openvdb/tree/ValueAccessor.h",
+      "evidence": "User-requested local transfer experiment; no application hotspot or application speedup claimed."
+    }
+  ],
+  "areas": [
+    {
+      "name": "Leaf location and activity writes",
+      "boundary": "Only the two source-level choices discussed with the user and their combination.",
+      "evidence": "Source comparison plus paired timing and independent tree validation.",
+      "hypothesisIds": [
+        "H-001",
+        "H-002",
+        "H-003"
+      ],
+      "disposition": "Three bounded questions; unrelated optimization catalogue categories excluded. No fabricated ten/twenty-hypothesis search."
+    }
+  ],
+  "series": [
+    {
+      "title": "coherent64",
+      "description": "Median of process-launch medians; whiskers span launch medians. Variants and read/write order alternate; setup and correctness checks excluded.",
+      "unit": "ns/op",
+      "lowerIsBetter": true,
+      "rounds": [
+        "stock",
+        "cache",
+        "mask",
+        "both"
+      ],
+      "rows": [
+        {
+          "label": "read",
+          "measurements": [
+            {
+              "median": 3.2785298158738123,
+              "min": 3.2715843670646296,
+              "max": 3.8581678158021377,
+              "n": 5
+            },
+            {
+              "median": 3.9583638642437338,
+              "min": 3.953442254822657,
+              "max": 4.591295634778424,
+              "n": 5
+            },
+            {
+              "median": 3.4765021047929636,
+              "min": 3.447342418905636,
+              "max": 4.082116043270806,
+              "n": 5
+            },
+            {
+              "median": 3.955542088179882,
+              "min": 3.9465328031567415,
+              "max": 4.833102444989966,
+              "n": 5
+            }
+          ]
+        },
+        {
+          "label": "write",
+          "measurements": [
+            {
+              "median": 4.941901810672305,
+              "min": 4.326178674460395,
+              "max": 6.2293256407171524,
+              "n": 5
+            },
+            {
+              "median": 6.102073739428039,
+              "min": 4.461217957742874,
+              "max": 6.980782005140072,
+              "n": 5
+            },
+            {
+              "median": 4.767201674875082,
+              "min": 4.23421397277912,
+              "max": 4.839545933634707,
+              "n": 5
+            },
+            {
+              "median": 4.540069700068603,
+              "min": 4.007431970198845,
+              "max": 5.002439006440449,
+              "n": 5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "random64",
+      "description": "Median of process-launch medians; whiskers span launch medians. Variants and read/write order alternate; setup and correctness checks excluded.",
+      "unit": "ns/op",
+      "lowerIsBetter": true,
+      "rounds": [
+        "stock",
+        "cache",
+        "mask",
+        "both"
+      ],
+      "rows": [
+        {
+          "label": "read",
+          "measurements": [
+            {
+              "median": 33.68139104480668,
+              "min": 33.561054594707365,
+              "max": 33.828699354419236,
+              "n": 3
+            },
+            {
+              "median": 7.795161375993201,
+              "min": 7.782546377119512,
+              "max": 8.894668119138066,
+              "n": 3
+            },
+            {
+              "median": 35.03793538944749,
+              "min": 33.521191758222066,
+              "max": 35.827784707005655,
+              "n": 3
+            },
+            {
+              "median": 7.912538060979481,
+              "min": 7.87742684740539,
+              "max": 9.496202381379014,
+              "n": 3
+            }
+          ]
+        },
+        {
+          "label": "write",
+          "measurements": [
+            {
+              "median": 41.825572722548735,
+              "min": 40.300115782811474,
+              "max": 42.203042766526046,
+              "n": 3
+            },
+            {
+              "median": 10.362671618380366,
+              "min": 8.261408374631388,
+              "max": 12.012702671915957,
+              "n": 3
+            },
+            {
+              "median": 41.84665504945527,
+              "min": 40.97996982959432,
+              "max": 43.79944007643554,
+              "n": 3
+            },
+            {
+              "median": 9.60704958454497,
+              "min": 7.995225498904407,
+              "max": 10.872923124820813,
+              "n": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "coherent512",
+      "description": "Median of process-launch medians; whiskers span launch medians. Variants and read/write order alternate; setup and correctness checks excluded.",
+      "unit": "ns/op",
+      "lowerIsBetter": true,
+      "rounds": [
+        "stock",
+        "cache",
+        "mask",
+        "both"
+      ],
+      "rows": [
+        {
+          "label": "read",
+          "measurements": [
+            {
+              "median": 3.36262583732605,
+              "min": 3.3490359783172607,
+              "max": 3.368908166885376,
+              "n": 3
+            },
+            {
+              "median": 5.371570587158203,
+              "min": 5.327045917510986,
+              "max": 5.380690097808838,
+              "n": 3
+            },
+            {
+              "median": 3.5835206508636475,
+              "min": 3.5820603370666504,
+              "max": 3.5915374755859375,
+              "n": 3
+            },
+            {
+              "median": 5.408120155334473,
+              "min": 5.406135320663452,
+              "max": 5.410361289978027,
+              "n": 3
+            }
+          ]
+        },
+        {
+          "label": "write",
+          "measurements": [
+            {
+              "median": 4.112553596496582,
+              "min": 4.11192774772644,
+              "max": 4.505175352096558,
+              "n": 3
+            },
+            {
+              "median": 5.837953090667725,
+              "min": 5.821537971496582,
+              "max": 5.843096971511841,
+              "n": 3
+            },
+            {
+              "median": 4.339969158172607,
+              "min": 4.335200786590576,
+              "max": 4.355913400650024,
+              "n": 3
+            },
+            {
+              "median": 5.574244260787964,
+              "min": 5.534815788269043,
+              "max": 5.587285757064819,
+              "n": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "random512",
+      "description": "Median of process-launch medians; whiskers span launch medians. Variants and read/write order alternate; setup and correctness checks excluded.",
+      "unit": "ns/op",
+      "lowerIsBetter": true,
+      "rounds": [
+        "stock",
+        "cache",
+        "mask",
+        "both"
+      ],
+      "rows": [
+        {
+          "label": "read",
+          "measurements": [
+            {
+              "median": 29.857981204986572,
+              "min": 29.85549569129944,
+              "max": 32.83223509788513,
+              "n": 3
+            },
+            {
+              "median": 42.85638928413391,
+              "min": 42.67531633377075,
+              "max": 57.054102420806885,
+              "n": 3
+            },
+            {
+              "median": 31.200939416885372,
+              "min": 30.104929208755493,
+              "max": 34.25491452217102,
+              "n": 3
+            },
+            {
+              "median": 45.52890062332153,
+              "min": 45.15518546104431,
+              "max": 48.87023568153381,
+              "n": 3
+            }
+          ]
+        },
+        {
+          "label": "write",
+          "measurements": [
+            {
+              "median": 42.754554748535156,
+              "min": 38.156479597091675,
+              "max": 46.317481994628906,
+              "n": 3
+            },
+            {
+              "median": 55.11265993118286,
+              "min": 54.123932123184204,
+              "max": 66.41348600387573,
+              "n": 3
+            },
+            {
+              "median": 43.48994493484497,
+              "min": 38.920074701309204,
+              "max": 55.149370431900024,
+              "n": 3
+            },
+            {
+              "median": 54.297226667404175,
+              "min": 49.850285053253174,
+              "max": 54.5177161693573,
+              "n": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "partial64",
+      "description": "Median of process-launch medians; whiskers span launch medians. Variants and read/write order alternate; setup and correctness checks excluded.",
+      "unit": "ns/op",
+      "lowerIsBetter": true,
+      "rounds": [
+        "stock",
+        "cache",
+        "mask",
+        "both"
+      ],
+      "rows": [
+        {
+          "label": "read",
+          "measurements": [
+            {
+              "median": 3.2744401404304555,
+              "min": 3.2668647416141057,
+              "max": 3.278101849837197,
+              "n": 3
+            },
+            {
+              "median": 3.952490330367382,
+              "min": 3.9426051148580847,
+              "max": 3.963557452080603,
+              "n": 3
+            },
+            {
+              "median": 3.4729403874508518,
+              "min": 3.4588095088773754,
+              "max": 3.4818756783461664,
+              "n": 3
+            },
+            {
+              "median": 3.9422071464408583,
+              "min": 3.929890123919766,
+              "max": 3.949476569539441,
+              "n": 3
+            }
+          ]
+        },
+        {
+          "label": "write",
+          "measurements": [
+            {
+              "median": 5.957453216512738,
+              "min": 5.9507837458019335,
+              "max": 5.957625202863901,
+              "n": 3
+            },
+            {
+              "median": 4.741621704901499,
+              "min": 4.726942869813851,
+              "max": 4.745653384947371,
+              "n": 3
+            },
+            {
+              "median": 6.019536289600057,
+              "min": 5.999687864771052,
+              "max": 6.0364569467767035,
+              "n": 3
+            },
+            {
+              "median": 4.902314952285387,
+              "min": 4.89807928842767,
+              "max": 4.994097668409035,
+              "n": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "collision64",
+      "description": "Median of process-launch medians; whiskers span launch medians. Variants and read/write order alternate; setup and correctness checks excluded.",
+      "unit": "ns/op",
+      "lowerIsBetter": true,
+      "rounds": [
+        "stock",
+        "cache",
+        "mask",
+        "both"
+      ],
+      "rows": [
+        {
+          "label": "read",
+          "measurements": [
+            {
+              "median": 15.109008550643921,
+              "min": 15.103763341903687,
+              "max": 17.114275693893433,
+              "n": 3
+            },
+            {
+              "median": 19.44599151611328,
+              "min": 19.021165370941162,
+              "max": 21.839815378189087,
+              "n": 3
+            },
+            {
+              "median": 15.313363075256346,
+              "min": 15.302789211273193,
+              "max": 16.643714904785156,
+              "n": 3
+            },
+            {
+              "median": 18.948894739151,
+              "min": 18.89926791191101,
+              "max": 29.74931001663208,
+              "n": 3
+            }
+          ]
+        },
+        {
+          "label": "write",
+          "measurements": [
+            {
+              "median": 22.05219268798828,
+              "min": 21.042025089263916,
+              "max": 22.29856252670288,
+              "n": 3
+            },
+            {
+              "median": 25.91688632965088,
+              "min": 23.436856269836426,
+              "max": 27.16814875602722,
+              "n": 3
+            },
+            {
+              "median": 22.24026918411255,
+              "min": 21.405506134033203,
+              "max": 26.17020606994629,
+              "n": 3
+            },
+            {
+              "median": 25.392639636993408,
+              "min": 23.60244393348694,
+              "max": 26.536279916763306,
+              "n": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "effectGroups": [
+    {
+      "name": "coherent64 read",
+      "control": "Paired unmodified native stock launches",
+      "items": [
+        {
+          "label": "cache",
+          "effect": 0.2073594222258821,
+          "range": [
+            0.15187921442518482,
+            0.22340978256757094
+          ]
+        },
+        {
+          "label": "mask",
+          "effect": 0.0603844711006194,
+          "range": [
+            0.05360088649242023,
+            0.06247975147959384
+          ]
+        },
+        {
+          "label": "both",
+          "effect": 0.20649873886403203,
+          "range": [
+            0.20630629088672947,
+            0.2526936814916987
+          ]
+        }
+      ]
+    },
+    {
+      "name": "coherent64 write",
+      "control": "Paired unmodified native stock launches",
+      "items": [
+        {
+          "label": "cache",
+          "effect": 0.23476223794051898,
+          "range": [
+            0.026729907812192977,
+            0.25497269081928353
+          ]
+        },
+        {
+          "label": "mask",
+          "effect": -0.035350790543824284,
+          "range": [
+            -0.2347162518339213,
+            -0.021257721560181686
+          ]
+        },
+        {
+          "label": "both",
+          "effect": -0.08131122915795774,
+          "range": [
+            -0.19695336301851418,
+            -0.0736785806243444
+          ]
+        }
+      ]
+    },
+    {
+      "name": "random64 read",
+      "control": "Paired unmodified native stock launches",
+      "items": [
+        {
+          "label": "cache",
+          "effect": -0.768561774493719,
+          "range": [
+            -0.769942488903203,
+            -0.7349705417022036
+          ]
+        },
+        {
+          "label": "mask",
+          "effect": 0.04027578144964927,
+          "range": [
+            -0.004756314439967713,
+            0.059094360431722226
+          ]
+        },
+        {
+          "label": "both",
+          "effect": -0.7650768624593517,
+          "range": [
+            -0.7661193138690153,
+            -0.7170469612454735
+          ]
+        }
+      ]
+    },
+    {
+      "name": "random64 write",
+      "control": "Paired unmodified native stock launches",
+      "items": [
+        {
+          "label": "cache",
+          "effect": -0.7522407717612983,
+          "range": [
+            -0.7950028625437601,
+            -0.715359322824846
+          ]
+        },
+        {
+          "label": "mask",
+          "effect": 0.0005040535140161673,
+          "range": [
+            -0.02021736554723952,
+            0.03837555393087522
+          ]
+        },
+        {
+          "label": "both",
+          "effect": -0.7703068013372192,
+          "range": [
+            -0.8016078777045481,
+            -0.7423663695299991
+          ]
+        }
+      ]
+    },
+    {
+      "name": "coherent512 read",
+      "control": "Paired unmodified native stock launches",
+      "items": [
+        {
+          "label": "cache",
+          "effect": 0.5974333294927812,
+          "range": [
+            0.5906206896551724,
+            0.5974333294927812
+          ]
+        },
+        {
+          "label": "mask",
+          "effect": 0.06569116643475637,
+          "range": [
+            0.0637038688343603,
+            0.06957953281423812
+          ]
+        },
+        {
+          "label": "both",
+          "effect": 0.6083026827733513,
+          "range": [
+            0.6059687655362884,
+            0.6148289210233593
+          ]
+        }
+      ]
+    },
+    {
+      "name": "coherent512 write",
+      "control": "Paired unmodified native stock launches",
+      "items": [
+        {
+          "label": "cache",
+          "effect": 0.41954456122857153,
+          "range": [
+            0.2958326001563816,
+            0.42101158629127067
+          ]
+        },
+        {
+          "label": "mask",
+          "effect": 0.05529789614651026,
+          "range": [
+            -0.036670313808555455,
+            0.059174865066988325
+          ]
+        },
+        {
+          "label": "both",
+          "effect": 0.3554216692851304,
+          "range": [
+            0.22854613987296313,
+            0.3587995947044864
+          ]
+        }
+      ]
+    },
+    {
+      "name": "random512 read",
+      "control": "Paired unmodified native stock launches",
+      "items": [
+        {
+          "label": "cache",
+          "effect": 0.4353411568554568,
+          "range": [
+            0.4293956722415866,
+            0.7377465241311576
+          ]
+        },
+        {
+          "label": "mask",
+          "effect": 0.04497819871607778,
+          "range": [
+            0.008270753540687403,
+            0.04506519467965253
+          ]
+        },
+        {
+          "label": "both",
+          "effect": 0.5248485927681461,
+          "range": [
+            0.4884833620322657,
+            0.5249755386439514
+          ]
+        }
+      ]
+    },
+    {
+      "name": "random512 write",
+      "control": "Paired unmodified native stock launches",
+      "items": [
+        {
+          "label": "cache",
+          "effect": 0.2890476875582739,
+          "range": [
+            0.1898889481421695,
+            0.7405559083322204
+          ]
+        },
+        {
+          "label": "mask",
+          "effect": 0.017200277037968892,
+          "range": [
+            -0.061046864769372045,
+            0.2899063212391315
+          ]
+        },
+        {
+          "label": "both",
+          "effect": 0.2699752572973406,
+          "range": [
+            0.17704404085868308,
+            0.30646971575052784
+          ]
+        }
+      ]
+    },
+    {
+      "name": "partial64 read",
+      "control": "Paired unmodified native stock launches",
+      "items": [
+        {
+          "label": "cache",
+          "effect": 0.20707362506489146,
+          "range": [
+            0.205725298182446,
+            0.21045347665435
+          ]
+        },
+        {
+          "label": "mask",
+          "effect": 0.06062112559929145,
+          "range": [
+            0.05875503960057826,
+            0.06334992518398619
+          ]
+        },
+        {
+          "label": "both",
+          "effect": 0.20393318471921096,
+          "range": [
+            0.19883100157944722,
+            0.2089501347362388
+          ]
+        }
+      ]
+    },
+    {
+      "name": "partial64 write",
+      "control": "Paired unmodified native stock launches",
+      "items": [
+        {
+          "label": "cache",
+          "effect": -0.20408578421417112,
+          "range": [
+            -0.20566045218017848,
+            -0.2034090386486841
+          ]
+        },
+        {
+          "label": "mask",
+          "effect": 0.010421076059017764,
+          "range": [
+            0.00708937976067503,
+            0.014396960910436185
+          ]
+        },
+        {
+          "label": "both",
+          "effect": -0.1771123038453314,
+          "range": [
+            -0.1778470243356186,
+            -0.16076639956338634
+          ]
+        }
+      ]
+    },
+    {
+      "name": "collision64 read",
+      "control": "Paired unmodified native stock launches",
+      "items": [
+        {
+          "label": "cache",
+          "effect": 0.2870461652683707,
+          "range": [
+            0.2589287581103732,
+            0.28749312842863284
+          ]
+        },
+        {
+          "label": "mask",
+          "effect": 0.01352534310424458,
+          "range": [
+            -0.02749522080424227,
+            0.013877318427729213
+          ]
+        },
+        {
+          "label": "both",
+          "effect": 0.2541454772254683,
+          "range": [
+            0.25129528873622675,
+            0.7382745579613965
+          ]
+        }
+      ]
+    },
+    {
+      "name": "collision64 write",
+      "control": "Paired unmodified native stock launches",
+      "items": [
+        {
+          "label": "cache",
+          "effect": 0.1752521255524706,
+          "range": [
+            0.11381182041239946,
+            0.21838117248557776
+          ]
+        },
+        {
+          "label": "mask",
+          "effect": 0.00852869820182156,
+          "range": [
+            0.00852869820182156,
+            0.1736274945349976
+          ]
+        },
+        {
+          "label": "both",
+          "effect": 0.15147912936678853,
+          "range": [
+            0.12168119909377939,
+            0.20333974458773363
+          ]
+        }
+      ]
+    }
+  ],
+  "hypotheses": [
+    {
+      "id": "H-001",
+      "claim": "A 64-leaf secondary cache improves native coherent cached reads.",
+      "mechanism": "Avoid repeated parent traversal when revisiting leaves.",
+      "prediction": "All paired cache/stock read time ratios below one on coherent64.",
+      "falsification": "Mixed paired directions or consistently higher time.",
+      "change": "Add 64 direct-mapped leaf references with full origin checks and existing native invalidation callbacks.",
+      "state": "inconclusive",
+      "decision": "Superseded",
+      "result": "read: stock 3.278530, cache 3.958364 ns/op; paired time ratio range 1.1519 to 1.2234.",
+      "effectPercent": 20.73594222258821,
+      "changeScope": "local",
+      "maintainability": "Experimental header overlay; generic library integration and additional platforms remain unvalidated.",
+      "codeComments": "Patch comments state cache collision checks, invalidation and mask-word conditions.",
+      "decisionRationale": "Preflight invalidation defect invalidates acceptance of this epoch; corrected tests and fresh measurements are recorded in E3.",
+      "evidence": [
+        "comparison.json",
+        "native-cache-transfer.patch",
+        "raw/validation.json"
+      ],
+      "risks": [
+        "One Windows x64 compiler and processor."
+      ]
+    },
+    {
+      "id": "H-002",
+      "claim": "Skipping saturated activity-word updates improves native coherent cached writes.",
+      "mechanism": "Avoid an idempotent activity-word read-modify-write when all 64 bits are already active.",
+      "prediction": "All paired mask/stock write time ratios below one on coherent64.",
+      "falsification": "Mixed paired directions or consistently higher time.",
+      "change": "Guard only the native cached-buffer activity-bit update with a whole-word saturation test.",
+      "state": "inconclusive",
+      "decision": "Superseded",
+      "result": "write: stock 4.941902, mask 4.767202 ns/op; paired time ratio range 0.7653 to 0.9787.",
+      "effectPercent": -3.5350790543824284,
+      "changeScope": "local",
+      "maintainability": "Experimental header overlay; generic library integration and additional platforms remain unvalidated.",
+      "codeComments": "Patch comments state cache collision checks, invalidation and mask-word conditions.",
+      "decisionRationale": "Preflight invalidation defect invalidates acceptance of this epoch; corrected tests and fresh measurements are recorded in E3.",
+      "evidence": [
+        "comparison.json",
+        "native-cache-transfer.patch",
+        "raw/validation.json"
+      ],
+      "risks": [
+        "One Windows x64 compiler and processor."
+      ]
+    },
+    {
+      "id": "H-003",
+      "claim": "The combined native changes improve coherent cached writes over stock.",
+      "mechanism": "Combine reduced leaf resolution with fewer redundant mask writes.",
+      "prediction": "All paired both/stock write time ratios below one on coherent64.",
+      "falsification": "Mixed paired directions or consistently higher time; counterexample regressions preclude a universal recommendation.",
+      "change": "Enable both independently tested mechanisms in one native build.",
+      "state": "inconclusive",
+      "decision": "Superseded",
+      "result": "write: stock 4.941902, both 4.540070 ns/op; paired time ratio range 0.8030 to 0.9263.",
+      "effectPercent": -8.131122915795775,
+      "changeScope": "local",
+      "maintainability": "Experimental header overlay; generic library integration and additional platforms remain unvalidated.",
+      "codeComments": "Patch comments state cache collision checks, invalidation and mask-word conditions.",
+      "decisionRationale": "Preflight invalidation defect invalidates acceptance of this epoch; corrected tests and fresh measurements are recorded in E3.",
+      "evidence": [
+        "comparison.json",
+        "native-cache-transfer.patch",
+        "raw/validation.json"
+      ],
+      "risks": [
+        "One Windows x64 compiler and processor."
+      ]
+    }
+  ],
+  "retainedChanges": [
+    "Reproduction harness, experimental patch and evidence. Upstream checkout and managed library remain unchanged."
+  ],
+  "decisions": [],
+  "correctness": [
+    "Each executable tests signed cache collisions, copying, assignment across trees, tile replacement, clearing, explicit cache erasure, mask reactivation and tree destruction.",
+    "Every timed sample validates all voxel values/activity through tree lookups independent of the accessor; read checksums are consumed and verified.",
+    "All variants have identical coordinate hashes, topology and active voxel counts for every workload."
+  ],
+  "generatedCode": [
+    {
+      "summary": "Focused MSVC Release read/write and relevant helper listings are preserved. No hardware-counter attribution is claimed.",
+      "artifact": "assembly.zip"
+    }
+  ],
+  "validityThreats": [
+    "The preflight could read a detached leaf through the experimental secondary cache after direct Tree.addTile. The check passing did not prove validity; all E1 performance conclusions were withdrawn and rerun in E3.",
+    "Only AMD Ryzen 9 5950X, Windows x64 and MSVC Release. No cross-machine claim.",
+    "The 64-leaf fixture exactly fits the secondary cache; random512 and collision64 deliberately test losing distributions.",
+    "The mask experiment modifies the native cached-buffer write path; it is not a general NodeMask API change.",
+    "The cache overlay changes accessor object size and layout. It is a prototype, not an ABI-compatible upstream patch.",
+    "Focused tests do not establish all OpenVDB types, APIs, threading configurations or full upstream-suite compatibility.",
+    "The shared performance lock is cooperative; external CPU snapshots are retained in raw/environment.json."
+  ],
+  "reproduction": [
+    "Set PYTHONDONTWRITEBYTECODE=1. Run through the shared performance lock: python benchmarks/NativeCacheTransfer/run.py --workspace D:/Workspaces/AI/openvdb-native-cache-transfer-20261015 --evidence \"Research/2026-10-15 Native cache transfer-1\"",
+    "Primary: five launches, nine samples of 50,003,968 operations, 1000 ms warmup/workload. Controls: three launches, five samples, 350 ms warmup; operation counts in raw JSON.",
+    "CMake uses unchanged upstream headers for stock and a copied tree-header overlay for other variants. Both experimental mechanisms are compile-time switches."
+  ],
+  "artifacts": [
+    {
+      "label": "All measurements",
+      "path": "comparison.json"
+    },
+    {
+      "label": "Experimental header patch",
+      "path": "native-cache-transfer.patch"
+    },
+    {
+      "label": "Source and reproduction driver",
+      "path": "../../benchmarks/NativeCacheTransfer/"
+    },
+    {
+      "label": "Assembly listings",
+      "path": "assembly.zip"
+    },
+    {
+      "label": "Raw measurements, validation and environment",
+      "path": "raw/"
+    }
+  ]
+}

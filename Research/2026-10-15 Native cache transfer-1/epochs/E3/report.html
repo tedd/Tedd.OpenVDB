@@ -1,0 +1,623 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Scientific performance report</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --page: #f5f6f8;
+      --surface: #fcfcfd;
+      --ink: #0f1217;
+      --ink-2: #4a5160;
+      --muted: #767d8b;
+      --grid: #e3e6eb;
+      --axis: #c3c8d1;
+      --hairline: rgba(15, 18, 23, .10);
+      --before: #a9cbf3;
+      --mid: #5f97dc;
+      --after: #1d5aa6;
+      --good: #006300;
+      --slower: #d9822b;
+      --noeffect: #b9c0cb;
+      --adopted-bg: #e4f2e4;
+      --adopted-ink: #0b4f0b;
+      --decision-bg: #fbf0da;
+      --decision-ink: #6b4a00;
+      --info-bg: #e3edfb;
+      --info-ink: #184f95;
+      --neutral-bg: #eceef1;
+      --neutral-ink: #4a5160;
+      --sans: "IBM Plex Sans", Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      --mono: "IBM Plex Mono", "SFMono-Regular", Consolas, ui-monospace, monospace;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 40px 16px 64px;
+      background: var(--page);
+      color: var(--ink);
+      font: 15px/1.55 var(--sans);
+    }
+    a { color: var(--after); overflow-wrap: anywhere; }
+    code, .mono { font-family: var(--mono); font-size: .86em; }
+    h1, h2, h3 { margin: 0; font-weight: 600; text-wrap: balance; }
+    h1 { font-size: clamp(1.9rem, 1.25rem + 2vw, 2.65rem); line-height: 1.15; letter-spacing: -.012em; }
+    h2 { font-size: 1.25rem; line-height: 1.3; }
+    h3 { font-size: 1rem; line-height: 1.35; }
+    p { margin: 0; }
+    ul, ol { margin: 0; padding-left: 1.25em; display: grid; gap: 6px; }
+
+    .wrap { max-width: 1180px; margin: 0 auto; display: grid; gap: 40px; }
+    .report-head { display: grid; gap: 12px; }
+    .eyebrow { font: .78rem/1.4 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+    .lede { color: var(--ink-2); max-width: 78ch; }
+    .meta { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; color: var(--muted); font: .74rem/1.4 var(--mono); }
+    .report-status { display: inline-flex; padding: 2px 9px; border-radius: 999px; background: var(--info-bg); color: var(--info-ink); font: 500 .72rem/1.5 var(--sans); text-transform: capitalize; }
+
+    .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin-top: 8px; }
+    .kpi, .card, .chart, .table-wrap, .panel {
+      background: var(--surface);
+      border: 1px solid var(--hairline);
+      border-radius: 10px;
+    }
+    .kpi { padding: 16px 18px; display: grid; gap: 6px; }
+    .kpi-label { color: var(--ink-2); font-size: .86rem; }
+    .kpi-value { font-size: 2rem; font-weight: 600; line-height: 1.1; font-variant-numeric: tabular-nums; }
+    .kpi-value small { margin-left: 3px; color: var(--ink-2); font-size: 1rem; font-weight: 500; }
+    .kpi-delta { color: var(--ink-2); font-size: .86rem; }
+    .kpi-delta strong { font-weight: 600; }
+    .kpi-delta .good { color: var(--good); }
+    .kpi-delta .bad { color: var(--slower); }
+    .kpi-steps { color: var(--muted); font: .72rem/1.4 var(--mono); }
+
+    section { display: grid; gap: 14px; }
+    section > p { color: var(--ink-2); max-width: 82ch; }
+    .panel { padding: 18px 20px; }
+    .scope-grid, .evidence-grid, .outcome-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .card { padding: 16px 18px; display: grid; gap: 6px; min-width: 0; }
+    .card p { color: var(--ink-2); }
+    .card .small, .small { color: var(--muted); font-size: .8rem; }
+    .card .metric { font: 500 .78rem/1.4 var(--mono); color: var(--muted); }
+
+    .charts { display: grid; gap: 20px; }
+    .chart { margin: 0; padding: 20px 20px 16px; display: grid; gap: 16px; overflow-x: auto; overflow-y: hidden; }
+    .chart-head { display: flex; flex-wrap: wrap; gap: 8px 24px; align-items: baseline; justify-content: space-between; }
+    .chart-head p { color: var(--ink-2); font-size: .9rem; }
+    .legend { display: flex; gap: 16px; flex-wrap: wrap; color: var(--ink-2); font-size: .86rem; }
+    .legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .swatch { width: 14px; height: 10px; border-radius: 0 3px 3px 0; display: inline-block; background: var(--swatch); }
+
+    .plot { display: grid; gap: 14px; }
+    .chart-row { display: grid; grid-template-columns: minmax(160px, 250px) 1fr; gap: 16px; align-items: center; }
+    .row-label { display: grid; gap: 2px; }
+    .row-label b { font-weight: 500; font-size: .95rem; }
+    .row-label small { color: var(--muted); font: .74rem/1.35 var(--mono); }
+    .track { position: relative; min-width: 0; }
+    .bar-plot-area { position: relative; display: grid; gap: 2px; margin-right: var(--bar-label-gutter, 0px); padding-block: 2px; }
+    .gridline { position: absolute; z-index: 0; top: -6px; bottom: -6px; width: 1px; background: var(--grid); }
+    .gridline.zero { background: var(--axis); }
+    .bar-line { position: relative; height: 16px; }
+    .bar { position: absolute; z-index: 1; left: 0; top: 1px; height: 14px; border-radius: 0 4px 4px 0; background: var(--bar-color); }
+    .whisker { position: absolute; z-index: 2; top: 7px; height: 1px; background: var(--ink); opacity: .65; pointer-events: none; }
+    .whisker::before, .whisker::after { content: ""; position: absolute; top: -3px; width: 1px; height: 7px; background: var(--ink); }
+    .whisker::before { left: 0; }
+    .whisker::after { right: 0; }
+    .bar-value { position: absolute; z-index: 3; top: -1px; color: var(--ink-2); font: .78rem/1.4 var(--mono); white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .bar-value strong { color: var(--ink); font-weight: 500; }
+    .bar-value .improve { color: var(--good); margin-left: 6px; }
+    .bar-value .regress { color: var(--slower); margin-left: 6px; }
+    .axis { display: grid; grid-template-columns: minmax(160px, 250px) 1fr; gap: 16px; }
+    .axis-ticks { position: relative; height: 18px; color: var(--muted); font: .72rem/1.4 var(--mono); font-variant-numeric: tabular-nums; }
+    .axis-ticks span { position: absolute; transform: translateX(-50%); }
+    .axis-ticks span:first-child { transform: none; }
+    .axis-ticks span:last-child { transform: translateX(-100%); }
+    .axis .axis-ticks { margin-right: var(--bar-label-gutter, 0px); }
+
+    .effects { display: grid; gap: 20px; }
+    .effect-group { display: grid; gap: 8px; }
+    .effect-head { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; }
+    .effect-head b { font-weight: 600; font-size: .95rem; }
+    .effect-head small { color: var(--muted); font: .74rem/1.4 var(--mono); }
+    .effect-row { display: grid; grid-template-columns: minmax(170px, 290px) 1fr; gap: 16px; align-items: center; }
+    .effect-label { font-size: .86rem; line-height: 1.3; }
+    .effect-label .id { margin-right: 6px; color: var(--muted); font: .74rem/1.3 var(--mono); }
+    .effect-track { position: relative; height: 18px; }
+    .effect-plot-area { position: absolute; inset: 0 var(--effect-right-gutter, 0px) 0 var(--effect-left-gutter, 0px); }
+    .effect-bar { position: absolute; z-index: 1; top: 3px; height: 12px; }
+    .effect-bar.faster { background: var(--after); border-radius: 3px 0 0 3px; }
+    .effect-bar.slower { background: var(--slower); border-radius: 0 3px 3px 0; }
+    .effect-bar.mixed { background: var(--noeffect); }
+    .effect-grid, .effect-zero { position: absolute; z-index: 0; top: -4px; bottom: -4px; width: 1px; background: var(--grid); }
+    .effect-zero { background: var(--axis); }
+    .effect-whisker { position: absolute; z-index: 2; top: 9px; height: 1px; background: var(--ink); opacity: .65; }
+    .effect-whisker::before, .effect-whisker::after { content: ""; position: absolute; top: -3px; width: 1px; height: 7px; background: var(--ink); }
+    .effect-whisker::before { left: 0; }
+    .effect-whisker::after { right: 0; }
+    .effect-value { position: absolute; z-index: 3; top: 0; color: var(--ink-2); font: .76rem/1.4 var(--mono); white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .effect-value strong { color: var(--ink); font-weight: 500; }
+    .effect-axis { display: grid; grid-template-columns: minmax(170px, 290px) 1fr; gap: 16px; }
+    .effect-axis .axis-ticks { margin-left: var(--effect-left-gutter, 0px); margin-right: var(--effect-right-gutter, 0px); }
+
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+    th, td { padding: 10px 12px; border-bottom: 1px solid var(--grid); text-align: left; vertical-align: top; }
+    thead th { color: var(--ink-2); font-size: .8rem; font-weight: 500; white-space: nowrap; }
+    tbody tr:last-child td { border-bottom: 0; }
+    td.id { color: var(--muted); font: .8rem/1.5 var(--mono); white-space: nowrap; }
+    td.num { text-align: right; font: .8rem/1.5 var(--mono); white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .hypothesis-table { min-width: 820px; }
+    .hypothesis-table th:nth-child(1) { width: 68px; }
+    .hypothesis-table th:nth-child(2) { width: 37%; }
+    .hypothesis-table th:nth-child(4) { width: 160px; }
+    .cell-note { margin-top: 3px; color: var(--muted); font-size: .78rem; }
+    .chip { display: inline-flex; align-items: center; gap: 5px; padding: 2px 9px; border-radius: 999px; font-size: .76rem; font-weight: 500; white-space: nowrap; }
+    .chip.retained { background: var(--adopted-bg); color: var(--adopted-ink); }
+    .chip.decision-required, .chip.inconclusive { background: var(--decision-bg); color: var(--decision-ink); }
+    .chip.pending { background: var(--info-bg); color: var(--info-ink); }
+    .chip.rejected, .chip.blocked, .chip.not-applicable { background: var(--neutral-bg); color: var(--neutral-ink); }
+
+    dl { display: grid; grid-template-columns: minmax(150px, 220px) 1fr; margin: 0; }
+    dt, dd { margin: 0; padding: 8px 0; border-bottom: 1px solid var(--grid); }
+    dt { padding-right: 18px; color: var(--muted); font-weight: 500; }
+    .code-note { padding-left: 13px; border-left: 3px solid var(--mid); }
+    .code-note + .code-note { margin-top: 14px; }
+    .empty { color: var(--muted); font-style: italic; }
+    footer { color: var(--muted); text-align: center; font: .72rem/1.4 var(--mono); }
+
+    @media (max-width: 700px) {
+      body { padding: 24px 10px 48px; }
+      .wrap { gap: 30px; }
+      .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+      .kpi { padding: 12px; }
+      .kpi-value { font-size: 1.6rem; }
+      .kpi-steps { display: none; }
+      .scope-grid, .evidence-grid, .outcome-grid { grid-template-columns: 1fr; }
+      .chart { padding: 16px 12px 14px; }
+      .chart-row, .axis, .effect-row, .effect-axis { grid-template-columns: 1fr; gap: 5px; }
+      .axis > div:first-child, .effect-axis > div:first-child { display: none; }
+      .effect-value .secondary { display: none; }
+      dl { grid-template-columns: 1fr; }
+      dt { padding-bottom: 0; border-bottom: 0; }
+    }
+
+    @media print {
+      body { padding: 0; background: #fff; font-size: 11px; }
+      .wrap { max-width: none; gap: 18px; }
+      .chart, .table-wrap, .panel, .kpi, .card { break-inside: avoid; background: #fff; }
+      a { color: inherit; text-decoration: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header class="report-head">
+      <p class="eyebrow" id="eyebrow"></p>
+      <h1 id="title"></h1>
+      <p class="lede" id="headline"></p>
+      <div class="meta"><span class="report-status" id="status"></span><span id="generated"></span></div>
+      <div class="kpis" id="scorecards" aria-label="Performance outcomes"></div>
+    </header>
+
+    <section>
+      <h2>Scope and scientific question</h2>
+      <div class="scope-grid">
+        <article class="card"><h3>Scope</h3><p id="scope"></p></article>
+        <article class="card"><h3>Question</h3><p id="question"></p></article>
+      </div>
+    </section>
+
+    <div class="charts" id="charts"></div>
+
+    <section id="measurements-section">
+      <h2>Every measurement</h2>
+      <p>Recorded medians, observed ranges, and run counts for every comparison series.</p>
+      <div class="table-wrap"><table id="measurements-table"><thead><tr><th>Metric</th><th>Workload</th><th>Round</th><th class="num">Median</th><th class="num">Range</th><th class="num">Runs</th></tr></thead><tbody></tbody></table></div>
+    </section>
+
+    <figure class="chart" id="effects-chart">
+      <div class="chart-head">
+        <div><h2>Effect of each variant against the control</h2><p>Change against a control measured in the same period. Bars are medians; whiskers span the runs. Grey means the runs disagreed on direction.</p></div>
+        <div class="legend" aria-hidden="true"><span><i class="swatch" style="--swatch:var(--after)"></i>Faster</span><span><i class="swatch" style="--swatch:var(--slower)"></i>Slower</span><span><i class="swatch" style="--swatch:var(--noeffect)"></i>No consistent effect</span></div>
+      </div>
+      <div class="effects" id="effects"></div>
+    </figure>
+
+    <section>
+      <h2 id="hypothesis-title">Hypotheses</h2>
+      <p>Claims are recorded before measurement and tested against the declared baseline. Results smaller than environmental variation remain inconclusive.</p>
+      <div class="table-wrap"><table class="hypothesis-table"><thead><tr><th>#</th><th>Hypothesis</th><th>Measured</th><th>Verdict</th></tr></thead><tbody id="hypotheses"></tbody></table></div>
+    </section>
+
+    <section>
+      <h2>Outcomes</h2>
+      <div class="outcome-grid">
+        <article class="card"><h3>Retained changes</h3><div id="retainedChanges"></div></article>
+        <article class="card"><h3>Decisions required</h3><div id="decisions"></div></article>
+      </div>
+    </section>
+
+    <section>
+      <h2>Environment and baseline epoch</h2>
+      <div class="panel"><dl id="environment"></dl></div>
+    </section>
+
+    <section>
+      <h2>Hotspot evidence</h2>
+      <div class="evidence-grid" id="hotspots"></div>
+    </section>
+
+    <section>
+      <h2>Investigation-area coverage</h2>
+      <div class="evidence-grid" id="areas"></div>
+    </section>
+
+    <section>
+      <h2>Correctness evidence</h2>
+      <div class="panel" id="correctness"></div>
+    </section>
+
+    <section>
+      <h2>Generated-code observations</h2>
+      <div class="panel" id="generatedCode"></div>
+    </section>
+
+    <section>
+      <h2>Threats to validity</h2>
+      <div class="panel" id="validityThreats"></div>
+    </section>
+
+    <section>
+      <h2>Reproduction procedure</h2>
+      <div class="panel" id="reproduction"></div>
+    </section>
+
+    <section>
+      <h2>Artifacts</h2>
+      <div class="panel" id="artifacts"></div>
+    </section>
+
+    <footer>Generated from the Scientific Performance standard report template.</footer>
+  </main>
+
+  <script id="report-data" type="application/json">{"title":"Transferring managed cache choices to native OpenVDB","generatedAt":"2026-10-15T08:58:34.186882+02:00","status":"complete","scope":"Local C++ UInt16 Tree4 5/4/3 experiment. Stock upstream headers versus 64-leaf cache, saturated activity-word guard, and their combination.","question":"Do the two managed implementation choices improve native C++ cached access, and where do they regress?","primaryMetric":"ns/op; median of process-launch medians","summary":{"baseline":4.876005040240006,"final":3.5165009304861568,"unit":"ns/op","changePercent":-27.881515677984858,"headline":"Native source-transfer experiment; primary and counterexample workloads measured separately."},"scorecards":[{"title":"coherent64 read","value":2.627943446408093,"baseline":3.522404461981897,"unit":"ns/op","wallChangePercent":-25.393478381824774},{"title":"coherent64 write","value":3.5165009304861568,"baseline":4.876005040240006,"unit":"ns/op","wallChangePercent":-27.881515677984858}],"environment":[{"label":"started","value":"2026-10-15T08:54:28.560394+02:00"},{"label":"cpu","value":"AMD Ryzen 9 5950X 16-Core Processor"},{"label":"platform","value":"Windows-11-10.0.26200-SP0"},{"label":"managedRevision","value":"9d0811b7640be49453bd4e7f5c0f4c61be795bf2"},{"label":"nativeRevision","value":"f42248c35a9f7bb30641a8a74d9075ce7d1ddcaf"},{"label":"affinityCpu","value":"8"},{"label":"lockPath","value":"C:\\Users\\tedd\\.codex\\locks\\performance-measurement.lock"},{"label":"configuration","value":"{'workspace': 'D:\\\\Workspaces\\\\AI\\\\openvdb-native-cache-transfer-20261015', 'evidence': 'Research\\\\2026-10-15 Native cache transfer-1\\\\epochs\\\\E3', 'variants': ['stock', 'mask', 'split', 'split_both'], 'patterns': ['coherent64', 'random64', 'coherent512', 'random512', 'partial64', 'collision64', 'churn'], 'small_control_operations': 4194304, 'large_control_operations': 4194304, 'epoch': 'E3'}"},{"label":"powerScheme","value":"Power Scheme GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c  (High performance)"},{"label":"protocol","value":"E3; fixed workload and variant orders before measurements"},{"label":"nativeLibrarySha256","value":"fbf4bed50138f292816ed4f123c34e3f39c87b56a7344c3122dc788ab9730b3c"},{"label":"completed","value":"2026-10-15T08:58:34.186882+02:00"}],"hotspots":[{"name":"Native cached voxel access","location":"openvdb/tree/ValueAccessor.h","evidence":"User-requested local transfer experiment; no application hotspot or application speedup claimed."}],"areas":[{"name":"Leaf location and activity writes","boundary":"Only the two source-level choices discussed with the user and their combination.","evidence":"Source comparison plus paired timing and independent tree validation.","hypothesisIds":["H-002","H-004","H-005"],"disposition":"Three bounded questions; unrelated optimization catalogue categories excluded. No fabricated ten/twenty-hypothesis search."}],"series":[{"title":"coherent64","description":"Median of process-launch medians; whiskers span launch medians. Variants and read/write order alternate; setup and correctness checks excluded.","unit":"ns/op","lowerIsBetter":true,"rounds":["stock","mask","split","split_both"],"rows":[{"label":"read","measurements":[{"median":3.522404461981897,"min":3.507663631814179,"max":4.929010833700238,"n":5},{"median":3.466228920072903,"min":3.435717341471781,"max":3.9171171375839613,"n":5},{"median":2.367326128998403,"min":2.362192536400311,"max":2.6688661987784648,"n":5},{"median":2.627943446408093,"min":2.617690260100958,"max":3.053245694421691,"n":5}]},{"label":"write","measurements":[{"median":4.876005040240006,"min":4.362577785826916,"max":5.0219894549168576,"n":5},{"median":4.686548075544724,"min":4.226436589992218,"max":5.505707067087156,"n":5},{"median":3.6153230879597396,"min":3.2981322602238285,"max":3.7901492137583963,"n":5},{"median":3.5165009304861568,"min":3.1753300058107388,"max":3.852534262880898,"n":5}]}]},{"title":"random64","description":"Median of process-launch medians; whiskers span launch medians. Variants and read/write order alternate; setup and correctness checks excluded.","unit":"ns/op","lowerIsBetter":true,"rounds":["stock","mask","split","split_both"],"rows":[{"label":"read","measurements":[{"median":32.83557891845703,"min":32.82430171966553,"max":33.05795192718506,"n":3},{"median":31.12344741821289,"min":31.108713150024414,"max":31.270766258239746,"n":3},{"median":10.912084579467773,"min":7.293939590454102,"max":15.908026695251465,"n":3},{"median":7.605457305908203,"min":7.602524757385254,"max":7.659339904785156,"n":3}]},{"label":"write","measurements":[{"median":36.746954917907715,"min":36.328744888305664,"max":36.837077140808105,"n":3},{"median":36.261749267578125,"min":36.17544174194336,"max":36.47432327270508,"n":3},{"median":8.709263801574707,"min":8.570647239685059,"max":8.879899978637695,"n":3},{"median":8.604907989501953,"min":8.593082427978516,"max":8.615565299987793,"n":3}]}]},{"title":"coherent512","description":"Median of process-launch medians; whiskers span launch medians. Variants and read/write order alternate; setup and correctness checks excluded.","unit":"ns/op","lowerIsBetter":true,"rounds":["stock","mask","split","split_both"],"rows":[{"label":"read","measurements":[{"median":3.6304235458374023,"min":3.621649742126465,"max":3.6330223083496094,"n":3},{"median":3.5390853881835938,"min":3.5280942916870117,"max":3.5395383834838867,"n":3},{"median":3.8968801498413086,"min":3.691267967224121,"max":3.9018154144287114,"n":3},{"median":4.10006046295166,"min":4.066944122314453,"max":4.147982597351074,"n":3}]},{"label":"write","measurements":[{"median":4.1381120681762695,"min":4.10914421081543,"max":4.176878929138184,"n":3},{"median":4.2685747146606445,"min":4.261994361877441,"max":4.2717695236206055,"n":3},{"median":4.723548889160156,"min":4.717302322387695,"max":4.741263389587402,"n":3},{"median":4.695868492126465,"min":4.6759843826293945,"max":4.703402519226074,"n":3}]}]},{"title":"random512","description":"Median of process-launch medians; whiskers span launch medians. Variants and read/write order alternate; setup and correctness checks excluded.","unit":"ns/op","lowerIsBetter":true,"rounds":["stock","mask","split","split_both"],"rows":[{"label":"read","measurements":[{"median":32.33013153076172,"min":32.276248931884766,"max":32.582664489746094,"n":3},{"median":30.18777370452881,"min":29.98783588409424,"max":30.339455604553223,"n":3},{"median":44.66202259063721,"min":44.45748329162598,"max":44.704270362854004,"n":3},{"median":43.40996742248535,"min":43.29562187194824,"max":43.87161731719971,"n":3}]},{"label":"write","measurements":[{"median":38.05737495422363,"min":37.98470497131348,"max":38.327765464782715,"n":3},{"median":38.41676712036133,"min":38.09213638305664,"max":38.565850257873535,"n":3},{"median":49.67348575592041,"min":49.160194396972656,"max":49.76918697357178,"n":3},{"median":50.169968605041504,"min":49.92198944091797,"max":50.597190856933594,"n":3}]}]},{"title":"partial64","description":"Median of process-launch medians; whiskers span launch medians. Variants and read/write order alternate; setup and correctness checks excluded.","unit":"ns/op","lowerIsBetter":true,"rounds":["stock","mask","split","split_both"],"rows":[{"label":"read","measurements":[{"median":3.507256507873535,"min":3.501558303833008,"max":3.515195846557617,"n":3},{"median":3.4484386444091797,"min":3.4375667572021484,"max":3.465104103088379,"n":3},{"median":2.372431755065918,"min":2.3626089096069336,"max":2.3917675018310547,"n":3},{"median":2.616405487060547,"min":2.6075124740600586,"max":2.6409387588500977,"n":3}]},{"label":"write","measurements":[{"median":6.004524230957031,"min":5.933475494384766,"max":6.117820739746094,"n":3},{"median":6.0349225997924805,"min":5.979394912719727,"max":6.2015533447265625,"n":3},{"median":3.90777587890625,"min":3.8718461990356445,"max":3.9516210556030273,"n":3},{"median":3.8945913314819336,"min":3.8543224334716797,"max":3.920221328735351,"n":3}]}]},{"title":"collision64","description":"Median of process-launch medians; whiskers span launch medians. Variants and read/write order alternate; setup and correctness checks excluded.","unit":"ns/op","lowerIsBetter":true,"rounds":["stock","mask","split","split_both"],"rows":[{"label":"read","measurements":[{"median":15.340709686279295,"min":15.316939353942871,"max":15.418434143066406,"n":3},{"median":15.150785446166992,"min":15.094804763793945,"max":15.16728401184082,"n":3},{"median":19.190263748168945,"min":19.155335426330566,"max":19.246363639831543,"n":3},{"median":19.554996490478516,"min":19.54336166381836,"max":19.56315040588379,"n":3}]},{"label":"write","measurements":[{"median":21.206355094909668,"min":21.093153953552246,"max":21.321392059326172,"n":3},{"median":21.197509765625,"min":21.152830123901367,"max":21.282505989074707,"n":3},{"median":23.19331169128418,"min":23.128604888916016,"max":23.292064666748047,"n":3},{"median":23.94862174987793,"min":23.752808570861816,"max":24.147391319274902,"n":3}]}]},{"title":"churn","description":"Median of process-launch medians; whiskers span launch medians. Variants and read/write order alternate; setup and correctness checks excluded.","unit":"ns/op","lowerIsBetter":true,"rounds":["stock","mask","split","split_both"],"rows":[{"label":"write","measurements":[{"median":443.3544158935547,"min":443.2777404785156,"max":444.4805145263672,"n":3},{"median":444.2329406738281,"min":441.9136047363281,"max":446.10633850097656,"n":3},{"median":448.4138488769531,"min":447.5547790527344,"max":451.5583038330078,"n":3},{"median":459.33685302734375,"min":458.843994140625,"max":461.77635192871094,"n":3}]}]}],"effectGroups":[{"name":"coherent64 read","control":"Paired unmodified native stock launches","items":[{"label":"mask","effect":-0.015948066871737554,"range":[-0.2052934615598403,-0.011812624039964192]},{"label":"split","effect":-0.3279232539733907,"range":[-0.4585391899463668,-0.3250988756370544]},{"label":"split_both","effect":-0.25393478381824774,"range":[-0.3805560999082648,-0.2511376180145125]}]},{"name":"coherent64 write","control":"Paired unmodified native stock launches","items":[{"label":"mask","effect":-0.038854956697492726,"range":[-0.057621014424857564,0.09631991793545236]},{"label":"split","effect":-0.2585481232845923,"range":[-0.2597591151562857,-0.24112968377588573]},{"label":"split_both","effect":-0.2788151567798486,"range":[-0.2997793081697391,-0.20989945024928258]}]},{"name":"random64 read","control":"Paired unmodified native stock launches","items":[{"label":"mask","effect":-0.05214257085267171,"range":[-0.05896429341582099,-0.04732881980837489]},{"label":"split","effect":-0.6676749751674382,"range":[-0.7778647482181548,-0.5153582601356381]},{"label":"split_both","effect":-0.7683775478789217,"range":[-0.7700243265483924,-0.7666564251633011]}]},{"name":"random64 write","control":"Paired unmodified native stock launches","items":[{"label":"mask","effect":-0.013203968911533859,"range":[-0.015618173804366031,-0.004219885570878934]},{"label":"split","effect":-0.7629935916858661,"range":[-0.7673363929791678,-0.7555682144830673]},{"label":"split_both","effect":-0.7658334409279566,"range":[-0.7667273547482653,-0.7631377572784823]}]},{"name":"coherent512 read","control":"Paired unmodified native stock launches","items":[{"label":"mask","effect":-0.025159091356857233,"range":[-0.028881743010893857,-0.022797443105139426]},{"label":"split","effect":0.07339545941118142,"range":[0.01603228770179821,0.07599586578276929]},{"label":"split_both","effect":0.12936146738380905,"range":[0.12295346372356053,0.1425616171168509]}]},{"name":"coherent512 write","control":"Paired unmodified native stock launches","items":[{"label":"mask","effect":0.03152709359605921,"range":[0.022718062000901762,0.038798955613577046]},{"label":"split","effect":0.14147437559415788,"range":[0.135121096403354,0.14800116042935896]},{"label":"split_both","effect":0.1347852389594677,"range":[0.12425295819990745,0.13794604003481292]}]},{"name":"random512 read","control":"Paired unmodified native stock launches","items":[{"label":"mask","effect":-0.06626505135602323,"range":[-0.07244930768186997,-0.06470625603871871]},{"label":"split","effect":0.3814364642513701,"range":[0.3707295977802103,0.3850516042678045]},{"label":"split_both","effect":0.3427092735821784,"range":[0.33230256341210707,0.3569885193772382]}]},{"name":"random512 write","control":"Paired unmodified native stock launches","items":[{"label":"mask","effect":0.0094434302568156,"range":[0.002828280799450633,0.0094434302568156]},{"label":"split","effect":0.30522627521390877,"range":[0.294210246837485,0.30522627521390877]},{"label":"split_both","effect":0.31827191616308803,"range":[0.30897191622454323,0.3320411701274295]}]},{"name":"partial64 read","control":"Paired unmodified native stock launches","items":[{"label":"mask","effect":-0.01677033411508788,"range":[-0.01987016076951842,-0.014250057651351788]},{"label":"split","effect":-0.3235648006525951,"range":[-0.32526929309710895,-0.3180517317562286]},{"label":"split_both","effect":-0.25400224329560517,"range":[-0.25821701325302837,-0.24578186918687783]}]},{"name":"partial64 write","control":"Paired unmodified native stock launches","items":[{"label":"mask","effect":0.005062577427654702,"range":[-0.01355027279812937,0.045180577655624665]},{"label":"split","effect":-0.3491947523903307,"range":[-0.3551785203773705,-0.34140186765674974]},{"label":"split_both","effect":-0.3513905212667958,"range":[-0.3592127825409198,-0.3504106594660623]}]},{"name":"collision64 read","control":"Paired unmodified native stock launches","items":[{"label":"mask","effect":-0.012380407686234385,"range":[-0.017359006395586185,-0.009770577440037065]},{"label":"split","effect":0.25093715614295764,"range":[0.24826966611823797,0.25287848340465]},{"label":"split_both","effect":0.2747126365326156,"range":[0.26828679936167843,0.2772232071838727]}]},{"name":"collision64 write","control":"Paired unmodified native stock launches","items":[{"label":"mask","effect":-0.0004171074776915251,"range":[-0.005810234780002754,0.0035909468564598868]},{"label":"split","effect":0.09369628054806345,"range":[0.08476054586686099,0.09956584692628434]},{"label":"split_both","effect":0.12931343659460404,"range":[0.12609089295826537,0.1325429058330463]}]},{"name":"churn write","control":"Paired unmodified native stock launches","items":[{"label":"mask","effect":0.0019815406112575484,"range":[-0.003077383810689227,0.006207049053239988]},{"label":"split","effect":0.011411712169825616,"range":[0.009474052831331514,0.015923733606596047]},{"label":"split_both","effect":0.036048895783697965,"range":[0.032315206504751615,0.04155126322138436]}]}],"hypotheses":[{"id":"H-002","variant":"mask","workload":"write","claim":"Skipping saturated activity-word updates improves native coherent cached writes.","mechanism":"Avoid an idempotent activity-word read-modify-write when all 64 bits are already active.","prediction":"All paired mask/stock write time ratios below one on coherent64.","falsification":"Mixed paired directions or consistently higher time.","change":"Guard only the native cached-buffer activity-bit update with a whole-word saturation test.","state":"inconclusive","decision":"Mixed runs","result":"write: stock 4.876005, mask 4.686548 ns/op; paired time ratio range 0.9424 to 1.0963.","effectPercent":-3.8854956697492726,"changeScope":"local","maintainability":"Experimental header overlay; generic library integration and additional platforms remain unvalidated.","codeComments":"Patch comments state cache collision checks, invalidation and mask-word conditions.","decisionRationale":"Classifies the bounded transfer experiment. Guardrail workload results determine upstream suitability; no production patch is installed.","evidence":["comparison.json","native-cache-transfer.patch","raw/validation.json"],"risks":["One Windows x64 compiler and processor."]},{"id":"H-004","parentId":"H-001","variant":"split","workload":"read","claim":"Separating secondary lookup from the common leaf-hit path makes the native cache improve coherent reads.","mechanism":"E1 assembly showed a leaf-index lambda call in the cache variant's read loop. A small forced-inline entry point and non-inlined miss helper keep that call off last-leaf hits.","prediction":"All paired split/stock read time ratios below one on coherent64; no unconditional leaf-lambda call on last-leaf hits in assembly.","falsification":"Mixed paired directions, higher time, or an unconditional per-read helper call.","change":"Preserve the original native membership predicate and tree fallback; move secondary lookup into an explicit miss helper.","state":"retained","decision":"Supported locally","result":"read: stock 3.522404, split 2.367326 ns/op; paired time ratio range 0.5415 to 0.6749.","effectPercent":-32.79232539733907,"changeScope":"local","maintainability":"Experimental header overlay; generic library integration and additional platforms remain unvalidated.","codeComments":"Patch comments state cache collision checks, invalidation and mask-word conditions.","decisionRationale":"Classifies the bounded transfer experiment. Guardrail workload results determine upstream suitability; no production patch is installed.","evidence":["comparison.json","native-cache-transfer.patch","raw/validation.json"],"risks":["One Windows x64 compiler and processor."]},{"id":"H-005","parentId":"H-003","variant":"split_both","workload":"write","claim":"The cache with a separate miss helper and saturated-mask guard improves native coherent writes.","mechanism":"Combine the small common leaf-hit path with the cache and mask choices; native safety callbacks remain active.","prediction":"All paired split_both/stock write time ratios below one on coherent64.","falsification":"Mixed directions or higher time. Counterexample regressions require an optional policy rather than a universal recommendation.","change":"Enable the explicit miss helper and mask guard in a combined native build.","state":"retained","decision":"Supported locally","result":"write: stock 4.876005, split_both 3.516501 ns/op; paired time ratio range 0.7002 to 0.7901.","effectPercent":-27.881515677984858,"changeScope":"local","maintainability":"Experimental header overlay; generic library integration and additional platforms remain unvalidated.","codeComments":"Patch comments state cache collision checks, invalidation and mask-word conditions.","decisionRationale":"Classifies the bounded transfer experiment. Guardrail workload results determine upstream suitability; no production patch is installed.","evidence":["comparison.json","native-cache-transfer.patch","raw/validation.json"],"risks":["One Windows x64 compiler and processor."]}],"retainedChanges":["Reproduction harness, experimental patch and evidence. Upstream checkout and managed library remain unchanged."],"decisions":[],"correctness":["Each executable tests signed cache collisions, copying, assignment across trees, explicitly invalidated direct tile replacement, clearing, explicit cache erasure, mask reactivation and tree destruction.","Every timed sample validates all voxel values/activity through tree lookups independent of the accessor; read checksums are consumed and verified.","All variants have identical coordinate hashes, topology and active voxel counts for every workload."],"generatedCode":[{"summary":"Focused MSVC Release read/write and relevant helper listings are preserved. No hardware-counter attribution is claimed.","artifact":"assembly.zip"}],"validityThreats":["Only AMD Ryzen 9 5950X, Windows x64 and MSVC Release. No cross-machine claim.","The 64-leaf fixture exactly fits the secondary cache; random512 and collision64 deliberately test losing distributions.","The mask experiment modifies the native cached-buffer write path; it is not a general NodeMask API change.","The cache overlay changes accessor object size and layout. It is a prototype, not an ABI-compatible upstream patch.","Focused tests do not establish all OpenVDB types, APIs, threading configurations or full upstream-suite compatibility.","The shared performance lock is cooperative; external CPU snapshots are retained in raw/environment.json."],"reproduction":["Set PYTHONDONTWRITEBYTECODE=1. Run through the shared performance lock: python benchmarks/NativeCacheTransfer/run.py --workspace D:/Workspaces/AI/openvdb-native-cache-transfer-20261015 --evidence \"Research/2026-10-15 Native cache transfer-1\"","Primary: five launches, nine samples of 50,003,968 operations, 1000 ms warmup/workload. Controls: three launches, five samples, 350 ms warmup; operation counts in raw JSON.","CMake uses unchanged upstream headers for stock and a copied tree-header overlay for other variants. Both experimental mechanisms are compile-time switches."],"artifacts":[{"label":"All measurements","path":"comparison.json"},{"label":"Experimental header patch","path":"native-cache-transfer.patch"},{"label":"Source and reproduction driver","path":"../../benchmarks/NativeCacheTransfer/"},{"label":"Assembly listings","path":"assembly.zip"},{"label":"Raw measurements, validation and environment","path":"raw/"}]}</script>
+  <script>
+    (() => {
+      "use strict";
+      const data = JSON.parse(document.getElementById("report-data").textContent);
+      const $ = id => document.getElementById(id);
+      const text = (node, value) => { node.textContent = value ?? ""; return node; };
+      const el = (tag, className, value) => {
+        const node = document.createElement(tag);
+        if (className) node.className = className;
+        if (value !== undefined) text(node, value);
+        return node;
+      };
+      const number = value => Number.isFinite(value) ? value.toLocaleString(undefined, { maximumFractionDigits: 3 }) : "—";
+      const signedPercent = value => Number.isFinite(value) ? `${value > 0 ? "+" : value < 0 ? "−" : ""}${number(Math.abs(value))}%` : "—";
+      const effectPercent = value => signedPercent(value * 100);
+      const roundColors = ["var(--before)", "var(--mid)", "var(--after)", "#123d72", "#739ecf"];
+
+      function niceMax(value) {
+        if (!Number.isFinite(value) || value <= 0) return 1;
+        const magnitude = 10 ** Math.floor(Math.log10(value));
+        for (const step of [1, 1.2, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10]) {
+          if (step * magnitude >= value) return step * magnitude;
+        }
+        return 10 * magnitude;
+      }
+
+      function safeHref(value) {
+        if (typeof value !== "string") return "#";
+        if (!/^[a-z][a-z0-9+.-]*:/i.test(value)) return value;
+        try {
+          const protocol = new URL(value).protocol;
+          return ["http:", "https:", "file:"].includes(protocol) ? value : "#";
+        } catch { return "#"; }
+      }
+
+      document.title = `${data.title} — Scientific performance report`;
+      text($("eyebrow"), `${data.primaryMetric} · performance investigation`);
+      text($("title"), data.title);
+      text($("headline"), data.summary.headline);
+      text($("status"), data.status.replaceAll("-", " "));
+      text($("generated"), `Generated ${data.generatedAt}`);
+      text($("scope"), data.scope);
+      text($("question"), data.question);
+
+      const scorecards = $("scorecards");
+      if (!data.scorecards.length) {
+        scorecards.append(el("p", "empty", "No headline measurements recorded."));
+      }
+      for (const item of data.scorecards) {
+        const card = el("article", "kpi");
+        card.append(el("div", "kpi-label", item.title));
+        const value = el("div", "kpi-value", number(item.value));
+        value.append(el("small", "", item.unit));
+        card.append(value);
+        const delta = el("div", "kpi-delta");
+        if (Number.isFinite(item.wallChangePercent)) {
+          const higherIsBetter = item.higherIsBetter === true;
+          const good = higherIsBetter ? item.wallChangePercent > 0 : item.wallChangePercent < 0;
+          const arrow = item.wallChangePercent > 0 ? "▲" : item.wallChangePercent < 0 ? "▼" : "◆";
+          const primary = el("strong", good ? "good" : item.wallChangePercent === 0 ? "" : "bad", `${arrow} ${signedPercent(item.wallChangePercent)} ${item.changeLabel || "wall"}`);
+          delta.append(primary);
+          if (Number.isFinite(item.baseline)) delta.append(document.createTextNode(` from ${number(item.baseline)} ${item.unit}`));
+        }
+        if (item.secondaryMetric && Number.isFinite(item.secondaryChangePercent)) {
+          delta.append(document.createTextNode(` · ${item.secondaryMetric} ${signedPercent(item.secondaryChangePercent)}`));
+        }
+        card.append(delta);
+        if (item.progression) card.append(el("div", "kpi-steps", item.progression));
+        scorecards.append(card);
+      }
+
+      function addGrid(track, maximum) {
+        const step = niceMax(maximum) / 4;
+        for (let value = 0; value <= maximum + step / 10; value += step) {
+          const line = el("i", `gridline${value === 0 ? " zero" : ""}`);
+          line.style.left = `${value / maximum * 100}%`;
+          track.append(line);
+        }
+      }
+
+      function renderSeries(series) {
+        const figure = el("figure", "chart");
+        const head = el("div", "chart-head");
+        const intro = el("div", "");
+        intro.append(el("h2", "", series.title), el("p", "", series.description || `Values in ${series.unit}.`));
+        const legend = el("div", "legend");
+        series.rounds.forEach((round, index) => {
+          const entry = el("span", "");
+          const swatch = el("i", "swatch"); swatch.style.setProperty("--swatch", roundColors[index % roundColors.length]);
+          entry.append(swatch, document.createTextNode(round)); legend.append(entry);
+        });
+        head.append(intro, legend); figure.append(head);
+
+        const plot = el("div", "plot");
+        const maximum = niceMax(Math.max(1, ...series.rows.flatMap(row => row.measurements.map(item => item.max ?? item.median))) * 1.18);
+        for (const row of series.rows) {
+          const rowNode = el("div", "chart-row");
+          const label = el("div", "row-label"); label.append(el("b", "", row.label));
+          if (row.detail) label.append(el("small", "", row.detail));
+          const track = el("div", "track");
+          const plotArea = el("div", "bar-plot-area"); addGrid(plotArea, maximum);
+          row.measurements.forEach((measurement, index) => {
+            const line = el("div", "bar-line");
+            const ratio = Math.max(0, measurement.median / maximum * 100);
+            const bar = el("i", "bar");
+            bar.style.width = `${ratio}%`; bar.style.setProperty("--bar-color", roundColors[index % roundColors.length]);
+            bar.title = `${row.label}, ${series.rounds[index]}: ${number(measurement.median)} ${series.unit}`;
+            line.append(bar);
+            if (Number.isFinite(measurement.min) && Number.isFinite(measurement.max)) {
+              const whisker = el("i", "whisker");
+              whisker.style.left = `${Math.max(0, measurement.min / maximum * 100)}%`;
+              whisker.style.width = `${Math.max(0, (measurement.max - measurement.min) / maximum * 100)}%`;
+              line.append(whisker);
+            }
+            const rangeEnd = Number.isFinite(measurement.max) ? Math.max(measurement.median, measurement.max) : measurement.median;
+            const labelAnchor = Math.max(0, rangeEnd / maximum * 100);
+            const value = el("span", "bar-value"); value.style.left = `calc(${labelAnchor}% + 8px)`;
+            value.append(el("strong", "", `${number(measurement.median)} ${series.unit}`));
+            if (Number.isFinite(measurement.changePercent)) {
+              const improved = series.lowerIsBetter === false ? measurement.changePercent > 0 : measurement.changePercent < 0;
+              value.append(el("span", improved ? "improve" : measurement.changePercent === 0 ? "" : "regress", signedPercent(measurement.changePercent)));
+            }
+            line.append(value); plotArea.append(line);
+          });
+          track.append(plotArea);
+          rowNode.append(label, track); plot.append(rowNode);
+        }
+        const axis = el("div", "axis"); axis.append(el("div", ""));
+        const ticks = el("div", "axis-ticks");
+        const step = maximum / 4;
+        for (let value = 0; value <= maximum + step / 10; value += step) {
+          const tick = el("span", "", number(value)); tick.style.left = `${value / maximum * 100}%`; ticks.append(tick);
+        }
+        axis.append(ticks); plot.append(axis); figure.append(plot);
+        return figure;
+      }
+
+      const charts = $("charts");
+      for (const series of data.series) charts.append(renderSeries(series));
+      if (!data.series.length) {
+        charts.hidden = true;
+        $("measurements-section").hidden = true;
+      }
+
+      const measurementBody = $("measurements-table").querySelector("tbody");
+      for (const series of data.series) {
+        for (const row of series.rows) {
+          row.measurements.forEach((measurement, index) => {
+            const tr = document.createElement("tr");
+            const range = Number.isFinite(measurement.min) && Number.isFinite(measurement.max)
+              ? `${number(measurement.min)}–${number(measurement.max)} ${series.unit}` : "—";
+            tr.append(
+              el("td", "", series.title), el("td", "", row.label), el("td", "", series.rounds[index]),
+              el("td", "num", `${number(measurement.median)} ${series.unit}`), el("td", "num", range),
+              el("td", "num", Number.isFinite(measurement.n) ? number(measurement.n) : "—")
+            );
+            measurementBody.append(tr);
+          });
+        }
+      }
+
+      function effectScale() {
+        const values = data.effectGroups.flatMap(group => group.items.flatMap(item => [item.effect, item.range[0], item.range[1]]));
+        const low = Math.min(-.05, ...values), high = Math.max(.05, ...values);
+        const pad = Math.max(.02, (high - low) * .08);
+        return { min: low - pad, max: high + pad };
+      }
+
+      if (!data.effectGroups.length) $("effects-chart").hidden = true;
+      else {
+        const scale = effectScale();
+        const x = value => (value - scale.min) / (scale.max - scale.min) * 100;
+        const effects = $("effects");
+        for (const group of data.effectGroups) {
+          const groupNode = el("div", "effect-group");
+          const head = el("div", "effect-head"); head.append(el("b", "", group.name));
+          if (group.control) head.append(el("small", "", group.control));
+          groupNode.append(head);
+          for (const item of group.items) {
+            const row = el("div", "effect-row");
+            const label = el("div", "effect-label");
+            if (item.hypothesisId) label.append(el("span", "id", item.hypothesisId));
+            label.append(document.createTextNode(item.label));
+            const track = el("div", "effect-track");
+            const plotArea = el("div", "effect-plot-area");
+            for (let i = 0; i <= 6; i++) {
+              const point = scale.min + (scale.max - scale.min) * i / 6;
+              const grid = el("i", Math.abs(point) < (scale.max - scale.min) / 100 ? "effect-zero" : "effect-grid");
+              grid.style.left = `${x(point)}%`; plotArea.append(grid);
+            }
+            const zero = el("i", "effect-zero"); zero.style.left = `${x(0)}%`; plotArea.append(zero);
+            const start = Math.min(0, item.effect), end = Math.max(0, item.effect);
+            const mixed = item.range[0] <= 0 && item.range[1] >= 0;
+            const direction = mixed ? "mixed" : item.effect < 0 ? "faster" : "slower";
+            const bar = el("i", `effect-bar ${direction}`); bar.style.left = `${x(start)}%`; bar.style.width = `${Math.abs(x(end) - x(start))}%`;
+            bar.title = `${item.label}: ${effectPercent(item.effect)}`; plotArea.append(bar);
+            const whisker = el("i", "effect-whisker"); whisker.style.left = `${x(item.range[0])}%`; whisker.style.width = `${Math.max(0, x(item.range[1]) - x(item.range[0]))}%`; plotArea.append(whisker);
+            const value = el("span", "effect-value");
+            if (item.effect < 0) {
+              const labelAnchor = Math.min(item.effect, item.range[0]);
+              value.dataset.side = "left";
+              value.style.left = `calc(${x(labelAnchor)}% - 8px)`;
+              value.style.transform = "translateX(-100%)";
+            } else {
+              const labelAnchor = Math.max(item.effect, item.range[1]);
+              value.dataset.side = "right";
+              value.style.left = `calc(${x(labelAnchor)}% + 8px)`;
+            }
+            value.append(el("strong", "", effectPercent(item.effect)));
+            if (item.secondaryMetric && Number.isFinite(item.secondaryEffect)) value.append(el("span", "secondary", ` · ${item.secondaryMetric} ${effectPercent(item.secondaryEffect)}`));
+            plotArea.append(value); track.append(plotArea); row.append(label, track); groupNode.append(row);
+          }
+          effects.append(groupNode);
+        }
+        const axis = el("div", "effect-axis"); axis.append(el("div", ""));
+        const ticks = el("div", "axis-ticks");
+        for (let i = 0; i <= 6; i++) {
+          const point = scale.min + (scale.max - scale.min) * i / 6;
+          const tick = el("span", "", effectPercent(point)); tick.style.left = `${x(point)}%`; ticks.append(tick);
+        }
+        axis.append(ticks); effects.append(axis);
+      }
+
+      function updateLabelGutters() {
+        for (const figure of charts.querySelectorAll(".chart")) {
+          let width = 0;
+          for (const label of figure.querySelectorAll(".bar-value")) width = Math.max(width, label.getBoundingClientRect().width);
+          const trackWidth = figure.querySelector(".track")?.getBoundingClientRect().width ?? 0;
+          const gutter = Math.min(Math.ceil(width) + 12, Math.max(0, trackWidth - 160));
+          figure.style.setProperty("--bar-label-gutter", `${gutter}px`);
+        }
+        const effects = $("effects");
+        let left = 0, right = 0;
+        for (const label of effects.querySelectorAll(".effect-value")) {
+          const width = label.getBoundingClientRect().width;
+          if (label.dataset.side === "left") left = Math.max(left, width);
+          else right = Math.max(right, width);
+        }
+        left = Math.ceil(left) + 12;
+        right = Math.ceil(right) + 12;
+        const trackWidth = effects.querySelector(".effect-track")?.getBoundingClientRect().width ?? 0;
+        const budget = Math.max(0, trackWidth - 180);
+        const total = left + right;
+        const factor = total > budget && total > 0 ? budget / total : 1;
+        effects.style.setProperty("--effect-left-gutter", `${Math.floor(left * factor)}px`);
+        effects.style.setProperty("--effect-right-gutter", `${Math.floor(right * factor)}px`);
+      }
+
+      updateLabelGutters();
+      document.fonts?.ready.then(updateLabelGutters);
+      window.addEventListener("resize", updateLabelGutters, { passive: true });
+
+      const hypothesisBody = $("hypotheses");
+      text($("hypothesis-title"), `${data.hypotheses.length} ${data.hypotheses.length === 1 ? "hypothesis" : "hypotheses"}`);
+      if (!data.hypotheses.length) {
+        const row = document.createElement("tr"); const cell = el("td", "empty", "None recorded."); cell.colSpan = 4; row.append(cell); hypothesisBody.append(row);
+      }
+      const icons = { retained: "✓", rejected: "×", inconclusive: "○", "decision-required": "○", pending: "…", blocked: "!", "not-applicable": "—" };
+      for (const item of data.hypotheses) {
+        const row = document.createElement("tr");
+        row.append(el("td", "id", item.id));
+        const claim = el("td", ""); claim.append(document.createTextNode(item.claim));
+        if (item.mechanism) claim.append(el("div", "cell-note", item.mechanism));
+        if (item.change) claim.append(el("div", "cell-note", `Change: ${item.change}`));
+        if (item.changeScope) claim.append(el("div", "cell-note", `Scope: ${item.changeScope}`));
+        if (item.maintainability) claim.append(el("div", "cell-note", `Maintainability: ${item.maintainability}`));
+        if (item.codeComments) claim.append(el("div", "cell-note", `Code comments: ${item.codeComments}`));
+        const measured = el("td", "", item.result || "Not yet measured.");
+        if (item.prediction && !item.result) measured.append(el("div", "cell-note", `Prediction: ${item.prediction}`));
+        if (item.decisionRationale) measured.append(el("div", "cell-note", `Decision: ${item.decisionRationale}`));
+        const verdict = el("td", ""); verdict.append(el("span", `chip ${item.state}`, `${icons[item.state]} ${item.decision}`));
+        row.append(claim, measured, verdict); hypothesisBody.append(row);
+      }
+
+      function renderList(id, items, ordered = false) {
+        const host = $(id);
+        if (!items.length) { host.append(el("p", "empty", "None recorded.")); return; }
+        const list = document.createElement(ordered ? "ol" : "ul");
+        items.forEach(item => list.append(el("li", "", item))); host.append(list);
+      }
+      renderList("retainedChanges", data.retainedChanges);
+      renderList("decisions", data.decisions);
+      renderList("correctness", data.correctness);
+      renderList("validityThreats", data.validityThreats);
+      renderList("reproduction", data.reproduction, true);
+
+      const environment = $("environment");
+      if (!data.environment.length) environment.replaceWith(el("p", "empty", "None recorded."));
+      else for (const item of data.environment) environment.append(el("dt", "", item.label), el("dd", "", item.value));
+
+      const hotspots = $("hotspots");
+      if (!data.hotspots.length) hotspots.append(el("p", "empty", "None recorded."));
+      for (const item of data.hotspots) {
+        const card = el("article", "card"); card.append(el("h3", "", item.name));
+        if (item.location) card.append(el("div", "small mono", item.location));
+        const shares = [];
+        if (Number.isFinite(item.inclusivePercent)) shares.push(`${number(item.inclusivePercent)}% inclusive`);
+        if (Number.isFinite(item.exclusivePercent)) shares.push(`${number(item.exclusivePercent)}% exclusive`);
+        if (shares.length) card.append(el("div", "metric", shares.join(" · ")));
+        if (item.evidence) card.append(el("p", "", item.evidence));
+        if (item.limit) card.append(el("p", "small", `Suspected limit: ${item.limit}`)); hotspots.append(card);
+      }
+
+      const areas = $("areas");
+      if (!data.areas.length) areas.append(el("p", "empty", "None recorded."));
+      for (const item of data.areas) {
+        const card = el("article", "card"); card.append(el("h3", "", item.name));
+        if (item.boundary) card.append(el("p", "", item.boundary));
+        if (item.evidence) card.append(el("p", "small", `Evidence: ${item.evidence}`));
+        if (item.catalogue) card.append(el("p", "small", `Catalogue: ${item.catalogue}`));
+        if (item.hypothesisIds?.length) card.append(el("div", "metric", item.hypothesisIds.join(" · ")));
+        if (item.disposition) card.append(el("p", "", item.disposition)); areas.append(card);
+      }
+
+      const generated = $("generatedCode");
+      if (!data.generatedCode.length) generated.append(el("p", "empty", "None recorded."));
+      for (const item of data.generatedCode) {
+        const note = el("article", "code-note"); note.append(el("h3", "", `${item.hypothesisId || "Unlinked"}: ${item.summary || "Observation"}`));
+        if (item.before) note.append(el("p", "", `Before: ${item.before}`));
+        if (item.after) note.append(el("p", "", `After: ${item.after}`));
+        if (item.artifact) { const link = el("a", "", item.artifact); link.href = safeHref(item.artifact); note.append(link); }
+        generated.append(note);
+      }
+
+      const artifacts = $("artifacts");
+      if (!data.artifacts.length) artifacts.append(el("p", "empty", "None recorded."));
+      else {
+        const list = document.createElement("ul");
+        for (const item of data.artifacts) {
+          const entry = document.createElement("li"); const link = el("a", "", item.label || item.path);
+          link.href = safeHref(item.path); entry.append(link); list.append(entry);
+        }
+        artifacts.append(list);
+      }
+    })();
+  </script>
+</body>
+</html>

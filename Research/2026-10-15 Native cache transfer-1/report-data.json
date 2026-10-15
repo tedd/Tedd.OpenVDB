@@ -1,0 +1,1234 @@
+{
+  "title": "Native OpenVDB cache transfer: measured benefits and limits",
+  "generatedAt": "2026-10-15T09:01:59.313812+02:00",
+  "status": "complete",
+  "scope": "Accepted E3/E4 native C++ experiments on UInt16 Tree4 5/4/3. E1/E2 are superseded and excluded from conclusions.",
+  "question": "Can the managed cache choices improve native OpenVDB, and what is suitable for upstream discussion?",
+  "primaryMetric": "ns/op; median of process-launch medians",
+  "summary": {
+    "baseline": 3.5950286985224853,
+    "final": 2.4380425169458553,
+    "unit": "ns/op",
+    "changePercent": -32.18294702493301,
+    "headline": "The 64-leaf native cache with a short common path improved coherent throughput by 47.5% for reads and 32.8% for writes. Larger and colliding working sets regressed."
+  },
+  "scorecards": [
+    {
+      "title": "E4 coherent64 read",
+      "value": 2.4380425169458553,
+      "baseline": 3.5950286985224853,
+      "unit": "ns/op",
+      "wallChangePercent": -32.18294702493301,
+      "progression": "Stock 3.595029; layout only 3.788847; cache with short common path 2.438043 ns/op."
+    },
+    {
+      "title": "E4 coherent64 write",
+      "value": 3.7955007890573804,
+      "baseline": 5.038738125742341,
+      "unit": "ns/op",
+      "wallChangePercent": -24.67358504569631,
+      "progression": "Stock 5.038738; layout only 5.246308; cache with short common path 3.795501 ns/op."
+    }
+  ],
+  "environment": [
+    {
+      "label": "started",
+      "value": "2026-10-15T08:58:51.846699+02:00"
+    },
+    {
+      "label": "cpu",
+      "value": "AMD Ryzen 9 5950X 16-Core Processor"
+    },
+    {
+      "label": "platform",
+      "value": "Windows-11-10.0.26200-SP0"
+    },
+    {
+      "label": "managedRevision",
+      "value": "9d0811b7640be49453bd4e7f5c0f4c61be795bf2"
+    },
+    {
+      "label": "nativeRevision",
+      "value": "f42248c35a9f7bb30641a8a74d9075ce7d1ddcaf"
+    },
+    {
+      "label": "affinityCpu",
+      "value": "8"
+    },
+    {
+      "label": "lockPath",
+      "value": "C:\\Users\\tedd\\.codex\\locks\\performance-measurement.lock"
+    },
+    {
+      "label": "configuration",
+      "value": "{'workspace': 'D:\\\\Workspaces\\\\AI\\\\openvdb-native-cache-transfer-20261015', 'evidence': 'Research\\\\2026-10-15 Native cache transfer-1\\\\epochs\\\\E4', 'variants': ['stock', 'split_only', 'split'], 'patterns': ['coherent64', 'random64', 'coherent512', 'random512', 'collision64', 'churn'], 'small_control_operations': 4194304, 'large_control_operations': 4194304, 'epoch': 'E4'}"
+    },
+    {
+      "label": "powerScheme",
+      "value": "Power Scheme GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c  (High performance)"
+    },
+    {
+      "label": "protocol",
+      "value": "E4; fixed workload and variant orders before measurements"
+    },
+    {
+      "label": "nativeLibrarySha256",
+      "value": "fbf4bed50138f292816ed4f123c34e3f39c87b56a7344c3122dc788ab9730b3c"
+    },
+    {
+      "label": "completed",
+      "value": "2026-10-15T09:01:59.313812+02:00"
+    },
+    {
+      "label": "Accepted epochs",
+      "value": "E3 isolates the mask guard and combined changes; E4 isolates layout-only versus layout plus cache. Raw configuration, source snapshots and ranges are retained separately."
+    }
+  ],
+  "hotspots": [
+    {
+      "name": "Native cached voxel access",
+      "location": "openvdb/tree/ValueAccessor.h",
+      "evidence": "User-requested local transfer experiment; no application hotspot or application speedup claimed."
+    }
+  ],
+  "areas": [
+    {
+      "name": "Two implementation choices and layout counterfactual",
+      "boundary": "Leaf-cache storage, activity-word writes, and generated common-hit/miss layout.",
+      "evidence": "Accepted E3/E4 timings, independent tree checks, native lifetime tests and assembly.",
+      "hypothesisIds": [
+        "H-001",
+        "H-003",
+        "H-002",
+        "H-004",
+        "H-005",
+        "H-006",
+        "H-007"
+      ],
+      "disposition": "Seven bounded hypotheses including superseded preliminary attempts. Cache-plus-layout combinations supported locally; mask-only and layout-only comparisons were inconclusive. Full catalogue dispositions are in coverage.json."
+    }
+  ],
+  "series": [
+    {
+      "title": "E4 coherent64",
+      "description": "Median of process-launch medians; whiskers span launch medians. Variants and read/write order alternate; setup and correctness checks excluded.",
+      "unit": "ns/op",
+      "lowerIsBetter": true,
+      "rounds": [
+        "stock",
+        "split_only",
+        "split"
+      ],
+      "rows": [
+        {
+          "label": "read",
+          "measurements": [
+            {
+              "median": 3.5950286985224853,
+              "min": 3.576166195450729,
+              "max": 4.2179612625942005,
+              "n": 5
+            },
+            {
+              "median": 3.788847317076917,
+              "min": 3.765979131896093,
+              "max": 4.298184896046649,
+              "n": 5
+            },
+            {
+              "median": 2.4380425169458553,
+              "min": 2.4118445960128603,
+              "max": 2.7328011249027275,
+              "n": 5
+            }
+          ]
+        },
+        {
+          "label": "write",
+          "measurements": [
+            {
+              "median": 5.038738125742341,
+              "min": 4.400298792287844,
+              "max": 5.458086846227883,
+              "n": 5
+            },
+            {
+              "median": 5.246307653024656,
+              "min": 4.590059732859601,
+              "max": 5.7089369387645394,
+              "n": 5
+            },
+            {
+              "median": 3.7955007890573804,
+              "min": 3.3846393950176115,
+              "max": 3.8652752517560205,
+              "n": 5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "E4 random64",
+      "description": "Median of process-launch medians; whiskers span launch medians. Variants and read/write order alternate; setup and correctness checks excluded.",
+      "unit": "ns/op",
+      "lowerIsBetter": true,
+      "rounds": [
+        "stock",
+        "split_only",
+        "split"
+      ],
+      "rows": [
+        {
+          "label": "read",
+          "measurements": [
+            {
+              "median": 33.5068941116333,
+              "min": 33.50634574890137,
+              "max": 33.62832069396973,
+              "n": 3
+            },
+            {
+              "median": 33.80281925201416,
+              "min": 33.76567363739014,
+              "max": 33.837151527404785,
+              "n": 3
+            },
+            {
+              "median": 7.4378252029418945,
+              "min": 7.436490058898926,
+              "max": 7.451987266540527,
+              "n": 3
+            }
+          ]
+        },
+        {
+          "label": "write",
+          "measurements": [
+            {
+              "median": 37.33518123626709,
+              "min": 37.04967498779297,
+              "max": 37.46192455291748,
+              "n": 3
+            },
+            {
+              "median": 38.10162544250488,
+              "min": 37.805938720703125,
+              "max": 38.289499282836914,
+              "n": 3
+            },
+            {
+              "median": 8.601617813110352,
+              "min": 8.510756492614746,
+              "max": 8.632969856262207,
+              "n": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "E4 coherent512",
+      "description": "Median of process-launch medians; whiskers span launch medians. Variants and read/write order alternate; setup and correctness checks excluded.",
+      "unit": "ns/op",
+      "lowerIsBetter": true,
+      "rounds": [
+        "stock",
+        "split_only",
+        "split"
+      ],
+      "rows": [
+        {
+          "label": "read",
+          "measurements": [
+            {
+              "median": 3.6890745162963867,
+              "min": 3.6878585815429688,
+              "max": 3.6981582641601562,
+              "n": 3
+            },
+            {
+              "median": 3.588223457336426,
+              "min": 3.58731746673584,
+              "max": 3.594636917114258,
+              "n": 3
+            },
+            {
+              "median": 3.9429426193237305,
+              "min": 3.7819385528564453,
+              "max": 3.9518594741821285,
+              "n": 3
+            }
+          ]
+        },
+        {
+          "label": "write",
+          "measurements": [
+            {
+              "median": 4.20534610748291,
+              "min": 4.188728332519531,
+              "max": 4.241132736206055,
+              "n": 3
+            },
+            {
+              "median": 4.387688636779785,
+              "min": 4.361248016357422,
+              "max": 4.391002655029297,
+              "n": 3
+            },
+            {
+              "median": 4.833197593688965,
+              "min": 4.805803298950195,
+              "max": 4.862380027770996,
+              "n": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "E4 random512",
+      "description": "Median of process-launch medians; whiskers span launch medians. Variants and read/write order alternate; setup and correctness checks excluded.",
+      "unit": "ns/op",
+      "lowerIsBetter": true,
+      "rounds": [
+        "stock",
+        "split_only",
+        "split"
+      ],
+      "rows": [
+        {
+          "label": "read",
+          "measurements": [
+            {
+              "median": 33.02040100097656,
+              "min": 32.95285701751709,
+              "max": 33.054566383361816,
+              "n": 3
+            },
+            {
+              "median": 32.78672695159912,
+              "min": 32.708096504211426,
+              "max": 32.85698890686035,
+              "n": 3
+            },
+            {
+              "median": 45.57595252990723,
+              "min": 45.366621017456055,
+              "max": 45.62804698944092,
+              "n": 3
+            }
+          ]
+        },
+        {
+          "label": "write",
+          "measurements": [
+            {
+              "median": 39.009952545166016,
+              "min": 38.92073631286621,
+              "max": 39.360690116882324,
+              "n": 3
+            },
+            {
+              "median": 39.72947597503662,
+              "min": 39.47784900665283,
+              "max": 39.73679542541504,
+              "n": 3
+            },
+            {
+              "median": 50.54583549499512,
+              "min": 50.19524097442627,
+              "max": 51.156044006347656,
+              "n": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "E4 collision64",
+      "description": "Median of process-launch medians; whiskers span launch medians. Variants and read/write order alternate; setup and correctness checks excluded.",
+      "unit": "ns/op",
+      "lowerIsBetter": true,
+      "rounds": [
+        "stock",
+        "split_only",
+        "split"
+      ],
+      "rows": [
+        {
+          "label": "read",
+          "measurements": [
+            {
+              "median": 15.677332878112793,
+              "min": 15.668034553527832,
+              "max": 15.696263313293459,
+              "n": 3
+            },
+            {
+              "median": 17.233705520629883,
+              "min": 17.16892719268799,
+              "max": 17.245149612426758,
+              "n": 3
+            },
+            {
+              "median": 19.565820693969727,
+              "min": 19.531679153442383,
+              "max": 19.617438316345215,
+              "n": 3
+            }
+          ]
+        },
+        {
+          "label": "write",
+          "measurements": [
+            {
+              "median": 21.576523780822754,
+              "min": 21.35906219482422,
+              "max": 21.883726119995117,
+              "n": 3
+            },
+            {
+              "median": 22.277021408081055,
+              "min": 22.223758697509766,
+              "max": 22.69880771636963,
+              "n": 3
+            },
+            {
+              "median": 23.667454719543457,
+              "min": 23.526620864868164,
+              "max": 24.174046516418457,
+              "n": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "E4 churn",
+      "description": "Median of process-launch medians; whiskers span launch medians. Variants and read/write order alternate; setup and correctness checks excluded.",
+      "unit": "ns/op",
+      "lowerIsBetter": true,
+      "rounds": [
+        "stock",
+        "split_only",
+        "split"
+      ],
+      "rows": [
+        {
+          "label": "write",
+          "measurements": [
+            {
+              "median": 449.957275390625,
+              "min": 448.6686706542969,
+              "max": 451.96075439453125,
+              "n": 3
+            },
+            {
+              "median": 450.6355285644531,
+              "min": 450.1628875732422,
+              "max": 451.2641906738281,
+              "n": 3
+            },
+            {
+              "median": 453.63616943359375,
+              "min": 453.3588409423828,
+              "max": 455.9894561767578,
+              "n": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "E3 coherent64",
+      "description": "Median of process-launch medians; whiskers span launch medians. Variants and read/write order alternate; setup and correctness checks excluded.",
+      "unit": "ns/op",
+      "lowerIsBetter": true,
+      "rounds": [
+        "stock",
+        "mask",
+        "split",
+        "split_both"
+      ],
+      "rows": [
+        {
+          "label": "read",
+          "measurements": [
+            {
+              "median": 3.522404461981897,
+              "min": 3.507663631814179,
+              "max": 4.929010833700238,
+              "n": 5
+            },
+            {
+              "median": 3.466228920072903,
+              "min": 3.435717341471781,
+              "max": 3.9171171375839613,
+              "n": 5
+            },
+            {
+              "median": 2.367326128998403,
+              "min": 2.362192536400311,
+              "max": 2.6688661987784648,
+              "n": 5
+            },
+            {
+              "median": 2.627943446408093,
+              "min": 2.617690260100958,
+              "max": 3.053245694421691,
+              "n": 5
+            }
+          ]
+        },
+        {
+          "label": "write",
+          "measurements": [
+            {
+              "median": 4.876005040240006,
+              "min": 4.362577785826916,
+              "max": 5.0219894549168576,
+              "n": 5
+            },
+            {
+              "median": 4.686548075544724,
+              "min": 4.226436589992218,
+              "max": 5.505707067087156,
+              "n": 5
+            },
+            {
+              "median": 3.6153230879597396,
+              "min": 3.2981322602238285,
+              "max": 3.7901492137583963,
+              "n": 5
+            },
+            {
+              "median": 3.5165009304861568,
+              "min": 3.1753300058107388,
+              "max": 3.852534262880898,
+              "n": 5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "E3 partial64",
+      "description": "Median of process-launch medians; whiskers span launch medians. Variants and read/write order alternate; setup and correctness checks excluded.",
+      "unit": "ns/op",
+      "lowerIsBetter": true,
+      "rounds": [
+        "stock",
+        "mask",
+        "split",
+        "split_both"
+      ],
+      "rows": [
+        {
+          "label": "read",
+          "measurements": [
+            {
+              "median": 3.507256507873535,
+              "min": 3.501558303833008,
+              "max": 3.515195846557617,
+              "n": 3
+            },
+            {
+              "median": 3.4484386444091797,
+              "min": 3.4375667572021484,
+              "max": 3.465104103088379,
+              "n": 3
+            },
+            {
+              "median": 2.372431755065918,
+              "min": 2.3626089096069336,
+              "max": 2.3917675018310547,
+              "n": 3
+            },
+            {
+              "median": 2.616405487060547,
+              "min": 2.6075124740600586,
+              "max": 2.6409387588500977,
+              "n": 3
+            }
+          ]
+        },
+        {
+          "label": "write",
+          "measurements": [
+            {
+              "median": 6.004524230957031,
+              "min": 5.933475494384766,
+              "max": 6.117820739746094,
+              "n": 3
+            },
+            {
+              "median": 6.0349225997924805,
+              "min": 5.979394912719727,
+              "max": 6.2015533447265625,
+              "n": 3
+            },
+            {
+              "median": 3.90777587890625,
+              "min": 3.8718461990356445,
+              "max": 3.9516210556030273,
+              "n": 3
+            },
+            {
+              "median": 3.8945913314819336,
+              "min": 3.8543224334716797,
+              "max": 3.920221328735351,
+              "n": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "effectGroups": [
+    {
+      "name": "E4 coherent64 read",
+      "control": "Paired unmodified native stock launches",
+      "items": [
+        {
+          "label": "split_only",
+          "effect": 0.053912954473517516,
+          "range": [
+            -0.006577537470106254,
+            0.06330622539333541
+          ]
+        },
+        {
+          "label": "split",
+          "effect": -0.32182947024933006,
+          "range": [
+            -0.3542382990667322,
+            -0.3182524570453942
+          ]
+        }
+      ]
+    },
+    {
+      "name": "E4 coherent64 write",
+      "control": "Paired unmodified native stock launches",
+      "items": [
+        {
+          "label": "split_only",
+          "effect": 0.04119474402169576,
+          "range": [
+            -0.038800993675941364,
+            0.13300925674192676
+          ]
+        },
+        {
+          "label": "split",
+          "effect": -0.2467358504569631,
+          "range": [
+            -0.2926470911529132,
+            -0.22910580441789474
+          ]
+        }
+      ]
+    },
+    {
+      "name": "E4 random64 read",
+      "control": "Paired unmodified native stock launches",
+      "items": [
+        {
+          "label": "split_only",
+          "effect": 0.008831768751676572,
+          "range": [
+            0.005189035742594328,
+            0.00985640192944115
+          ]
+        },
+        {
+          "label": "split",
+          "effect": -0.7780210490962949,
+          "range": [
+            -0.7788622831757268,
+            -0.7775947480997725
+          ]
+        }
+      ]
+    },
+    {
+      "name": "E4 random64 write",
+      "control": "Paired unmodified native stock launches",
+      "items": [
+        {
+          "label": "split_only",
+          "effect": 0.02052873940500044,
+          "range": [
+            0.020412155657487663,
+            0.022091089547479736
+          ]
+        },
+        {
+          "label": "split",
+          "effect": -0.7696109265232437,
+          "range": [
+            -0.7720445914335762,
+            -0.7669893228724254
+          ]
+        }
+      ]
+    },
+    {
+      "name": "E4 coherent512 read",
+      "control": "Paired unmodified native stock launches",
+      "items": [
+        {
+          "label": "split_only",
+          "effect": -0.027337766834053978,
+          "range": [
+            -0.027992676259734894,
+            -0.02726273597103701
+          ]
+        },
+        {
+          "label": "split",
+          "effect": 0.06881620360496599,
+          "range": [
+            0.02551073183346264,
+            0.06881620360496599
+          ]
+        }
+      ]
+    },
+    {
+      "name": "E4 coherent512 write",
+      "control": "Paired unmodified native stock launches",
+      "items": [
+        {
+          "label": "split_only",
+          "effect": 0.043359696119284585,
+          "range": [
+            0.034555839132927924,
+            0.04414774498965324
+          ]
+        },
+        {
+          "label": "split",
+          "effect": 0.14929840972871844,
+          "range": [
+            0.14648145441462512,
+            0.14929840972871844
+          ]
+        }
+      ]
+    },
+    {
+      "name": "E4 random512 read",
+      "control": "Paired unmodified native stock launches",
+      "items": [
+        {
+          "label": "split_only",
+          "effect": -0.007076656924018931,
+          "range": [
+            -0.009457925624703933,
+            -0.005041446507344061
+          ]
+        },
+        {
+          "label": "split",
+          "effect": 0.38023619181848645,
+          "range": [
+            0.3738967317845219,
+            0.38306528340410506
+          ]
+        }
+      ]
+    },
+    {
+      "name": "E4 random512 write",
+      "control": "Paired unmodified native stock launches",
+      "items": [
+        {
+          "label": "split_only",
+          "effect": 0.018444611770227937,
+          "range": [
+            0.009555353511736309,
+            0.018444611770227937
+          ]
+        },
+        {
+          "label": "split",
+          "effect": 0.29571640561399737,
+          "range": [
+            0.28417045902646243,
+            0.31135878586672994
+          ]
+        }
+      ]
+    },
+    {
+      "name": "E4 collision64 read",
+      "control": "Paired unmodified native stock launches",
+      "items": [
+        {
+          "label": "split_only",
+          "effect": 0.09927534578856512,
+          "range": [
+            0.09514337203732004,
+            0.09992771982683202
+          ]
+        },
+        {
+          "label": "split",
+          "effect": 0.24803248397472455,
+          "range": [
+            0.24659408215592737,
+            0.24981582716765716
+          ]
+        }
+      ]
+    },
+    {
+      "name": "E4 collision64 write",
+      "control": "Paired unmodified native stock launches",
+      "items": [
+        {
+          "label": "split_only",
+          "effect": 0.032465731476212234,
+          "range": [
+            0.029997182273739265,
+            0.04297750551422985
+          ]
+        },
+        {
+          "label": "split",
+          "effect": 0.09690768355276602,
+          "range": [
+            0.09038050354425753,
+            0.10807555611119546
+          ]
+        }
+      ]
+    },
+    {
+      "name": "E4 churn write",
+      "control": "Paired unmodified native stock launches",
+      "items": [
+        {
+          "label": "split_only",
+          "effect": 0.0015073723904992509,
+          "range": [
+            -0.0015412039959891155,
+            0.003330334869974916
+          ]
+        },
+        {
+          "label": "split",
+          "effect": 0.008176096363315732,
+          "range": [
+            0.00309338041911289,
+            0.016316685343295667
+          ]
+        }
+      ]
+    },
+    {
+      "name": "E3 coherent64 read",
+      "control": "Paired unmodified native stock launches",
+      "items": [
+        {
+          "label": "mask",
+          "effect": -0.015948066871737554,
+          "range": [
+            -0.2052934615598403,
+            -0.011812624039964192
+          ]
+        },
+        {
+          "label": "split",
+          "effect": -0.3279232539733907,
+          "range": [
+            -0.4585391899463668,
+            -0.3250988756370544
+          ]
+        },
+        {
+          "label": "split_both",
+          "effect": -0.25393478381824774,
+          "range": [
+            -0.3805560999082648,
+            -0.2511376180145125
+          ]
+        }
+      ]
+    },
+    {
+      "name": "E3 coherent64 write",
+      "control": "Paired unmodified native stock launches",
+      "items": [
+        {
+          "label": "mask",
+          "effect": -0.038854956697492726,
+          "range": [
+            -0.057621014424857564,
+            0.09631991793545236
+          ]
+        },
+        {
+          "label": "split",
+          "effect": -0.2585481232845923,
+          "range": [
+            -0.2597591151562857,
+            -0.24112968377588573
+          ]
+        },
+        {
+          "label": "split_both",
+          "effect": -0.2788151567798486,
+          "range": [
+            -0.2997793081697391,
+            -0.20989945024928258
+          ]
+        }
+      ]
+    },
+    {
+      "name": "E3 partial64 read",
+      "control": "Paired unmodified native stock launches",
+      "items": [
+        {
+          "label": "mask",
+          "effect": -0.01677033411508788,
+          "range": [
+            -0.01987016076951842,
+            -0.014250057651351788
+          ]
+        },
+        {
+          "label": "split",
+          "effect": -0.3235648006525951,
+          "range": [
+            -0.32526929309710895,
+            -0.3180517317562286
+          ]
+        },
+        {
+          "label": "split_both",
+          "effect": -0.25400224329560517,
+          "range": [
+            -0.25821701325302837,
+            -0.24578186918687783
+          ]
+        }
+      ]
+    },
+    {
+      "name": "E3 partial64 write",
+      "control": "Paired unmodified native stock launches",
+      "items": [
+        {
+          "label": "mask",
+          "effect": 0.005062577427654702,
+          "range": [
+            -0.01355027279812937,
+            0.045180577655624665
+          ]
+        },
+        {
+          "label": "split",
+          "effect": -0.3491947523903307,
+          "range": [
+            -0.3551785203773705,
+            -0.34140186765674974
+          ]
+        },
+        {
+          "label": "split_both",
+          "effect": -0.3513905212667958,
+          "range": [
+            -0.3592127825409198,
+            -0.3504106594660623
+          ]
+        }
+      ]
+    }
+  ],
+  "hypotheses": [
+    {
+      "id": "H-001",
+      "claim": "A 64-leaf secondary cache improves native coherent cached reads.",
+      "mechanism": "Avoid repeated parent traversal when revisiting leaves.",
+      "prediction": "All paired cache/stock read time ratios below one on coherent64.",
+      "falsification": "Mixed paired directions or consistently higher time.",
+      "change": "Add 64 direct-mapped leaf references with full origin checks and existing native invalidation callbacks.",
+      "state": "inconclusive",
+      "decision": "Superseded",
+      "result": "read: stock 3.278530, cache 3.958364 ns/op; paired time ratio range 1.1519 to 1.2234.",
+      "effectPercent": 20.73594222258821,
+      "changeScope": "local",
+      "maintainability": "Experimental header overlay; generic library integration and additional platforms remain unvalidated.",
+      "codeComments": "Patch comments state cache collision checks, invalidation and mask-word conditions.",
+      "decisionRationale": "Preflight invalidation defect invalidates acceptance of this epoch; corrected tests and fresh measurements are recorded in E3.",
+      "evidence": [
+        "superseded-epochs.json",
+        "epochs/E1/hypotheses.json"
+      ],
+      "risks": [
+        "One Windows x64 compiler and processor."
+      ]
+    },
+    {
+      "id": "H-002",
+      "variant": "mask",
+      "workload": "write",
+      "claim": "Skipping saturated activity-word updates improves native coherent cached writes.",
+      "mechanism": "Avoid an idempotent activity-word read-modify-write when all 64 bits are already active.",
+      "prediction": "All paired mask/stock write time ratios below one on coherent64.",
+      "falsification": "Mixed paired directions or consistently higher time.",
+      "change": "Guard only the native cached-buffer activity-bit update with a whole-word saturation test.",
+      "state": "inconclusive",
+      "decision": "Mixed runs",
+      "result": "write: stock 4.876005, mask 4.686548 ns/op; paired time ratio range 0.9424 to 1.0963.",
+      "effectPercent": -3.8854956697492726,
+      "changeScope": "local",
+      "maintainability": "Experimental header overlay; generic library integration and additional platforms remain unvalidated.",
+      "codeComments": "Patch comments state cache collision checks, invalidation and mask-word conditions.",
+      "decisionRationale": "Classifies the bounded transfer experiment. Guardrail workload results determine upstream suitability; no production patch is installed.",
+      "evidence": [
+        "epochs/E3/comparison.json",
+        "epochs/E3/native-cache-transfer.patch",
+        "epochs/E3/raw/validation.json"
+      ],
+      "risks": [
+        "One Windows x64 compiler and processor."
+      ],
+      "epochs": [
+        "E1/E2 superseded; corrected native invalidation in E3/E4"
+      ]
+    },
+    {
+      "id": "H-003",
+      "claim": "The combined native changes improve coherent cached writes over stock.",
+      "mechanism": "Combine reduced leaf resolution with fewer redundant mask writes.",
+      "prediction": "All paired both/stock write time ratios below one on coherent64.",
+      "falsification": "Mixed paired directions or consistently higher time; counterexample regressions preclude a universal recommendation.",
+      "change": "Enable both independently tested mechanisms in one native build.",
+      "state": "inconclusive",
+      "decision": "Superseded",
+      "result": "write: stock 4.941902, both 4.540070 ns/op; paired time ratio range 0.8030 to 0.9263.",
+      "effectPercent": -8.131122915795775,
+      "changeScope": "local",
+      "maintainability": "Experimental header overlay; generic library integration and additional platforms remain unvalidated.",
+      "codeComments": "Patch comments state cache collision checks, invalidation and mask-word conditions.",
+      "decisionRationale": "Preflight invalidation defect invalidates acceptance of this epoch; corrected tests and fresh measurements are recorded in E3.",
+      "evidence": [
+        "superseded-epochs.json",
+        "epochs/E1/hypotheses.json"
+      ],
+      "risks": [
+        "One Windows x64 compiler and processor."
+      ]
+    },
+    {
+      "id": "H-004",
+      "parentId": "H-001",
+      "variant": "split",
+      "workload": "read",
+      "claim": "Separating secondary lookup from the common leaf-hit path makes the native cache improve coherent reads.",
+      "mechanism": "E1 assembly showed a leaf-index lambda call in the cache variant's read loop. A small forced-inline entry point and non-inlined miss helper keep that call off last-leaf hits.",
+      "prediction": "All paired split/stock read time ratios below one on coherent64; no unconditional leaf-lambda call on last-leaf hits in assembly.",
+      "falsification": "Mixed paired directions, higher time, or an unconditional per-read helper call.",
+      "change": "Preserve the original native membership predicate and tree fallback; move secondary lookup into an explicit miss helper.",
+      "state": "retained",
+      "decision": "Supports optional cache",
+      "result": "read: stock 3.522404, split 2.367326 ns/op; paired time ratio range 0.5415 to 0.6749.",
+      "effectPercent": -32.79232539733907,
+      "changeScope": "local",
+      "maintainability": "Experimental header overlay; generic library integration and additional platforms remain unvalidated.",
+      "codeComments": "Patch comments state cache collision checks, invalidation and mask-word conditions.",
+      "decisionRationale": "Classifies the bounded transfer experiment. Guardrail workload results determine upstream suitability; no production patch is installed.",
+      "evidence": [
+        "epochs/E3/comparison.json",
+        "epochs/E3/native-cache-transfer.patch",
+        "epochs/E3/raw/validation.json"
+      ],
+      "risks": [
+        "One Windows x64 compiler and processor.",
+        "512 additional bytes per accessor; random512 and collision64 regress."
+      ],
+      "epochs": [
+        "E1/E2 superseded; corrected native invalidation in E3/E4"
+      ]
+    },
+    {
+      "id": "H-005",
+      "parentId": "H-003",
+      "variant": "split_both",
+      "workload": "write",
+      "claim": "The cache with a separate miss helper and saturated-mask guard improves native coherent writes.",
+      "mechanism": "Combine the small common leaf-hit path with the cache and mask choices; native safety callbacks remain active.",
+      "prediction": "All paired split_both/stock write time ratios below one on coherent64.",
+      "falsification": "Mixed directions or higher time. Counterexample regressions require an optional policy rather than a universal recommendation.",
+      "change": "Enable the explicit miss helper and mask guard in a combined native build.",
+      "state": "retained",
+      "decision": "Supported locally",
+      "result": "write: stock 4.876005, split_both 3.516501 ns/op; paired time ratio range 0.7002 to 0.7901.",
+      "effectPercent": -27.881515677984858,
+      "changeScope": "local",
+      "maintainability": "Experimental header overlay; generic library integration and additional platforms remain unvalidated.",
+      "codeComments": "Patch comments state cache collision checks, invalidation and mask-word conditions.",
+      "decisionRationale": "Classifies the bounded transfer experiment. Guardrail workload results determine upstream suitability; no production patch is installed.",
+      "evidence": [
+        "epochs/E3/comparison.json",
+        "epochs/E3/native-cache-transfer.patch",
+        "epochs/E3/raw/validation.json"
+      ],
+      "risks": [
+        "One Windows x64 compiler and processor."
+      ],
+      "epochs": [
+        "E1/E2 superseded; corrected native invalidation in E3/E4"
+      ]
+    },
+    {
+      "id": "H-006",
+      "parentId": "H-004",
+      "variant": "split_only",
+      "workload": "read",
+      "claim": "Separating native common leaf hits from the miss helper improves coherent reads even without a larger cache.",
+      "mechanism": "The native default traverses a template cache-level dispatcher. A small common-hit entry point may improve code layout independently of retaining additional leaves.",
+      "prediction": "All paired split_only/stock read time ratios below one on coherent64, with the same 96-byte accessor and original parent caches.",
+      "falsification": "Mixed paired directions or no improvement; larger/cache-collision/churn workloads identify regressions.",
+      "change": "Use the explicit inline-hit and non-inline-miss layout with the stock single-leaf/parent caches and no secondary slots or activity guard.",
+      "state": "inconclusive",
+      "decision": "Mixed runs",
+      "result": "read: stock 3.595029, split_only 3.788847 ns/op; paired time ratio range 0.9934 to 1.0633.",
+      "effectPercent": 5.391295447351752,
+      "changeScope": "local",
+      "maintainability": "Experimental header overlay; generic library integration and additional platforms remain unvalidated.",
+      "codeComments": "Patch comments state cache collision checks, invalidation and mask-word conditions.",
+      "decisionRationale": "Classifies the bounded transfer experiment. Guardrail workload results determine upstream suitability; no production patch is installed.",
+      "evidence": [
+        "epochs/E4/comparison.json",
+        "epochs/E4/native-cache-transfer.patch",
+        "epochs/E4/raw/validation.json"
+      ],
+      "risks": [
+        "One Windows x64 compiler and processor."
+      ],
+      "epochs": [
+        "E1/E2 superseded; corrected native invalidation in E3/E4"
+      ]
+    },
+    {
+      "id": "H-007",
+      "parentId": "H-004",
+      "variant": "split_only",
+      "workload": "write",
+      "claim": "The common-hit layout alone improves native coherent writes.",
+      "mechanism": "Reduce common-path dispatcher code while retaining unconditional activity updates and stock cache storage.",
+      "prediction": "All paired split_only/stock write time ratios below one on coherent64.",
+      "falsification": "Mixed paired directions or no improvement; guardrail regressions limit suitability.",
+      "change": "Use only the explicit hit/miss layout; no secondary cache and no mask guard.",
+      "state": "inconclusive",
+      "decision": "Mixed runs",
+      "result": "write: stock 5.038738, split_only 5.246308 ns/op; paired time ratio range 0.9612 to 1.1330.",
+      "effectPercent": 4.119474402169576,
+      "changeScope": "local",
+      "maintainability": "Experimental header overlay; generic library integration and additional platforms remain unvalidated.",
+      "codeComments": "Patch comments state cache collision checks, invalidation and mask-word conditions.",
+      "decisionRationale": "Classifies the bounded transfer experiment. Guardrail workload results determine upstream suitability; no production patch is installed.",
+      "evidence": [
+        "epochs/E4/comparison.json",
+        "epochs/E4/native-cache-transfer.patch",
+        "epochs/E4/raw/validation.json"
+      ],
+      "risks": [
+        "One Windows x64 compiler and processor."
+      ],
+      "epochs": [
+        "E1/E2 superseded; corrected native invalidation in E3/E4"
+      ]
+    }
+  ],
+  "retainedChanges": [
+    "Native reproduction harness, guarded header prototype, focused assembly and measurement evidence.",
+    "Existing upstream OpenVDB checkout and the managed library remain unchanged."
+  ],
+  "decisions": [
+    "The evidence supports proposing a configurable secondary leaf cache with a short common path. The 64-slot option adds 512 bytes per accessor.",
+    "The saturated-word guard was inconclusive in isolated native coherent-write comparisons. Its adoption needs further evidence.",
+    "The layout-only change did not reproduce the coherent gain. No unconditional replacement of the current native default is justified by these workloads."
+  ],
+  "correctness": [
+    "Each executable tests signed cache collisions, copying, assignment across trees, explicitly invalidated direct tile replacement, clearing, explicit cache erasure, mask reactivation and tree destruction.",
+    "Every timed sample validates all voxel values/activity through tree lookups independent of the accessor; read checksums are consumed and verified.",
+    "All variants have identical coordinate hashes, topology and active voxel counts for every workload.",
+    "Accepted churn checks every voxel in the resulting leaf after each sample and includes node detachment, deletion, cache invalidation and rematerialization in timing.",
+    "E4 accessor sizes: stock and layout-only 96 bytes; 64-leaf cache 608 bytes. E3/E4 measured all variants after correcting the invalidation preflight."
+  ],
+  "generatedCode": [
+    {
+      "summary": "The accepted cached native read/write loops inline leaf-hit checks and buffer access. Calls to getValueSecondary/setValueSecondary occur on miss paths. Focused annotated listings are retained.",
+      "artifact": "assembly-observations.json"
+    }
+  ],
+  "validityThreats": [
+    "Only AMD Ryzen 9 5950X, Windows x64 and MSVC Release. No cross-machine claim.",
+    "The 64-leaf fixture exactly fits the secondary cache; random512 and collision64 deliberately test losing distributions.",
+    "The mask experiment modifies the native cached-buffer write path; it is not a general NodeMask API change.",
+    "The cache overlay changes accessor object size and layout. It is a prototype, not an ABI-compatible upstream patch.",
+    "Focused tests do not establish all OpenVDB types, APIs, threading configurations or full upstream-suite compatibility.",
+    "The shared performance lock is cooperative; external CPU snapshots are retained in raw/environment.json.",
+    "E1/E2 preflight omitted required invalidation before direct Tree.addTile. Those results are retained as superseded and excluded; E3/E4 rebuilt and reran all accepted measurements.",
+    "Direct Tree.addTile requires explicit invalidation. The accepted churn workload uses Tree.stealNode, whose implementation clears registered accessors before detaching the node.",
+    "The layout-only control measures the call-layout choice without extra cache storage or the mask guard. It is distinct from the 608-byte cached variants.",
+    "Power/CPU load snapshots do not prove continuous isolation. E4 snapshots showed CPU 8 at 31% before and 9% after; total load 15% before and 0% after. All samples, including slower launches, remain included.",
+    "Absolute timings from this native vector-coordinate harness should not be used for an exact ratio against the earlier managed fixed-array harness. All stated improvement ratios are contemporaneous native-versus-native comparisons."
+  ],
+  "reproduction": [
+    "Set PYTHONDONTWRITEBYTECODE=1. Prefix each command with python C:/Users/tedd/.codex/skills/scientific-method-performance/scripts/run_with_performance_lock.py --cwd D:/SourceCode/Tedd.OpenVDB --",
+    "E3: python benchmarks/NativeCacheTransfer/run.py --workspace D:/Workspaces/AI/openvdb-native-cache-transfer-20261015 --evidence \"Research/2026-10-15 Native cache transfer-1/epochs/E3\" --epoch E3 --variants stock mask split split_both --patterns coherent64 random64 coherent512 random512 partial64 collision64 churn --small-control-operations 4194304 --large-control-operations 4194304",
+    "E4: python benchmarks/NativeCacheTransfer/run.py --workspace D:/Workspaces/AI/openvdb-native-cache-transfer-20261015 --evidence \"Research/2026-10-15 Native cache transfer-1/epochs/E4\" --epoch E4 --variants stock split_only split --patterns coherent64 random64 coherent512 random512 collision64 churn --small-control-operations 4194304 --large-control-operations 4194304",
+    "Allocate a fresh evidence directory and preregister hypotheses before another measurement; do not overwrite the accepted epochs.",
+    "Primary: five launches, nine samples of 50,003,968 operations and 1000 ms warmup per workload. Controls: three launches, five samples of 4,194,304 operations and 350 ms warmup; churn uses 262,144 detach/write pairs per sample."
+  ],
+  "artifacts": [
+    {
+      "label": "Accepted E4 measurements",
+      "path": "epochs/E4/comparison.json"
+    },
+    {
+      "label": "Accepted E3 mask/combination measurements",
+      "path": "epochs/E3/comparison.json"
+    },
+    {
+      "label": "Experimental header patch",
+      "path": "native-cache-transfer.patch"
+    },
+    {
+      "label": "Reproduction source",
+      "path": "../../benchmarks/NativeCacheTransfer/"
+    },
+    {
+      "label": "Exact accepted E4 source snapshot",
+      "path": "epochs/E4/harness-source.zip"
+    },
+    {
+      "label": "Accepted E4 assembly functions",
+      "path": "epochs/E4/assembly.zip"
+    },
+    {
+      "label": "Accepted E3 assembly functions",
+      "path": "epochs/E3/assembly.zip"
+    },
+    {
+      "label": "Hypothesis ledger",
+      "path": "hypotheses.json"
+    },
+    {
+      "label": "Catalogue coverage",
+      "path": "coverage.json"
+    },
+    {
+      "label": "Superseded epochs and correction",
+      "path": "superseded-epochs.json"
+    }
+  ]
+}

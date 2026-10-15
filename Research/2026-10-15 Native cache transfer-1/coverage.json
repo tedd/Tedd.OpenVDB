@@ -1,0 +1,43 @@
+{
+  "scope": "Transfer two identified managed implementation choices to native C++, followed by one assembly-supported layout refinement. No general OpenVDB optimization search.",
+  "integrationBranch": "main",
+  "startingRevision": "9d0811b7640be49453bd4e7f5c0f4c61be795bf2",
+  "epochs": {
+    "E1": "Superseded; see superseded-epochs.json.",
+    "E2": "Superseded; see superseded-epochs.json.",
+    "E3": "Accepted protocol after correcting native direct-mutation invalidation. Stock, mask-only, separate miss helper, and combined variants; coherent64 and six guardrail workloads.",
+    "E4": "Isolate layout alone versus cache plus layout; no mask guard. Accepted follow-up with the same corrected native invalidation preflight."
+  },
+  "catalogue": {
+    "M1": "Inline 64-pointer cache adds 512 bytes per accessor. No timed allocations except the explicitly separate churn workload.",
+    "M2": "No temporary scalar-access buffers; cache is persistent accessor storage.",
+    "M3": "Native indexed value storage already lacks managed range checks; no range-check-removal experiment applies.",
+    "M4": "Existing native pointers retained under existing safe-accessor invalidation callbacks. No managed pinning or byref transformation.",
+    "M5": "H-001/H-004: additional inline leaf-pointer storage changes accessor size/layout; report its cost and collision controls.",
+    "M6": "H-001/H-004: direct-mapped leaf-location cache avoids parent traversal. Prefetch and alignment tuning are outside the requested transfer.",
+    "M7": "No bulk copies or serialization in these scalar calls.",
+    "C1": "Keep checksum reduction and scalar caller work identical across native arms; accumulator/unrolling changes are outside scope.",
+    "C2": "H-002/H-003/H-005: saturated mask-word guard; mixed activity tests cover its opposite branch. No unsupported branch-miss claim.",
+    "C3": "SIMD/bulk APIs would change the scalar accessor workload and are outside scope.",
+    "C4": "Coordinate/slot arithmetic uses shifts and masks; no ISA-specific changes requested.",
+    "C5": "No stencils or neighboring-value arithmetic.",
+    "S1": "H-002: avoid idempotent writes to fully active activity words; partial64 and reactivation tests preserve semantics.",
+    "S2": "H-001: secondary leaf lookup, signed full-origin equality on collisions, original tree fallback on misses.",
+    "S3": "Mutable tree topology precludes frozen mappings as an equivalent transfer.",
+    "S4": "Existing clear/release/stealNode callbacks invalidate secondary leaves. Direct Tree.addTile requires explicit clearAllAccessors before replacing nodes; E1/E2 preflight invalidation defect was corrected and measurements rerun.",
+    "S5": "No value compression or changed representation.",
+    "R1": "No reflection, runtime feature flags or delegate dispatch. Template code is inspected at the generated native caller.",
+    "R2": "H-004/H-005 arise from an observed leaf-index lambda call in E1; test a small inline hit path and explicit non-inlined miss helper. H-006/H-007 isolate layout alone; no consistent coherent read or write benefit.",
+    "R3": "Compile-time experiment switches; no per-access environment reads.",
+    "T1": "Single-thread timed scalar kernels; no false-sharing hypothesis.",
+    "T2": "Original one-accessor-per-thread and exclusive mutation contract retained; no synchronization removed.",
+    "T3": "Default native MutexT=void already performs no per-access locking. No lock-removal explanation is valid here.",
+    "T4": "No threading or scheduling changes; all build and timing phases serialized under the shared host lock."
+  },
+  "limitations": [
+    "One processor and native compiler; no cross-machine conclusion.",
+    "Focused native correctness tests are not the upstream test suite.",
+    "Accessor layout and public helper additions are experimental, not an ABI-stable upstream patch."
+  ],
+  "stoppingCondition": "Both requested implementation choices, their combination, and the source-supported call-layout counterfactual have been measured with correctness and losing-distribution controls. Further capacity tuning, new hardware/compiler ports and full upstream integration are separate work."
+}

@@ -1,0 +1,25 @@
+{
+  "pattern": "churn",
+  "coordinates": 1,
+  "coordinateHash": 0,
+  "activeVoxelCount": 1,
+  "leafCount": 1,
+  "accessorBytes": 608,
+  "msvc": 195136260,
+  "results": [
+    {
+      "name": "write",
+      "operations": 262144,
+      "elapsedMilliseconds": [
+        120.2589,
+        120.0755,
+        120.4124,
+        120.9807,
+        121.2651
+      ]
+    }
+  ],
+  "sink": 65535,
+  "variant": "split_both",
+  "launch": 1
+}

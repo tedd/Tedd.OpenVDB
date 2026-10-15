@@ -1,0 +1,44 @@
+{
+  "pattern": "coherent64",
+  "coordinates": 32768,
+  "coordinateHash": 822071576408521509,
+  "activeVoxelCount": 32768,
+  "leafCount": 64,
+  "accessorBytes": 96,
+  "msvc": 195136260,
+  "results": [
+    {
+      "name": "read",
+      "operations": 50003968,
+      "elapsedMilliseconds": [
+        171.7606,
+        172.0221,
+        172.0377,
+        171.5655,
+        171.8061,
+        171.6768,
+        171.5558,
+        171.8184,
+        171.7995
+      ]
+    },
+    {
+      "name": "write",
+      "operations": 50003968,
+      "elapsedMilliseconds": [
+        235.1566,
+        245.4636,
+        237.0747,
+        245.7741,
+        247.2736,
+        243.7569,
+        235.2774,
+        236.4353,
+        232.0086
+      ]
+    }
+  ],
+  "sink": 225017856,
+  "variant": "mask",
+  "launch": 3
+}

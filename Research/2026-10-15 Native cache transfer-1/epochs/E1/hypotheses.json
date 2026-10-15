@@ -1,0 +1,74 @@
+[
+  {
+    "id": "H-001",
+    "claim": "A 64-leaf secondary cache improves native coherent cached reads.",
+    "mechanism": "Avoid repeated parent traversal when revisiting leaves.",
+    "prediction": "All paired cache/stock read time ratios below one on coherent64.",
+    "falsification": "Mixed paired directions or consistently higher time.",
+    "change": "Add 64 direct-mapped leaf references with full origin checks and existing native invalidation callbacks.",
+    "state": "inconclusive",
+    "decision": "Superseded",
+    "result": "read: stock 3.278530, cache 3.958364 ns/op; paired time ratio range 1.1519 to 1.2234.",
+    "effectPercent": 20.73594222258821,
+    "changeScope": "local",
+    "maintainability": "Experimental header overlay; generic library integration and additional platforms remain unvalidated.",
+    "codeComments": "Patch comments state cache collision checks, invalidation and mask-word conditions.",
+    "decisionRationale": "Preflight invalidation defect invalidates acceptance of this epoch; corrected tests and fresh measurements are recorded in E3.",
+    "evidence": [
+      "comparison.json",
+      "native-cache-transfer.patch",
+      "raw/validation.json"
+    ],
+    "risks": [
+      "One Windows x64 compiler and processor."
+    ]
+  },
+  {
+    "id": "H-002",
+    "claim": "Skipping saturated activity-word updates improves native coherent cached writes.",
+    "mechanism": "Avoid an idempotent activity-word read-modify-write when all 64 bits are already active.",
+    "prediction": "All paired mask/stock write time ratios below one on coherent64.",
+    "falsification": "Mixed paired directions or consistently higher time.",
+    "change": "Guard only the native cached-buffer activity-bit update with a whole-word saturation test.",
+    "state": "inconclusive",
+    "decision": "Superseded",
+    "result": "write: stock 4.941902, mask 4.767202 ns/op; paired time ratio range 0.7653 to 0.9787.",
+    "effectPercent": -3.5350790543824284,
+    "changeScope": "local",
+    "maintainability": "Experimental header overlay; generic library integration and additional platforms remain unvalidated.",
+    "codeComments": "Patch comments state cache collision checks, invalidation and mask-word conditions.",
+    "decisionRationale": "Preflight invalidation defect invalidates acceptance of this epoch; corrected tests and fresh measurements are recorded in E3.",
+    "evidence": [
+      "comparison.json",
+      "native-cache-transfer.patch",
+      "raw/validation.json"
+    ],
+    "risks": [
+      "One Windows x64 compiler and processor."
+    ]
+  },
+  {
+    "id": "H-003",
+    "claim": "The combined native changes improve coherent cached writes over stock.",
+    "mechanism": "Combine reduced leaf resolution with fewer redundant mask writes.",
+    "prediction": "All paired both/stock write time ratios below one on coherent64.",
+    "falsification": "Mixed paired directions or consistently higher time; counterexample regressions preclude a universal recommendation.",
+    "change": "Enable both independently tested mechanisms in one native build.",
+    "state": "inconclusive",
+    "decision": "Superseded",
+    "result": "write: stock 4.941902, both 4.540070 ns/op; paired time ratio range 0.8030 to 0.9263.",
+    "effectPercent": -8.131122915795775,
+    "changeScope": "local",
+    "maintainability": "Experimental header overlay; generic library integration and additional platforms remain unvalidated.",
+    "codeComments": "Patch comments state cache collision checks, invalidation and mask-word conditions.",
+    "decisionRationale": "Preflight invalidation defect invalidates acceptance of this epoch; corrected tests and fresh measurements are recorded in E3.",
+    "evidence": [
+      "comparison.json",
+      "native-cache-transfer.patch",
+      "raw/validation.json"
+    ],
+    "risks": [
+      "One Windows x64 compiler and processor."
+    ]
+  }
+]

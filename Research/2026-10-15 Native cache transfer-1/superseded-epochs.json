@@ -1,0 +1,5 @@
+{
+  "E1": "Preflight used direct Tree.addTile without clearing registered accessors. Experimental cache could read a detached leaf. All timings excluded from final conclusions.",
+  "E2": "Same preflight defect. Subsequent churn control failed on stock because direct Tree.addTile did not clear its accessor. Timed results retained but not accepted. No completed E2 comparison report was produced.",
+  "E3": "Correct preflight explicitly invalidates before direct tile replacement. Churn uses stealNode, which clears registered accessors before detaching the leaf. Fresh measurements define the accepted epoch."
+}

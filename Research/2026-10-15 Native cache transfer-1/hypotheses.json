@@ -1,0 +1,198 @@
+[
+  {
+    "id": "H-001",
+    "claim": "A 64-leaf secondary cache improves native coherent cached reads.",
+    "mechanism": "Avoid repeated parent traversal when revisiting leaves.",
+    "prediction": "All paired cache/stock read time ratios below one on coherent64.",
+    "falsification": "Mixed paired directions or consistently higher time.",
+    "change": "Add 64 direct-mapped leaf references with full origin checks and existing native invalidation callbacks.",
+    "state": "inconclusive",
+    "decision": "Superseded",
+    "result": "read: stock 3.278530, cache 3.958364 ns/op; paired time ratio range 1.1519 to 1.2234.",
+    "effectPercent": 20.73594222258821,
+    "changeScope": "local",
+    "maintainability": "Experimental header overlay; generic library integration and additional platforms remain unvalidated.",
+    "codeComments": "Patch comments state cache collision checks, invalidation and mask-word conditions.",
+    "decisionRationale": "Preflight invalidation defect invalidates acceptance of this epoch; corrected tests and fresh measurements are recorded in E3.",
+    "evidence": [
+      "superseded-epochs.json",
+      "epochs/E1/hypotheses.json"
+    ],
+    "risks": [
+      "One Windows x64 compiler and processor."
+    ]
+  },
+  {
+    "id": "H-002",
+    "variant": "mask",
+    "workload": "write",
+    "claim": "Skipping saturated activity-word updates improves native coherent cached writes.",
+    "mechanism": "Avoid an idempotent activity-word read-modify-write when all 64 bits are already active.",
+    "prediction": "All paired mask/stock write time ratios below one on coherent64.",
+    "falsification": "Mixed paired directions or consistently higher time.",
+    "change": "Guard only the native cached-buffer activity-bit update with a whole-word saturation test.",
+    "state": "inconclusive",
+    "decision": "Mixed runs",
+    "result": "write: stock 4.876005, mask 4.686548 ns/op; paired time ratio range 0.9424 to 1.0963.",
+    "effectPercent": -3.8854956697492726,
+    "changeScope": "local",
+    "maintainability": "Experimental header overlay; generic library integration and additional platforms remain unvalidated.",
+    "codeComments": "Patch comments state cache collision checks, invalidation and mask-word conditions.",
+    "decisionRationale": "Classifies the bounded transfer experiment. Guardrail workload results determine upstream suitability; no production patch is installed.",
+    "evidence": [
+      "epochs/E3/comparison.json",
+      "epochs/E3/native-cache-transfer.patch",
+      "epochs/E3/raw/validation.json"
+    ],
+    "risks": [
+      "One Windows x64 compiler and processor."
+    ],
+    "epochs": [
+      "E1/E2 superseded; corrected native invalidation in E3/E4"
+    ]
+  },
+  {
+    "id": "H-003",
+    "claim": "The combined native changes improve coherent cached writes over stock.",
+    "mechanism": "Combine reduced leaf resolution with fewer redundant mask writes.",
+    "prediction": "All paired both/stock write time ratios below one on coherent64.",
+    "falsification": "Mixed paired directions or consistently higher time; counterexample regressions preclude a universal recommendation.",
+    "change": "Enable both independently tested mechanisms in one native build.",
+    "state": "inconclusive",
+    "decision": "Superseded",
+    "result": "write: stock 4.941902, both 4.540070 ns/op; paired time ratio range 0.8030 to 0.9263.",
+    "effectPercent": -8.131122915795775,
+    "changeScope": "local",
+    "maintainability": "Experimental header overlay; generic library integration and additional platforms remain unvalidated.",
+    "codeComments": "Patch comments state cache collision checks, invalidation and mask-word conditions.",
+    "decisionRationale": "Preflight invalidation defect invalidates acceptance of this epoch; corrected tests and fresh measurements are recorded in E3.",
+    "evidence": [
+      "superseded-epochs.json",
+      "epochs/E1/hypotheses.json"
+    ],
+    "risks": [
+      "One Windows x64 compiler and processor."
+    ]
+  },
+  {
+    "id": "H-004",
+    "parentId": "H-001",
+    "variant": "split",
+    "workload": "read",
+    "claim": "Separating secondary lookup from the common leaf-hit path makes the native cache improve coherent reads.",
+    "mechanism": "E1 assembly showed a leaf-index lambda call in the cache variant's read loop. A small forced-inline entry point and non-inlined miss helper keep that call off last-leaf hits.",
+    "prediction": "All paired split/stock read time ratios below one on coherent64; no unconditional leaf-lambda call on last-leaf hits in assembly.",
+    "falsification": "Mixed paired directions, higher time, or an unconditional per-read helper call.",
+    "change": "Preserve the original native membership predicate and tree fallback; move secondary lookup into an explicit miss helper.",
+    "state": "retained",
+    "decision": "Supports optional cache",
+    "result": "read: stock 3.522404, split 2.367326 ns/op; paired time ratio range 0.5415 to 0.6749.",
+    "effectPercent": -32.79232539733907,
+    "changeScope": "local",
+    "maintainability": "Experimental header overlay; generic library integration and additional platforms remain unvalidated.",
+    "codeComments": "Patch comments state cache collision checks, invalidation and mask-word conditions.",
+    "decisionRationale": "Classifies the bounded transfer experiment. Guardrail workload results determine upstream suitability; no production patch is installed.",
+    "evidence": [
+      "epochs/E3/comparison.json",
+      "epochs/E3/native-cache-transfer.patch",
+      "epochs/E3/raw/validation.json"
+    ],
+    "risks": [
+      "One Windows x64 compiler and processor.",
+      "512 additional bytes per accessor; random512 and collision64 regress."
+    ],
+    "epochs": [
+      "E1/E2 superseded; corrected native invalidation in E3/E4"
+    ]
+  },
+  {
+    "id": "H-005",
+    "parentId": "H-003",
+    "variant": "split_both",
+    "workload": "write",
+    "claim": "The cache with a separate miss helper and saturated-mask guard improves native coherent writes.",
+    "mechanism": "Combine the small common leaf-hit path with the cache and mask choices; native safety callbacks remain active.",
+    "prediction": "All paired split_both/stock write time ratios below one on coherent64.",
+    "falsification": "Mixed directions or higher time. Counterexample regressions require an optional policy rather than a universal recommendation.",
+    "change": "Enable the explicit miss helper and mask guard in a combined native build.",
+    "state": "retained",
+    "decision": "Supported locally",
+    "result": "write: stock 4.876005, split_both 3.516501 ns/op; paired time ratio range 0.7002 to 0.7901.",
+    "effectPercent": -27.881515677984858,
+    "changeScope": "local",
+    "maintainability": "Experimental header overlay; generic library integration and additional platforms remain unvalidated.",
+    "codeComments": "Patch comments state cache collision checks, invalidation and mask-word conditions.",
+    "decisionRationale": "Classifies the bounded transfer experiment. Guardrail workload results determine upstream suitability; no production patch is installed.",
+    "evidence": [
+      "epochs/E3/comparison.json",
+      "epochs/E3/native-cache-transfer.patch",
+      "epochs/E3/raw/validation.json"
+    ],
+    "risks": [
+      "One Windows x64 compiler and processor."
+    ],
+    "epochs": [
+      "E1/E2 superseded; corrected native invalidation in E3/E4"
+    ]
+  },
+  {
+    "id": "H-006",
+    "parentId": "H-004",
+    "variant": "split_only",
+    "workload": "read",
+    "claim": "Separating native common leaf hits from the miss helper improves coherent reads even without a larger cache.",
+    "mechanism": "The native default traverses a template cache-level dispatcher. A small common-hit entry point may improve code layout independently of retaining additional leaves.",
+    "prediction": "All paired split_only/stock read time ratios below one on coherent64, with the same 96-byte accessor and original parent caches.",
+    "falsification": "Mixed paired directions or no improvement; larger/cache-collision/churn workloads identify regressions.",
+    "change": "Use the explicit inline-hit and non-inline-miss layout with the stock single-leaf/parent caches and no secondary slots or activity guard.",
+    "state": "inconclusive",
+    "decision": "Mixed runs",
+    "result": "read: stock 3.595029, split_only 3.788847 ns/op; paired time ratio range 0.9934 to 1.0633.",
+    "effectPercent": 5.391295447351752,
+    "changeScope": "local",
+    "maintainability": "Experimental header overlay; generic library integration and additional platforms remain unvalidated.",
+    "codeComments": "Patch comments state cache collision checks, invalidation and mask-word conditions.",
+    "decisionRationale": "Classifies the bounded transfer experiment. Guardrail workload results determine upstream suitability; no production patch is installed.",
+    "evidence": [
+      "epochs/E4/comparison.json",
+      "epochs/E4/native-cache-transfer.patch",
+      "epochs/E4/raw/validation.json"
+    ],
+    "risks": [
+      "One Windows x64 compiler and processor."
+    ],
+    "epochs": [
+      "E1/E2 superseded; corrected native invalidation in E3/E4"
+    ]
+  },
+  {
+    "id": "H-007",
+    "parentId": "H-004",
+    "variant": "split_only",
+    "workload": "write",
+    "claim": "The common-hit layout alone improves native coherent writes.",
+    "mechanism": "Reduce common-path dispatcher code while retaining unconditional activity updates and stock cache storage.",
+    "prediction": "All paired split_only/stock write time ratios below one on coherent64.",
+    "falsification": "Mixed paired directions or no improvement; guardrail regressions limit suitability.",
+    "change": "Use only the explicit hit/miss layout; no secondary cache and no mask guard.",
+    "state": "inconclusive",
+    "decision": "Mixed runs",
+    "result": "write: stock 5.038738, split_only 5.246308 ns/op; paired time ratio range 0.9612 to 1.1330.",
+    "effectPercent": 4.119474402169576,
+    "changeScope": "local",
+    "maintainability": "Experimental header overlay; generic library integration and additional platforms remain unvalidated.",
+    "codeComments": "Patch comments state cache collision checks, invalidation and mask-word conditions.",
+    "decisionRationale": "Classifies the bounded transfer experiment. Guardrail workload results determine upstream suitability; no production patch is installed.",
+    "evidence": [
+      "epochs/E4/comparison.json",
+      "epochs/E4/native-cache-transfer.patch",
+      "epochs/E4/raw/validation.json"
+    ],
+    "risks": [
+      "One Windows x64 compiler and processor."
+    ],
+    "epochs": [
+      "E1/E2 superseded; corrected native invalidation in E3/E4"
+    ]
+  }
+]

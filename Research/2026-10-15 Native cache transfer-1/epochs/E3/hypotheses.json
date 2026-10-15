@@ -1,0 +1,82 @@
+[
+  {
+    "id": "H-002",
+    "variant": "mask",
+    "workload": "write",
+    "claim": "Skipping saturated activity-word updates improves native coherent cached writes.",
+    "mechanism": "Avoid an idempotent activity-word read-modify-write when all 64 bits are already active.",
+    "prediction": "All paired mask/stock write time ratios below one on coherent64.",
+    "falsification": "Mixed paired directions or consistently higher time.",
+    "change": "Guard only the native cached-buffer activity-bit update with a whole-word saturation test.",
+    "state": "inconclusive",
+    "decision": "Mixed runs",
+    "result": "write: stock 4.876005, mask 4.686548 ns/op; paired time ratio range 0.9424 to 1.0963.",
+    "effectPercent": -3.8854956697492726,
+    "changeScope": "local",
+    "maintainability": "Experimental header overlay; generic library integration and additional platforms remain unvalidated.",
+    "codeComments": "Patch comments state cache collision checks, invalidation and mask-word conditions.",
+    "decisionRationale": "Classifies the bounded transfer experiment. Guardrail workload results determine upstream suitability; no production patch is installed.",
+    "evidence": [
+      "comparison.json",
+      "native-cache-transfer.patch",
+      "raw/validation.json"
+    ],
+    "risks": [
+      "One Windows x64 compiler and processor."
+    ]
+  },
+  {
+    "id": "H-004",
+    "parentId": "H-001",
+    "variant": "split",
+    "workload": "read",
+    "claim": "Separating secondary lookup from the common leaf-hit path makes the native cache improve coherent reads.",
+    "mechanism": "E1 assembly showed a leaf-index lambda call in the cache variant's read loop. A small forced-inline entry point and non-inlined miss helper keep that call off last-leaf hits.",
+    "prediction": "All paired split/stock read time ratios below one on coherent64; no unconditional leaf-lambda call on last-leaf hits in assembly.",
+    "falsification": "Mixed paired directions, higher time, or an unconditional per-read helper call.",
+    "change": "Preserve the original native membership predicate and tree fallback; move secondary lookup into an explicit miss helper.",
+    "state": "retained",
+    "decision": "Supported locally",
+    "result": "read: stock 3.522404, split 2.367326 ns/op; paired time ratio range 0.5415 to 0.6749.",
+    "effectPercent": -32.79232539733907,
+    "changeScope": "local",
+    "maintainability": "Experimental header overlay; generic library integration and additional platforms remain unvalidated.",
+    "codeComments": "Patch comments state cache collision checks, invalidation and mask-word conditions.",
+    "decisionRationale": "Classifies the bounded transfer experiment. Guardrail workload results determine upstream suitability; no production patch is installed.",
+    "evidence": [
+      "comparison.json",
+      "native-cache-transfer.patch",
+      "raw/validation.json"
+    ],
+    "risks": [
+      "One Windows x64 compiler and processor."
+    ]
+  },
+  {
+    "id": "H-005",
+    "parentId": "H-003",
+    "variant": "split_both",
+    "workload": "write",
+    "claim": "The cache with a separate miss helper and saturated-mask guard improves native coherent writes.",
+    "mechanism": "Combine the small common leaf-hit path with the cache and mask choices; native safety callbacks remain active.",
+    "prediction": "All paired split_both/stock write time ratios below one on coherent64.",
+    "falsification": "Mixed directions or higher time. Counterexample regressions require an optional policy rather than a universal recommendation.",
+    "change": "Enable the explicit miss helper and mask guard in a combined native build.",
+    "state": "retained",
+    "decision": "Supported locally",
+    "result": "write: stock 4.876005, split_both 3.516501 ns/op; paired time ratio range 0.7002 to 0.7901.",
+    "effectPercent": -27.881515677984858,
+    "changeScope": "local",
+    "maintainability": "Experimental header overlay; generic library integration and additional platforms remain unvalidated.",
+    "codeComments": "Patch comments state cache collision checks, invalidation and mask-word conditions.",
+    "decisionRationale": "Classifies the bounded transfer experiment. Guardrail workload results determine upstream suitability; no production patch is installed.",
+    "evidence": [
+      "comparison.json",
+      "native-cache-transfer.patch",
+      "raw/validation.json"
+    ],
+    "risks": [
+      "One Windows x64 compiler and processor."
+    ]
+  }
+]

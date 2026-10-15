@@ -1,0 +1,1102 @@
+{
+  "title": "Transferring managed cache choices to native OpenVDB",
+  "generatedAt": "2026-10-15T08:58:34.186882+02:00",
+  "status": "complete",
+  "scope": "Local C++ UInt16 Tree4 5/4/3 experiment. Stock upstream headers versus 64-leaf cache, saturated activity-word guard, and their combination.",
+  "question": "Do the two managed implementation choices improve native C++ cached access, and where do they regress?",
+  "primaryMetric": "ns/op; median of process-launch medians",
+  "summary": {
+    "baseline": 4.876005040240006,
+    "final": 3.5165009304861568,
+    "unit": "ns/op",
+    "changePercent": -27.881515677984858,
+    "headline": "Native source-transfer experiment; primary and counterexample workloads measured separately."
+  },
+  "scorecards": [
+    {
+      "title": "coherent64 read",
+      "value": 2.627943446408093,
+      "baseline": 3.522404461981897,
+      "unit": "ns/op",
+      "wallChangePercent": -25.393478381824774
+    },
+    {
+      "title": "coherent64 write",
+      "value": 3.5165009304861568,
+      "baseline": 4.876005040240006,
+      "unit": "ns/op",
+      "wallChangePercent": -27.881515677984858
+    }
+  ],
+  "environment": [
+    {
+      "label": "started",
+      "value": "2026-10-15T08:54:28.560394+02:00"
+    },
+    {
+      "label": "cpu",
+      "value": "AMD Ryzen 9 5950X 16-Core Processor"
+    },
+    {
+      "label": "platform",
+      "value": "Windows-11-10.0.26200-SP0"
+    },
+    {
+      "label": "managedRevision",
+      "value": "9d0811b7640be49453bd4e7f5c0f4c61be795bf2"
+    },
+    {
+      "label": "nativeRevision",
+      "value": "f42248c35a9f7bb30641a8a74d9075ce7d1ddcaf"
+    },
+    {
+      "label": "affinityCpu",
+      "value": "8"
+    },
+    {
+      "label": "lockPath",
+      "value": "C:\\Users\\tedd\\.codex\\locks\\performance-measurement.lock"
+    },
+    {
+      "label": "configuration",
+      "value": "{'workspace': 'D:\\\\Workspaces\\\\AI\\\\openvdb-native-cache-transfer-20261015', 'evidence': 'Research\\\\2026-10-15 Native cache transfer-1\\\\epochs\\\\E3', 'variants': ['stock', 'mask', 'split', 'split_both'], 'patterns': ['coherent64', 'random64', 'coherent512', 'random512', 'partial64', 'collision64', 'churn'], 'small_control_operations': 4194304, 'large_control_operations': 4194304, 'epoch': 'E3'}"
+    },
+    {
+      "label": "powerScheme",
+      "value": "Power Scheme GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c  (High performance)"
+    },
+    {
+      "label": "protocol",
+      "value": "E3; fixed workload and variant orders before measurements"
+    },
+    {
+      "label": "nativeLibrarySha256",
+      "value": "fbf4bed50138f292816ed4f123c34e3f39c87b56a7344c3122dc788ab9730b3c"
+    },
+    {
+      "label": "completed",
+      "value": "2026-10-15T08:58:34.186882+02:00"
+    }
+  ],
+  "hotspots": [
+    {
+      "name": "Native cached voxel access",
+      "location": "openvdb/tree/ValueAccessor.h",
+      "evidence": "User-requested local transfer experiment; no application hotspot or application speedup claimed."
+    }
+  ],
+  "areas": [
+    {
+      "name": "Leaf location and activity writes",
+      "boundary": "Only the two source-level choices discussed with the user and their combination.",
+      "evidence": "Source comparison plus paired timing and independent tree validation.",
+      "hypothesisIds": [
+        "H-002",
+        "H-004",
+        "H-005"
+      ],
+      "disposition": "Three bounded questions; unrelated optimization catalogue categories excluded. No fabricated ten/twenty-hypothesis search."
+    }
+  ],
+  "series": [
+    {
+      "title": "coherent64",
+      "description": "Median of process-launch medians; whiskers span launch medians. Variants and read/write order alternate; setup and correctness checks excluded.",
+      "unit": "ns/op",
+      "lowerIsBetter": true,
+      "rounds": [
+        "stock",
+        "mask",
+        "split",
+        "split_both"
+      ],
+      "rows": [
+        {
+          "label": "read",
+          "measurements": [
+            {
+              "median": 3.522404461981897,
+              "min": 3.507663631814179,
+              "max": 4.929010833700238,
+              "n": 5
+            },
+            {
+              "median": 3.466228920072903,
+              "min": 3.435717341471781,
+              "max": 3.9171171375839613,
+              "n": 5
+            },
+            {
+              "median": 2.367326128998403,
+              "min": 2.362192536400311,
+              "max": 2.6688661987784648,
+              "n": 5
+            },
+            {
+              "median": 2.627943446408093,
+              "min": 2.617690260100958,
+              "max": 3.053245694421691,
+              "n": 5
+            }
+          ]
+        },
+        {
+          "label": "write",
+          "measurements": [
+            {
+              "median": 4.876005040240006,
+              "min": 4.362577785826916,
+              "max": 5.0219894549168576,
+              "n": 5
+            },
+            {
+              "median": 4.686548075544724,
+              "min": 4.226436589992218,
+              "max": 5.505707067087156,
+              "n": 5
+            },
+            {
+              "median": 3.6153230879597396,
+              "min": 3.2981322602238285,
+              "max": 3.7901492137583963,
+              "n": 5
+            },
+            {
+              "median": 3.5165009304861568,
+              "min": 3.1753300058107388,
+              "max": 3.852534262880898,
+              "n": 5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "random64",
+      "description": "Median of process-launch medians; whiskers span launch medians. Variants and read/write order alternate; setup and correctness checks excluded.",
+      "unit": "ns/op",
+      "lowerIsBetter": true,
+      "rounds": [
+        "stock",
+        "mask",
+        "split",
+        "split_both"
+      ],
+      "rows": [
+        {
+          "label": "read",
+          "measurements": [
+            {
+              "median": 32.83557891845703,
+              "min": 32.82430171966553,
+              "max": 33.05795192718506,
+              "n": 3
+            },
+            {
+              "median": 31.12344741821289,
+              "min": 31.108713150024414,
+              "max": 31.270766258239746,
+              "n": 3
+            },
+            {
+              "median": 10.912084579467773,
+              "min": 7.293939590454102,
+              "max": 15.908026695251465,
+              "n": 3
+            },
+            {
+              "median": 7.605457305908203,
+              "min": 7.602524757385254,
+              "max": 7.659339904785156,
+              "n": 3
+            }
+          ]
+        },
+        {
+          "label": "write",
+          "measurements": [
+            {
+              "median": 36.746954917907715,
+              "min": 36.328744888305664,
+              "max": 36.837077140808105,
+              "n": 3
+            },
+            {
+              "median": 36.261749267578125,
+              "min": 36.17544174194336,
+              "max": 36.47432327270508,
+              "n": 3
+            },
+            {
+              "median": 8.709263801574707,
+              "min": 8.570647239685059,
+              "max": 8.879899978637695,
+              "n": 3
+            },
+            {
+              "median": 8.604907989501953,
+              "min": 8.593082427978516,
+              "max": 8.615565299987793,
+              "n": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "coherent512",
+      "description": "Median of process-launch medians; whiskers span launch medians. Variants and read/write order alternate; setup and correctness checks excluded.",
+      "unit": "ns/op",
+      "lowerIsBetter": true,
+      "rounds": [
+        "stock",
+        "mask",
+        "split",
+        "split_both"
+      ],
+      "rows": [
+        {
+          "label": "read",
+          "measurements": [
+            {
+              "median": 3.6304235458374023,
+              "min": 3.621649742126465,
+              "max": 3.6330223083496094,
+              "n": 3
+            },
+            {
+              "median": 3.5390853881835938,
+              "min": 3.5280942916870117,
+              "max": 3.5395383834838867,
+              "n": 3
+            },
+            {
+              "median": 3.8968801498413086,
+              "min": 3.691267967224121,
+              "max": 3.9018154144287114,
+              "n": 3
+            },
+            {
+              "median": 4.10006046295166,
+              "min": 4.066944122314453,
+              "max": 4.147982597351074,
+              "n": 3
+            }
+          ]
+        },
+        {
+          "label": "write",
+          "measurements": [
+            {
+              "median": 4.1381120681762695,
+              "min": 4.10914421081543,
+              "max": 4.176878929138184,
+              "n": 3
+            },
+            {
+              "median": 4.2685747146606445,
+              "min": 4.261994361877441,
+              "max": 4.2717695236206055,
+              "n": 3
+            },
+            {
+              "median": 4.723548889160156,
+              "min": 4.717302322387695,
+              "max": 4.741263389587402,
+              "n": 3
+            },
+            {
+              "median": 4.695868492126465,
+              "min": 4.6759843826293945,
+              "max": 4.703402519226074,
+              "n": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "random512",
+      "description": "Median of process-launch medians; whiskers span launch medians. Variants and read/write order alternate; setup and correctness checks excluded.",
+      "unit": "ns/op",
+      "lowerIsBetter": true,
+      "rounds": [
+        "stock",
+        "mask",
+        "split",
+        "split_both"
+      ],
+      "rows": [
+        {
+          "label": "read",
+          "measurements": [
+            {
+              "median": 32.33013153076172,
+              "min": 32.276248931884766,
+              "max": 32.582664489746094,
+              "n": 3
+            },
+            {
+              "median": 30.18777370452881,
+              "min": 29.98783588409424,
+              "max": 30.339455604553223,
+              "n": 3
+            },
+            {
+              "median": 44.66202259063721,
+              "min": 44.45748329162598,
+              "max": 44.704270362854004,
+              "n": 3
+            },
+            {
+              "median": 43.40996742248535,
+              "min": 43.29562187194824,
+              "max": 43.87161731719971,
+              "n": 3
+            }
+          ]
+        },
+        {
+          "label": "write",
+          "measurements": [
+            {
+              "median": 38.05737495422363,
+              "min": 37.98470497131348,
+              "max": 38.327765464782715,
+              "n": 3
+            },
+            {
+              "median": 38.41676712036133,
+              "min": 38.09213638305664,
+              "max": 38.565850257873535,
+              "n": 3
+            },
+            {
+              "median": 49.67348575592041,
+              "min": 49.160194396972656,
+              "max": 49.76918697357178,
+              "n": 3
+            },
+            {
+              "median": 50.169968605041504,
+              "min": 49.92198944091797,
+              "max": 50.597190856933594,
+              "n": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "partial64",
+      "description": "Median of process-launch medians; whiskers span launch medians. Variants and read/write order alternate; setup and correctness checks excluded.",
+      "unit": "ns/op",
+      "lowerIsBetter": true,
+      "rounds": [
+        "stock",
+        "mask",
+        "split",
+        "split_both"
+      ],
+      "rows": [
+        {
+          "label": "read",
+          "measurements": [
+            {
+              "median": 3.507256507873535,
+              "min": 3.501558303833008,
+              "max": 3.515195846557617,
+              "n": 3
+            },
+            {
+              "median": 3.4484386444091797,
+              "min": 3.4375667572021484,
+              "max": 3.465104103088379,
+              "n": 3
+            },
+            {
+              "median": 2.372431755065918,
+              "min": 2.3626089096069336,
+              "max": 2.3917675018310547,
+              "n": 3
+            },
+            {
+              "median": 2.616405487060547,
+              "min": 2.6075124740600586,
+              "max": 2.6409387588500977,
+              "n": 3
+            }
+          ]
+        },
+        {
+          "label": "write",
+          "measurements": [
+            {
+              "median": 6.004524230957031,
+              "min": 5.933475494384766,
+              "max": 6.117820739746094,
+              "n": 3
+            },
+            {
+              "median": 6.0349225997924805,
+              "min": 5.979394912719727,
+              "max": 6.2015533447265625,
+              "n": 3
+            },
+            {
+              "median": 3.90777587890625,
+              "min": 3.8718461990356445,
+              "max": 3.9516210556030273,
+              "n": 3
+            },
+            {
+              "median": 3.8945913314819336,
+              "min": 3.8543224334716797,
+              "max": 3.920221328735351,
+              "n": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "collision64",
+      "description": "Median of process-launch medians; whiskers span launch medians. Variants and read/write order alternate; setup and correctness checks excluded.",
+      "unit": "ns/op",
+      "lowerIsBetter": true,
+      "rounds": [
+        "stock",
+        "mask",
+        "split",
+        "split_both"
+      ],
+      "rows": [
+        {
+          "label": "read",
+          "measurements": [
+            {
+              "median": 15.340709686279295,
+              "min": 15.316939353942871,
+              "max": 15.418434143066406,
+              "n": 3
+            },
+            {
+              "median": 15.150785446166992,
+              "min": 15.094804763793945,
+              "max": 15.16728401184082,
+              "n": 3
+            },
+            {
+              "median": 19.190263748168945,
+              "min": 19.155335426330566,
+              "max": 19.246363639831543,
+              "n": 3
+            },
+            {
+              "median": 19.554996490478516,
+              "min": 19.54336166381836,
+              "max": 19.56315040588379,
+              "n": 3
+            }
+          ]
+        },
+        {
+          "label": "write",
+          "measurements": [
+            {
+              "median": 21.206355094909668,
+              "min": 21.093153953552246,
+              "max": 21.321392059326172,
+              "n": 3
+            },
+            {
+              "median": 21.197509765625,
+              "min": 21.152830123901367,
+              "max": 21.282505989074707,
+              "n": 3
+            },
+            {
+              "median": 23.19331169128418,
+              "min": 23.128604888916016,
+              "max": 23.292064666748047,
+              "n": 3
+            },
+            {
+              "median": 23.94862174987793,
+              "min": 23.752808570861816,
+              "max": 24.147391319274902,
+              "n": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "churn",
+      "description": "Median of process-launch medians; whiskers span launch medians. Variants and read/write order alternate; setup and correctness checks excluded.",
+      "unit": "ns/op",
+      "lowerIsBetter": true,
+      "rounds": [
+        "stock",
+        "mask",
+        "split",
+        "split_both"
+      ],
+      "rows": [
+        {
+          "label": "write",
+          "measurements": [
+            {
+              "median": 443.3544158935547,
+              "min": 443.2777404785156,
+              "max": 444.4805145263672,
+              "n": 3
+            },
+            {
+              "median": 444.2329406738281,
+              "min": 441.9136047363281,
+              "max": 446.10633850097656,
+              "n": 3
+            },
+            {
+              "median": 448.4138488769531,
+              "min": 447.5547790527344,
+              "max": 451.5583038330078,
+              "n": 3
+            },
+            {
+              "median": 459.33685302734375,
+              "min": 458.843994140625,
+              "max": 461.77635192871094,
+              "n": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "effectGroups": [
+    {
+      "name": "coherent64 read",
+      "control": "Paired unmodified native stock launches",
+      "items": [
+        {
+          "label": "mask",
+          "effect": -0.015948066871737554,
+          "range": [
+            -0.2052934615598403,
+            -0.011812624039964192
+          ]
+        },
+        {
+          "label": "split",
+          "effect": -0.3279232539733907,
+          "range": [
+            -0.4585391899463668,
+            -0.3250988756370544
+          ]
+        },
+        {
+          "label": "split_both",
+          "effect": -0.25393478381824774,
+          "range": [
+            -0.3805560999082648,
+            -0.2511376180145125
+          ]
+        }
+      ]
+    },
+    {
+      "name": "coherent64 write",
+      "control": "Paired unmodified native stock launches",
+      "items": [
+        {
+          "label": "mask",
+          "effect": -0.038854956697492726,
+          "range": [
+            -0.057621014424857564,
+            0.09631991793545236
+          ]
+        },
+        {
+          "label": "split",
+          "effect": -0.2585481232845923,
+          "range": [
+            -0.2597591151562857,
+            -0.24112968377588573
+          ]
+        },
+        {
+          "label": "split_both",
+          "effect": -0.2788151567798486,
+          "range": [
+            -0.2997793081697391,
+            -0.20989945024928258
+          ]
+        }
+      ]
+    },
+    {
+      "name": "random64 read",
+      "control": "Paired unmodified native stock launches",
+      "items": [
+        {
+          "label": "mask",
+          "effect": -0.05214257085267171,
+          "range": [
+            -0.05896429341582099,
+            -0.04732881980837489
+          ]
+        },
+        {
+          "label": "split",
+          "effect": -0.6676749751674382,
+          "range": [
+            -0.7778647482181548,
+            -0.5153582601356381
+          ]
+        },
+        {
+          "label": "split_both",
+          "effect": -0.7683775478789217,
+          "range": [
+            -0.7700243265483924,
+            -0.7666564251633011
+          ]
+        }
+      ]
+    },
+    {
+      "name": "random64 write",
+      "control": "Paired unmodified native stock launches",
+      "items": [
+        {
+          "label": "mask",
+          "effect": -0.013203968911533859,
+          "range": [
+            -0.015618173804366031,
+            -0.004219885570878934
+          ]
+        },
+        {
+          "label": "split",
+          "effect": -0.7629935916858661,
+          "range": [
+            -0.7673363929791678,
+            -0.7555682144830673
+          ]
+        },
+        {
+          "label": "split_both",
+          "effect": -0.7658334409279566,
+          "range": [
+            -0.7667273547482653,
+            -0.7631377572784823
+          ]
+        }
+      ]
+    },
+    {
+      "name": "coherent512 read",
+      "control": "Paired unmodified native stock launches",
+      "items": [
+        {
+          "label": "mask",
+          "effect": -0.025159091356857233,
+          "range": [
+            -0.028881743010893857,
+            -0.022797443105139426
+          ]
+        },
+        {
+          "label": "split",
+          "effect": 0.07339545941118142,
+          "range": [
+            0.01603228770179821,
+            0.07599586578276929
+          ]
+        },
+        {
+          "label": "split_both",
+          "effect": 0.12936146738380905,
+          "range": [
+            0.12295346372356053,
+            0.1425616171168509
+          ]
+        }
+      ]
+    },
+    {
+      "name": "coherent512 write",
+      "control": "Paired unmodified native stock launches",
+      "items": [
+        {
+          "label": "mask",
+          "effect": 0.03152709359605921,
+          "range": [
+            0.022718062000901762,
+            0.038798955613577046
+          ]
+        },
+        {
+          "label": "split",
+          "effect": 0.14147437559415788,
+          "range": [
+            0.135121096403354,
+            0.14800116042935896
+          ]
+        },
+        {
+          "label": "split_both",
+          "effect": 0.1347852389594677,
+          "range": [
+            0.12425295819990745,
+            0.13794604003481292
+          ]
+        }
+      ]
+    },
+    {
+      "name": "random512 read",
+      "control": "Paired unmodified native stock launches",
+      "items": [
+        {
+          "label": "mask",
+          "effect": -0.06626505135602323,
+          "range": [
+            -0.07244930768186997,
+            -0.06470625603871871
+          ]
+        },
+        {
+          "label": "split",
+          "effect": 0.3814364642513701,
+          "range": [
+            0.3707295977802103,
+            0.3850516042678045
+          ]
+        },
+        {
+          "label": "split_both",
+          "effect": 0.3427092735821784,
+          "range": [
+            0.33230256341210707,
+            0.3569885193772382
+          ]
+        }
+      ]
+    },
+    {
+      "name": "random512 write",
+      "control": "Paired unmodified native stock launches",
+      "items": [
+        {
+          "label": "mask",
+          "effect": 0.0094434302568156,
+          "range": [
+            0.002828280799450633,
+            0.0094434302568156
+          ]
+        },
+        {
+          "label": "split",
+          "effect": 0.30522627521390877,
+          "range": [
+            0.294210246837485,
+            0.30522627521390877
+          ]
+        },
+        {
+          "label": "split_both",
+          "effect": 0.31827191616308803,
+          "range": [
+            0.30897191622454323,
+            0.3320411701274295
+          ]
+        }
+      ]
+    },
+    {
+      "name": "partial64 read",
+      "control": "Paired unmodified native stock launches",
+      "items": [
+        {
+          "label": "mask",
+          "effect": -0.01677033411508788,
+          "range": [
+            -0.01987016076951842,
+            -0.014250057651351788
+          ]
+        },
+        {
+          "label": "split",
+          "effect": -0.3235648006525951,
+          "range": [
+            -0.32526929309710895,
+            -0.3180517317562286
+          ]
+        },
+        {
+          "label": "split_both",
+          "effect": -0.25400224329560517,
+          "range": [
+            -0.25821701325302837,
+            -0.24578186918687783
+          ]
+        }
+      ]
+    },
+    {
+      "name": "partial64 write",
+      "control": "Paired unmodified native stock launches",
+      "items": [
+        {
+          "label": "mask",
+          "effect": 0.005062577427654702,
+          "range": [
+            -0.01355027279812937,
+            0.045180577655624665
+          ]
+        },
+        {
+          "label": "split",
+          "effect": -0.3491947523903307,
+          "range": [
+            -0.3551785203773705,
+            -0.34140186765674974
+          ]
+        },
+        {
+          "label": "split_both",
+          "effect": -0.3513905212667958,
+          "range": [
+            -0.3592127825409198,
+            -0.3504106594660623
+          ]
+        }
+      ]
+    },
+    {
+      "name": "collision64 read",
+      "control": "Paired unmodified native stock launches",
+      "items": [
+        {
+          "label": "mask",
+          "effect": -0.012380407686234385,
+          "range": [
+            -0.017359006395586185,
+            -0.009770577440037065
+          ]
+        },
+        {
+          "label": "split",
+          "effect": 0.25093715614295764,
+          "range": [
+            0.24826966611823797,
+            0.25287848340465
+          ]
+        },
+        {
+          "label": "split_both",
+          "effect": 0.2747126365326156,
+          "range": [
+            0.26828679936167843,
+            0.2772232071838727
+          ]
+        }
+      ]
+    },
+    {
+      "name": "collision64 write",
+      "control": "Paired unmodified native stock launches",
+      "items": [
+        {
+          "label": "mask",
+          "effect": -0.0004171074776915251,
+          "range": [
+            -0.005810234780002754,
+            0.0035909468564598868
+          ]
+        },
+        {
+          "label": "split",
+          "effect": 0.09369628054806345,
+          "range": [
+            0.08476054586686099,
+            0.09956584692628434
+          ]
+        },
+        {
+          "label": "split_both",
+          "effect": 0.12931343659460404,
+          "range": [
+            0.12609089295826537,
+            0.1325429058330463
+          ]
+        }
+      ]
+    },
+    {
+      "name": "churn write",
+      "control": "Paired unmodified native stock launches",
+      "items": [
+        {
+          "label": "mask",
+          "effect": 0.0019815406112575484,
+          "range": [
+            -0.003077383810689227,
+            0.006207049053239988
+          ]
+        },
+        {
+          "label": "split",
+          "effect": 0.011411712169825616,
+          "range": [
+            0.009474052831331514,
+            0.015923733606596047
+          ]
+        },
+        {
+          "label": "split_both",
+          "effect": 0.036048895783697965,
+          "range": [
+            0.032315206504751615,
+            0.04155126322138436
+          ]
+        }
+      ]
+    }
+  ],
+  "hypotheses": [
+    {
+      "id": "H-002",
+      "variant": "mask",
+      "workload": "write",
+      "claim": "Skipping saturated activity-word updates improves native coherent cached writes.",
+      "mechanism": "Avoid an idempotent activity-word read-modify-write when all 64 bits are already active.",
+      "prediction": "All paired mask/stock write time ratios below one on coherent64.",
+      "falsification": "Mixed paired directions or consistently higher time.",
+      "change": "Guard only the native cached-buffer activity-bit update with a whole-word saturation test.",
+      "state": "inconclusive",
+      "decision": "Mixed runs",
+      "result": "write: stock 4.876005, mask 4.686548 ns/op; paired time ratio range 0.9424 to 1.0963.",
+      "effectPercent": -3.8854956697492726,
+      "changeScope": "local",
+      "maintainability": "Experimental header overlay; generic library integration and additional platforms remain unvalidated.",
+      "codeComments": "Patch comments state cache collision checks, invalidation and mask-word conditions.",
+      "decisionRationale": "Classifies the bounded transfer experiment. Guardrail workload results determine upstream suitability; no production patch is installed.",
+      "evidence": [
+        "comparison.json",
+        "native-cache-transfer.patch",
+        "raw/validation.json"
+      ],
+      "risks": [
+        "One Windows x64 compiler and processor."
+      ]
+    },
+    {
+      "id": "H-004",
+      "parentId": "H-001",
+      "variant": "split",
+      "workload": "read",
+      "claim": "Separating secondary lookup from the common leaf-hit path makes the native cache improve coherent reads.",
+      "mechanism": "E1 assembly showed a leaf-index lambda call in the cache variant's read loop. A small forced-inline entry point and non-inlined miss helper keep that call off last-leaf hits.",
+      "prediction": "All paired split/stock read time ratios below one on coherent64; no unconditional leaf-lambda call on last-leaf hits in assembly.",
+      "falsification": "Mixed paired directions, higher time, or an unconditional per-read helper call.",
+      "change": "Preserve the original native membership predicate and tree fallback; move secondary lookup into an explicit miss helper.",
+      "state": "retained",
+      "decision": "Supported locally",
+      "result": "read: stock 3.522404, split 2.367326 ns/op; paired time ratio range 0.5415 to 0.6749.",
+      "effectPercent": -32.79232539733907,
+      "changeScope": "local",
+      "maintainability": "Experimental header overlay; generic library integration and additional platforms remain unvalidated.",
+      "codeComments": "Patch comments state cache collision checks, invalidation and mask-word conditions.",
+      "decisionRationale": "Classifies the bounded transfer experiment. Guardrail workload results determine upstream suitability; no production patch is installed.",
+      "evidence": [
+        "comparison.json",
+        "native-cache-transfer.patch",
+        "raw/validation.json"
+      ],
+      "risks": [
+        "One Windows x64 compiler and processor."
+      ]
+    },
+    {
+      "id": "H-005",
+      "parentId": "H-003",
+      "variant": "split_both",
+      "workload": "write",
+      "claim": "The cache with a separate miss helper and saturated-mask guard improves native coherent writes.",
+      "mechanism": "Combine the small common leaf-hit path with the cache and mask choices; native safety callbacks remain active.",
+      "prediction": "All paired split_both/stock write time ratios below one on coherent64.",
+      "falsification": "Mixed directions or higher time. Counterexample regressions require an optional policy rather than a universal recommendation.",
+      "change": "Enable the explicit miss helper and mask guard in a combined native build.",
+      "state": "retained",
+      "decision": "Supported locally",
+      "result": "write: stock 4.876005, split_both 3.516501 ns/op; paired time ratio range 0.7002 to 0.7901.",
+      "effectPercent": -27.881515677984858,
+      "changeScope": "local",
+      "maintainability": "Experimental header overlay; generic library integration and additional platforms remain unvalidated.",
+      "codeComments": "Patch comments state cache collision checks, invalidation and mask-word conditions.",
+      "decisionRationale": "Classifies the bounded transfer experiment. Guardrail workload results determine upstream suitability; no production patch is installed.",
+      "evidence": [
+        "comparison.json",
+        "native-cache-transfer.patch",
+        "raw/validation.json"
+      ],
+      "risks": [
+        "One Windows x64 compiler and processor."
+      ]
+    }
+  ],
+  "retainedChanges": [
+    "Reproduction harness, experimental patch and evidence. Upstream checkout and managed library remain unchanged."
+  ],
+  "decisions": [],
+  "correctness": [
+    "Each executable tests signed cache collisions, copying, assignment across trees, explicitly invalidated direct tile replacement, clearing, explicit cache erasure, mask reactivation and tree destruction.",
+    "Every timed sample validates all voxel values/activity through tree lookups independent of the accessor; read checksums are consumed and verified.",
+    "All variants have identical coordinate hashes, topology and active voxel counts for every workload."
+  ],
+  "generatedCode": [
+    {
+      "summary": "Focused MSVC Release read/write and relevant helper listings are preserved. No hardware-counter attribution is claimed.",
+      "artifact": "assembly.zip"
+    }
+  ],
+  "validityThreats": [
+    "Only AMD Ryzen 9 5950X, Windows x64 and MSVC Release. No cross-machine claim.",
+    "The 64-leaf fixture exactly fits the secondary cache; random512 and collision64 deliberately test losing distributions.",
+    "The mask experiment modifies the native cached-buffer write path; it is not a general NodeMask API change.",
+    "The cache overlay changes accessor object size and layout. It is a prototype, not an ABI-compatible upstream patch.",
+    "Focused tests do not establish all OpenVDB types, APIs, threading configurations or full upstream-suite compatibility.",
+    "The shared performance lock is cooperative; external CPU snapshots are retained in raw/environment.json."
+  ],
+  "reproduction": [
+    "Set PYTHONDONTWRITEBYTECODE=1. Run through the shared performance lock: python benchmarks/NativeCacheTransfer/run.py --workspace D:/Workspaces/AI/openvdb-native-cache-transfer-20261015 --evidence \"Research/2026-10-15 Native cache transfer-1\"",
+    "Primary: five launches, nine samples of 50,003,968 operations, 1000 ms warmup/workload. Controls: three launches, five samples, 350 ms warmup; operation counts in raw JSON.",
+    "CMake uses unchanged upstream headers for stock and a copied tree-header overlay for other variants. Both experimental mechanisms are compile-time switches."
+  ],
+  "artifacts": [
+    {
+      "label": "All measurements",
+      "path": "comparison.json"
+    },
+    {
+      "label": "Experimental header patch",
+      "path": "native-cache-transfer.patch"
+    },
+    {
+      "label": "Source and reproduction driver",
+      "path": "../../benchmarks/NativeCacheTransfer/"
+    },
+    {
+      "label": "Assembly listings",
+      "path": "assembly.zip"
+    },
+    {
+      "label": "Raw measurements, validation and environment",
+      "path": "raw/"
+    }
+  ]
+}

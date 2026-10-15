@@ -1,0 +1,339 @@
+{
+  "started": "2026-10-15T08:54:28.560394+02:00",
+  "cpu": "AMD Ryzen 9 5950X 16-Core Processor",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "managedRevision": "9d0811b7640be49453bd4e7f5c0f4c61be795bf2",
+  "dirtyState": [
+    "?? .codex-remote-attachments/",
+    "?? \"Research/2026-10-15 Native cache transfer-1/\"",
+    "?? benchmarks/NativeCacheTransfer/",
+    "?? reference/Build-PointStatisticsReference.ps1.pending",
+    "?? reference/point-algorithms-oracle.cpp.pending",
+    "?? reference/point-algorithms.pending/",
+    "?? reference/point-statistics-oracle.cpp.pending",
+    "?? reference/point-statistics-output.json.tmp",
+    "?? reference/point-statistics-output2.json.tmp",
+    "?? reference/point-statistics-output3.json.tmp",
+    "?? reference/point-statistics-output4.json.tmp",
+    "?? reference/point-statistics-output5.json.tmp",
+    "?? reference/point-statistics-output6.json.tmp",
+    "?? reference/point-statistics-output7.json.tmp",
+    "?? reference/point-statistics-output8.json.tmp",
+    "?? reference/point-statistics-output9.json.tmp",
+    "?? reference/point-statistics.pending/",
+    "?? src/Tedd.OpenVDB/Points/PointAttribute.cs.pending",
+    "?? src/Tedd.OpenVDB/Points/PointCount.cs.pending",
+    "?? src/Tedd.OpenVDB/Points/PointDelete.cs.pending",
+    "?? src/Tedd.OpenVDB/Points/PointFilters.cs.pending",
+    "?? src/Tedd.OpenVDB/Points/PointGroup.cs.pending",
+    "?? src/Tedd.OpenVDB/Points/PointMask.cs.pending",
+    "?? src/Tedd.OpenVDB/Points/PointReplicate.cs.pending",
+    "?? src/Tedd.OpenVDB/Points/PointStatistics.cs.pending",
+    "?? tests/Tedd.OpenVDB.Tests/PointAlgorithmsNativeTests.cs.pending",
+    "?? tests/Tedd.OpenVDB.Tests/PointAlgorithmsTests.cs.pending",
+    "?? tests/Tedd.OpenVDB.Tests/PointStatisticsTests.cs.pending"
+  ],
+  "nativeRevision": "f42248c35a9f7bb30641a8a74d9075ce7d1ddcaf",
+  "affinityCpu": 8,
+  "lockPath": "C:\\Users\\tedd\\.codex\\locks\\performance-measurement.lock",
+  "configuration": {
+    "workspace": "D:\\Workspaces\\AI\\openvdb-native-cache-transfer-20261015",
+    "evidence": "Research\\2026-10-15 Native cache transfer-1\\epochs\\E3",
+    "variants": [
+      "stock",
+      "mask",
+      "split",
+      "split_both"
+    ],
+    "patterns": [
+      "coherent64",
+      "random64",
+      "coherent512",
+      "random512",
+      "partial64",
+      "collision64",
+      "churn"
+    ],
+    "small_control_operations": 4194304,
+    "large_control_operations": 4194304,
+    "epoch": "E3"
+  },
+  "powerScheme": "Power Scheme GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c  (High performance)",
+  "protocol": "E3; fixed workload and variant orders before measurements",
+  "nativeLibrarySha256": "fbf4bed50138f292816ed4f123c34e3f39c87b56a7344c3122dc788ab9730b3c",
+  "sourceHashes": {
+    "CMakeLists.txt": "ab6343e7f34f44dc054c27bdea950594eb99ad509cfa9b2d656e7d8fd09b0c2b",
+    "main.cpp": "e922b57c2de15153abf37b20f77f7a74c9fa8d126452bbc8e8ae4991b1f222a8",
+    "patch_header.py": "287a73bc8f01653688924be38351a5fc5eabbd4d14b58c93495ef01589409229",
+    "run.py": "9211271cb7d91a3c28a29ff84aa931f0e211aecc6bb7c40e39eeb5fb5f8b4f63"
+  },
+  "cpuBefore": [
+    {
+      "Name": "0",
+      "PercentProcessorTime": 4
+    },
+    {
+      "Name": "1",
+      "PercentProcessorTime": 10
+    },
+    {
+      "Name": "10",
+      "PercentProcessorTime": 4
+    },
+    {
+      "Name": "11",
+      "PercentProcessorTime": 4
+    },
+    {
+      "Name": "12",
+      "PercentProcessorTime": 10
+    },
+    {
+      "Name": "13",
+      "PercentProcessorTime": 10
+    },
+    {
+      "Name": "14",
+      "PercentProcessorTime": 0
+    },
+    {
+      "Name": "15",
+      "PercentProcessorTime": 10
+    },
+    {
+      "Name": "16",
+      "PercentProcessorTime": 0
+    },
+    {
+      "Name": "17",
+      "PercentProcessorTime": 0
+    },
+    {
+      "Name": "18",
+      "PercentProcessorTime": 4
+    },
+    {
+      "Name": "19",
+      "PercentProcessorTime": 0
+    },
+    {
+      "Name": "2",
+      "PercentProcessorTime": 4
+    },
+    {
+      "Name": "20",
+      "PercentProcessorTime": 0
+    },
+    {
+      "Name": "21",
+      "PercentProcessorTime": 0
+    },
+    {
+      "Name": "22",
+      "PercentProcessorTime": 0
+    },
+    {
+      "Name": "23",
+      "PercentProcessorTime": 0
+    },
+    {
+      "Name": "24",
+      "PercentProcessorTime": 0
+    },
+    {
+      "Name": "25",
+      "PercentProcessorTime": 4
+    },
+    {
+      "Name": "26",
+      "PercentProcessorTime": 10
+    },
+    {
+      "Name": "27",
+      "PercentProcessorTime": 16
+    },
+    {
+      "Name": "28",
+      "PercentProcessorTime": 0
+    },
+    {
+      "Name": "29",
+      "PercentProcessorTime": 4
+    },
+    {
+      "Name": "3",
+      "PercentProcessorTime": 4
+    },
+    {
+      "Name": "30",
+      "PercentProcessorTime": 0
+    },
+    {
+      "Name": "31",
+      "PercentProcessorTime": 0
+    },
+    {
+      "Name": "4",
+      "PercentProcessorTime": 0
+    },
+    {
+      "Name": "5",
+      "PercentProcessorTime": 4
+    },
+    {
+      "Name": "6",
+      "PercentProcessorTime": 0
+    },
+    {
+      "Name": "7",
+      "PercentProcessorTime": 0
+    },
+    {
+      "Name": "8",
+      "PercentProcessorTime": 34
+    },
+    {
+      "Name": "9",
+      "PercentProcessorTime": 28
+    },
+    {
+      "Name": "_Total",
+      "PercentProcessorTime": 3
+    }
+  ],
+  "cpuAfter": [
+    {
+      "Name": "0",
+      "PercentProcessorTime": 0
+    },
+    {
+      "Name": "1",
+      "PercentProcessorTime": 1
+    },
+    {
+      "Name": "10",
+      "PercentProcessorTime": 1
+    },
+    {
+      "Name": "11",
+      "PercentProcessorTime": 1
+    },
+    {
+      "Name": "12",
+      "PercentProcessorTime": 44
+    },
+    {
+      "Name": "13",
+      "PercentProcessorTime": 44
+    },
+    {
+      "Name": "14",
+      "PercentProcessorTime": 1
+    },
+    {
+      "Name": "15",
+      "PercentProcessorTime": 1
+    },
+    {
+      "Name": "16",
+      "PercentProcessorTime": 1
+    },
+    {
+      "Name": "17",
+      "PercentProcessorTime": 0
+    },
+    {
+      "Name": "18",
+      "PercentProcessorTime": 0
+    },
+    {
+      "Name": "19",
+      "PercentProcessorTime": 0
+    },
+    {
+      "Name": "2",
+      "PercentProcessorTime": 1
+    },
+    {
+      "Name": "20",
+      "PercentProcessorTime": 0
+    },
+    {
+      "Name": "21",
+      "PercentProcessorTime": 0
+    },
+    {
+      "Name": "22",
+      "PercentProcessorTime": 0
+    },
+    {
+      "Name": "23",
+      "PercentProcessorTime": 0
+    },
+    {
+      "Name": "24",
+      "PercentProcessorTime": 0
+    },
+    {
+      "Name": "25",
+      "PercentProcessorTime": 0
+    },
+    {
+      "Name": "26",
+      "PercentProcessorTime": 1
+    },
+    {
+      "Name": "27",
+      "PercentProcessorTime": 1
+    },
+    {
+      "Name": "28",
+      "PercentProcessorTime": 0
+    },
+    {
+      "Name": "29",
+      "PercentProcessorTime": 0
+    },
+    {
+      "Name": "3",
+      "PercentProcessorTime": 7
+    },
+    {
+      "Name": "30",
+      "PercentProcessorTime": 0
+    },
+    {
+      "Name": "31",
+      "PercentProcessorTime": 0
+    },
+    {
+      "Name": "4",
+      "PercentProcessorTime": 0
+    },
+    {
+      "Name": "5",
+      "PercentProcessorTime": 0
+    },
+    {
+      "Name": "6",
+      "PercentProcessorTime": 1
+    },
+    {
+      "Name": "7",
+      "PercentProcessorTime": 0
+    },
+    {
+      "Name": "8",
+      "PercentProcessorTime": 19
+    },
+    {
+      "Name": "9",
+      "PercentProcessorTime": 7
+    },
+    {
+      "Name": "_Total",
+      "PercentProcessorTime": 0
+    }
+  ],
+  "completed": "2026-10-15T08:58:34.186882+02:00"
+}

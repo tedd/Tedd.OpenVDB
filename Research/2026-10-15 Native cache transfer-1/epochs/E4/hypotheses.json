@@ -1,0 +1,56 @@
+[
+  {
+    "id": "H-006",
+    "parentId": "H-004",
+    "variant": "split_only",
+    "workload": "read",
+    "claim": "Separating native common leaf hits from the miss helper improves coherent reads even without a larger cache.",
+    "mechanism": "The native default traverses a template cache-level dispatcher. A small common-hit entry point may improve code layout independently of retaining additional leaves.",
+    "prediction": "All paired split_only/stock read time ratios below one on coherent64, with the same 96-byte accessor and original parent caches.",
+    "falsification": "Mixed paired directions or no improvement; larger/cache-collision/churn workloads identify regressions.",
+    "change": "Use the explicit inline-hit and non-inline-miss layout with the stock single-leaf/parent caches and no secondary slots or activity guard.",
+    "state": "inconclusive",
+    "decision": "Mixed runs",
+    "result": "read: stock 3.595029, split_only 3.788847 ns/op; paired time ratio range 0.9934 to 1.0633.",
+    "effectPercent": 5.391295447351752,
+    "changeScope": "local",
+    "maintainability": "Experimental header overlay; generic library integration and additional platforms remain unvalidated.",
+    "codeComments": "Patch comments state cache collision checks, invalidation and mask-word conditions.",
+    "decisionRationale": "Classifies the bounded transfer experiment. Guardrail workload results determine upstream suitability; no production patch is installed.",
+    "evidence": [
+      "comparison.json",
+      "native-cache-transfer.patch",
+      "raw/validation.json"
+    ],
+    "risks": [
+      "One Windows x64 compiler and processor."
+    ]
+  },
+  {
+    "id": "H-007",
+    "parentId": "H-004",
+    "variant": "split_only",
+    "workload": "write",
+    "claim": "The common-hit layout alone improves native coherent writes.",
+    "mechanism": "Reduce common-path dispatcher code while retaining unconditional activity updates and stock cache storage.",
+    "prediction": "All paired split_only/stock write time ratios below one on coherent64.",
+    "falsification": "Mixed paired directions or no improvement; guardrail regressions limit suitability.",
+    "change": "Use only the explicit hit/miss layout; no secondary cache and no mask guard.",
+    "state": "inconclusive",
+    "decision": "Mixed runs",
+    "result": "write: stock 5.038738, split_only 5.246308 ns/op; paired time ratio range 0.9612 to 1.1330.",
+    "effectPercent": 4.119474402169576,
+    "changeScope": "local",
+    "maintainability": "Experimental header overlay; generic library integration and additional platforms remain unvalidated.",
+    "codeComments": "Patch comments state cache collision checks, invalidation and mask-word conditions.",
+    "decisionRationale": "Classifies the bounded transfer experiment. Guardrail workload results determine upstream suitability; no production patch is installed.",
+    "evidence": [
+      "comparison.json",
+      "native-cache-transfer.patch",
+      "raw/validation.json"
+    ],
+    "risks": [
+      "One Windows x64 compiler and processor."
+    ]
+  }
+]

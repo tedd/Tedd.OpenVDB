@@ -1,0 +1,18 @@
+{
+  "stock": {
+    "correctness": true,
+    "accessorBytes": 96
+  },
+  "mask": {
+    "correctness": true,
+    "accessorBytes": 96
+  },
+  "split": {
+    "correctness": true,
+    "accessorBytes": 608
+  },
+  "split_both": {
+    "correctness": true,
+    "accessorBytes": 608
+  }
+}
