@@ -1,0 +1,46 @@
+{
+  "combined_region": {
+    "accessor.read.coherent": {
+      "nsPerOperation": 5.657946985327245,
+      "launchMedians": [
+        5.657946985327245,
+        5.98671689414728,
+        5.649739636662434
+      ],
+      "minimum": 5.649739636662434,
+      "maximum": 5.98671689414728
+    },
+    "accessor.write.coherent": {
+      "nsPerOperation": 8.408544697892776,
+      "launchMedians": [
+        8.54576980770806,
+        7.837705999651868,
+        8.408544697892776
+      ],
+      "minimum": 7.837705999651868,
+      "maximum": 8.54576980770806
+    }
+  },
+  "leaf_slots": {
+    "accessor.read.coherent": {
+      "nsPerOperation": 3.8720967104050623,
+      "launchMedians": [
+        3.8026262235828963,
+        5.17452534966825,
+        3.8720967104050623
+      ],
+      "minimum": 3.8026262235828963,
+      "maximum": 5.17452534966825
+    },
+    "accessor.write.coherent": {
+      "nsPerOperation": 7.155976101736567,
+      "launchMedians": [
+        7.38063827254669,
+        6.976710328268348,
+        7.155976101736567
+      ],
+      "minimum": 6.976710328268348,
+      "maximum": 7.38063827254669
+    }
+  }
+}

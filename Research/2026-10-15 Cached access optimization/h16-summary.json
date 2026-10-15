@@ -1,0 +1,46 @@
+{
+  "weak_registry": {
+    "accessor.read.coherent": {
+      "nsPerOperation": 3.156653487979194,
+      "launchMedians": [
+        3.1306555511754586,
+        3.5328836303550952,
+        3.156653487979194
+      ],
+      "minimum": 3.1306555511754586,
+      "maximum": 3.5328836303550952
+    },
+    "accessor.write.coherent": {
+      "nsPerOperation": 4.959810389447494,
+      "launchMedians": [
+        4.967505778741399,
+        4.733764328462893,
+        4.959810389447494
+      ],
+      "minimum": 4.733764328462893,
+      "maximum": 4.967505778741399
+    }
+  },
+  "direct_callback": {
+    "accessor.read.coherent": {
+      "nsPerOperation": 3.195610396358945,
+      "launchMedians": [
+        3.1670166655574215,
+        4.797351282202245,
+        3.195610396358945
+      ],
+      "minimum": 3.1670166655574215,
+      "maximum": 4.797351282202245
+    },
+    "accessor.write.coherent": {
+      "nsPerOperation": 5.183216659925868,
+      "launchMedians": [
+        5.340904145846985,
+        4.6189334414420875,
+        5.183216659925868
+      ],
+      "minimum": 4.6189334414420875,
+      "maximum": 5.340904145846985
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "selectedSource": "secondary_direct, with documentation-only comment updates in final_candidate",
+  "controlRevision": "0f56c8272ee342305c29bee82e482ed56487e5a6",
+  "arms": ["final_baseline", "final_candidate", "native"],
+  "sourceFrozenBeforeConfirmation": true,
+  "coherent": {"launches": 5, "samplesPerLaunch": 9, "operationsPerSample": 50003968, "warmupMillisecondsPerWorkload": 2000, "cpu": 8},
+  "random": {"launches": 3, "samplesPerLaunch": 5, "operationsPerSample": 12517376, "warmupMillisecondsPerWorkload": 2000, "cpu": 8},
+  "partial": {"launches": 3, "samplesPerLaunch": 5, "operationsPerSample": 25001984, "warmupMillisecondsPerWorkload": 2000, "cpu": 8},
+  "churn": {"launches": 3, "samplesPerLaunch": 5, "operationsPerSample": 32768, "warmupMilliseconds": 2000, "cpu": 8},
+  "primary": "median of launch-median elapsed ns per useful coherent read/write",
+  "goal": "at least approximately 2.5x original throughput; match or exceed native throughput on both coherent operations",
+  "guardrails": "Every fixture validates. Steady-state allocations remain zero. No median random/partial regression over 5% versus original. Setup/registration/churn are reported separately to quantify the mutation-time invalidation tradeoff.",
+  "order": "rotate arms across launches; alternate read/write order",
+  "independence": "descriptive sequential host sessions; no independent-sample or population significance claim",
+  "exclusions": "none; retain every sample and failed operation separately; no favorable-run selection or post-result sample expansion"
+}

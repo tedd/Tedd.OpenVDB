@@ -1,0 +1,17 @@
+{
+  "supersedes": "confirmation-plan.json for integration; preserve the earlier completed registry confirmation as rejected tradeoff evidence",
+  "selectedSource": "polled_safe: direct secondary-cache operations, original lazy topology-version invalidation, reuse of materialized leaf",
+  "reasonForSelection": "Meets cached throughput target while avoiding registry allocation, locks and topology callback clearing. The earlier registry build regressed topology churn.",
+  "arms": ["final_baseline", "release_candidate", "native"],
+  "sourceFrozenBeforeConfirmation": true,
+  "coherent": {"launches": 5, "samplesPerLaunch": 9, "operationsPerSample": 50003968, "warmupMillisecondsPerWorkload": 2000, "cpu": 8},
+  "random": {"launches": 3, "samplesPerLaunch": 5, "operationsPerSample": 12517376, "warmupMillisecondsPerWorkload": 2000, "cpu": 8},
+  "partial": {"launches": 3, "samplesPerLaunch": 5, "operationsPerSample": 25001984, "warmupMillisecondsPerWorkload": 2000, "cpu": 8},
+  "churn": {"launches": 3, "samplesPerLaunch": 5, "operationsPerSample": 32768, "warmupMilliseconds": 2000, "cpu": 8},
+  "primary": "median of launch-median elapsed ns per useful coherent read/write",
+  "goal": "approximately 2.5x or greater original throughput; match or exceed native throughput on both coherent operations",
+  "guardrails": "All fixtures validate; zero steady-state allocation; no median random/partial/churn regression above 5% versus original. Account for per-accessor storage and setup allocation separately.",
+  "order": "rotate arms across launches; alternate read/write order",
+  "independence": "descriptive sequential host sessions; no population significance or individual-tail-latency claim",
+  "exclusions": "none; preserve all samples, including slow sessions; no sample-budget expansion after results"
+}

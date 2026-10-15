@@ -1,0 +1,17 @@
+{
+  "revision": "f42248c35a9f7bb30641a8a74d9075ce7d1ddcaf",
+  "tbbSha256": "4243442411bae9e3b80bfe2e47b5b571e8ae541ac45cfb991036b3a16a0c6012",
+  "librarySha256": "fbf4bed50138f292816ed4f123c34e3f39c87b56a7344c3122dc788ab9730b3c",
+  "headerSha256": {
+    "tree/ValueAccessor.h": "e85bbf5e0d4f7291affc7459ff027d692f25541527ae181feac166becf668596",
+    "tree/Tree.h": "c5a29bedbef9ce1e02908baa1567195d364b2dc2f685ef2017052adbdeb5eb5f",
+    "tree/LeafNode.h": "e1a7f7f083c5d751180a9892349a5178d27d3533414d49bfb914a50d9da19699",
+    "tree/InternalNode.h": "b9d4abed5fb560e89dd411c9d9ba98d3984588b708fe71bf4067d0cac92a9387",
+    "tree/RootNode.h": "ec3a3df88a9f08656f6087c7b6e4565f8336069bcc2cd818400817e8124ceac1",
+    "math/Coord.h": "46bd164b70837b962505d77d155fc6b9b0de6aad94a2cc6c54821c0aa2027a49",
+    "util/NodeMasks.h": "4c85c6ac514ba35c5065cd2f2a6608440c9ee444be0d8516b9fff70d798ef314",
+    "Types.h": "4c382011eb28ed1b6f0d5634249523e282e42f1631aa20d4a700422975c6b638"
+  },
+  "trackedHeaderStatus": "",
+  "executableSha256": "4e6663707affe4ea1ec19ca908686eb0d7be92733ebca1714dcc4c1bed2cdf7e"
+}

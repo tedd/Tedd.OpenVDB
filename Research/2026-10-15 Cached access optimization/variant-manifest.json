@@ -1,0 +1,205 @@
+{
+  "baseRevision": "0f56c8272ee342305c29bee82e482ed56487e5a6",
+  "zipSha256": "bcc3510470e4dea0097c4dfae47ec16178f234f0ac3c087ade5feacdc7e1befa",
+  "format": "ZIP preserves exact modified source bytes; readable patches normalize line endings. Overlay on the base revision. Complete source hashes remain in raw/<tag>-source.json.",
+  "variants": {
+    "aligned_compare": {
+      "src/Tedd.OpenVDB/Tree/ValueAccessor.cs": "e069aee6ce502295cd5764f3d2ffffcdac19b4baffa7a9c1809b8bdcc08d2e49",
+      "src/Tedd.OpenVDB/Tree/LeafNode.cs": "ca8efefa5cab11c38f1cc4db5acf75c5e743e704aa0b0d28c280259e942284a0",
+      "src/Tedd.OpenVDB/Util/NodeMask.cs": "abb7410c97f77654be4af639eceedced5150f244d977a639c91e13a36b272f3a",
+      "benchmarks/CachedAccess.Managed/Program.cs": "996864c4041efe598dac211bb2951bd3ca28ea2a8c6102d9e52c455c3cdf0b12"
+    },
+    "append_stamp": {
+      "src/Tedd.OpenVDB/Tree/ValueAccessor.cs": "06f83a446221cf34d0310299a604634d8212a9541699a5531b2e48d7e471ef16",
+      "src/Tedd.OpenVDB/Tree/LeafNode.cs": "ca8efefa5cab11c38f1cc4db5acf75c5e743e704aa0b0d28c280259e942284a0",
+      "src/Tedd.OpenVDB/Util/NodeMask.cs": "abb7410c97f77654be4af639eceedced5150f244d977a639c91e13a36b272f3a",
+      "benchmarks/CachedAccess.Managed/Program.cs": "1072fcb9c0636ba0eb251de8a614797c41c834f4599b0dd412a7ccbef51608ee"
+    },
+    "baseline": {},
+    "bounded_leaf": {
+      "src/Tedd.OpenVDB/Tree/ValueAccessor.cs": "223834bbb668fac31efd00c30ce7bab8480b8027599ebb4b5f38c0f497aa3b9b",
+      "src/Tedd.OpenVDB/Tree/LeafNode.cs": "d603a977b1b5d3ca3df9b48ac6395c9e33844e9d6f3d312afe3af8014aba8a72",
+      "src/Tedd.OpenVDB/Util/NodeMask.cs": "8d83d7088ed3a5071e2522760062cfc2b4632da4aeccaf69e605aa5bc31ad170"
+    },
+    "bounded_write": {
+      "src/Tedd.OpenVDB/Tree/ValueAccessor.cs": "ce288a26d3b10ff5dd8e64fc71c9d27e1114fc409ba5c4c277ed48fdfa949cdf",
+      "src/Tedd.OpenVDB/Tree/LeafNode.cs": "7092354a3115020f8844237784814f3c8fcc0fa9ba5940a283650d1e9ae7b2c6",
+      "src/Tedd.OpenVDB/Tree/VdbTree.cs": "fba392b3d807261f8359f7133f9a0eca1fc816a4180e675334710886ccdbb8e3",
+      "src/Tedd.OpenVDB/Util/NodeMask.cs": "abb7410c97f77654be4af639eceedced5150f244d977a639c91e13a36b272f3a",
+      "benchmarks/CachedAccess.Managed/Program.cs": "d6f1a6d70e37635e75eb550b9c3e8e3ad105704be5dc77b836dc482da5e41ecc"
+    },
+    "cache64": {
+      "src/Tedd.OpenVDB/Tree/ValueAccessor.cs": "fb8a2ec90edf2dd6e37b3efbb88ddd8a57353a3d4f88cdeb90691803edb36fb7",
+      "src/Tedd.OpenVDB/Tree/LeafNode.cs": "e92607537a58d5b4f91a15236be98c693e3fb8bb6107d4df43742a970b9d7535",
+      "src/Tedd.OpenVDB/Util/NodeMask.cs": "abb7410c97f77654be4af639eceedced5150f244d977a639c91e13a36b272f3a",
+      "benchmarks/CachedAccess.Managed/Program.cs": "996864c4041efe598dac211bb2951bd3ca28ea2a8c6102d9e52c455c3cdf0b12"
+    },
+    "cached_origin": {
+      "src/Tedd.OpenVDB/Tree/ValueAccessor.cs": "df3ce35ceb80b9bd25df17d187e9b7ca3cc561aac36838865d783814286d9b9a",
+      "src/Tedd.OpenVDB/Tree/LeafNode.cs": "ca8efefa5cab11c38f1cc4db5acf75c5e743e704aa0b0d28c280259e942284a0",
+      "src/Tedd.OpenVDB/Util/NodeMask.cs": "abb7410c97f77654be4af639eceedced5150f244d977a639c91e13a36b272f3a",
+      "benchmarks/CachedAccess.Managed/Program.cs": "996864c4041efe598dac211bb2951bd3ca28ea2a8c6102d9e52c455c3cdf0b12"
+    },
+    "combined_region": {
+      "src/Tedd.OpenVDB/Tree/ValueAccessor.cs": "8140acab1826f34ef9083428d7651da48b0d303b664bb3f88dfdc5e762922a7a"
+    },
+    "dense_mask": {
+      "src/Tedd.OpenVDB/Tree/ValueAccessor.cs": "fb8a2ec90edf2dd6e37b3efbb88ddd8a57353a3d4f88cdeb90691803edb36fb7",
+      "src/Tedd.OpenVDB/Tree/LeafNode.cs": "ca8efefa5cab11c38f1cc4db5acf75c5e743e704aa0b0d28c280259e942284a0",
+      "src/Tedd.OpenVDB/Util/NodeMask.cs": "abb7410c97f77654be4af639eceedced5150f244d977a639c91e13a36b272f3a",
+      "benchmarks/CachedAccess.Managed/Program.cs": "996864c4041efe598dac211bb2951bd3ca28ea2a8c6102d9e52c455c3cdf0b12"
+    },
+    "direct_callback": {
+      "src/Tedd.OpenVDB/Tree/ValueAccessor.cs": "ce288a26d3b10ff5dd8e64fc71c9d27e1114fc409ba5c4c277ed48fdfa949cdf",
+      "src/Tedd.OpenVDB/Tree/LeafNode.cs": "ca8efefa5cab11c38f1cc4db5acf75c5e743e704aa0b0d28c280259e942284a0",
+      "src/Tedd.OpenVDB/Tree/VdbTree.cs": "fba392b3d807261f8359f7133f9a0eca1fc816a4180e675334710886ccdbb8e3",
+      "src/Tedd.OpenVDB/Util/NodeMask.cs": "abb7410c97f77654be4af639eceedced5150f244d977a639c91e13a36b272f3a",
+      "benchmarks/CachedAccess.Managed/Program.cs": "d6f1a6d70e37635e75eb550b9c3e8e3ad105704be5dc77b836dc482da5e41ecc"
+    },
+    "direct_hit": {
+      "src/Tedd.OpenVDB/Tree/ValueAccessor.cs": "a5bce361f95da4c46985925a8ceda209fe1d30f681266404baafe98282cc0e8e",
+      "src/Tedd.OpenVDB/Tree/LeafNode.cs": "ca8efefa5cab11c38f1cc4db5acf75c5e743e704aa0b0d28c280259e942284a0",
+      "src/Tedd.OpenVDB/Util/NodeMask.cs": "abb7410c97f77654be4af639eceedced5150f244d977a639c91e13a36b272f3a",
+      "benchmarks/CachedAccess.Managed/Program.cs": "996864c4041efe598dac211bb2951bd3ca28ea2a8c6102d9e52c455c3cdf0b12"
+    },
+    "direct_mask": {
+      "src/Tedd.OpenVDB/Tree/ValueAccessor.cs": "598ed716aeb2e0610b8a957c58b9f5b5cbb042517e0c5954ce12094ad8c151de",
+      "src/Tedd.OpenVDB/Tree/LeafNode.cs": "e92607537a58d5b4f91a15236be98c693e3fb8bb6107d4df43742a970b9d7535",
+      "src/Tedd.OpenVDB/Util/NodeMask.cs": "abb7410c97f77654be4af639eceedced5150f244d977a639c91e13a36b272f3a",
+      "benchmarks/CachedAccess.Managed/Program.cs": "7c87a1dfde3908aaba5a5e8c49ea1a215fb9fd9b8440a0a52105633134210715"
+    },
+    "final_baseline": {
+      "benchmarks/CachedAccess.Managed/Program.cs": "1072fcb9c0636ba0eb251de8a614797c41c834f4599b0dd412a7ccbef51608ee"
+    },
+    "final_candidate": {
+      "src/Tedd.OpenVDB/Tree/ValueAccessor.cs": "abefe53dbd29a99d3887e904232bd46c430a4313aa44d2cf8e6fdea2161b0a86",
+      "src/Tedd.OpenVDB/Tree/LeafNode.cs": "ca8efefa5cab11c38f1cc4db5acf75c5e743e704aa0b0d28c280259e942284a0",
+      "src/Tedd.OpenVDB/Tree/VdbTree.cs": "fba392b3d807261f8359f7133f9a0eca1fc816a4180e675334710886ccdbb8e3",
+      "src/Tedd.OpenVDB/Util/NodeMask.cs": "abb7410c97f77654be4af639eceedced5150f244d977a639c91e13a36b272f3a",
+      "benchmarks/CachedAccess.Managed/Program.cs": "1072fcb9c0636ba0eb251de8a614797c41c834f4599b0dd412a7ccbef51608ee"
+    },
+    "final_leaf": {
+      "src/Tedd.OpenVDB/Tree/ValueAccessor.cs": "b58ffa4e5a168860adfe2cbc5e2ab9748b25a6c80ff4ec0b5f45e72431b76383",
+      "src/Tedd.OpenVDB/Tree/LeafNode.cs": "ca8efefa5cab11c38f1cc4db5acf75c5e743e704aa0b0d28c280259e942284a0",
+      "src/Tedd.OpenVDB/Util/NodeMask.cs": "abb7410c97f77654be4af639eceedced5150f244d977a639c91e13a36b272f3a",
+      "benchmarks/CachedAccess.Managed/Program.cs": "1072fcb9c0636ba0eb251de8a614797c41c834f4599b0dd412a7ccbef51608ee"
+    },
+    "guard_baseline": {
+      "benchmarks/CachedAccess.Managed/Program.cs": "7c87a1dfde3908aaba5a5e8c49ea1a215fb9fd9b8440a0a52105633134210715"
+    },
+    "guard_saturated": {
+      "src/Tedd.OpenVDB/Tree/ValueAccessor.cs": "a14e31843127f09c175b47f58b9250359902e56a2b1e3ec5c5045a53acd46017",
+      "src/Tedd.OpenVDB/Tree/LeafNode.cs": "f6cbdd361b5b641a6843452eccdc30b9e143b499eedd2dcf35cf15697c11d492",
+      "src/Tedd.OpenVDB/Tree/LeafNode.Advanced.cs": "b5a126430f7a8d77f701ba75699d4589308d6775f0eaa977462bf7193d03cec3",
+      "src/Tedd.OpenVDB/Tree/VdbTree.cs": "fba392b3d807261f8359f7133f9a0eca1fc816a4180e675334710886ccdbb8e3",
+      "src/Tedd.OpenVDB/Util/NodeMask.cs": "abb7410c97f77654be4af639eceedced5150f244d977a639c91e13a36b272f3a",
+      "benchmarks/CachedAccess.Managed/Program.cs": "1072fcb9c0636ba0eb251de8a614797c41c834f4599b0dd412a7ccbef51608ee"
+    },
+    "guard_slots": {
+      "src/Tedd.OpenVDB/Tree/ValueAccessor.cs": "223834bbb668fac31efd00c30ce7bab8480b8027599ebb4b5f38c0f497aa3b9b",
+      "benchmarks/CachedAccess.Managed/Program.cs": "7c87a1dfde3908aaba5a5e8c49ea1a215fb9fd9b8440a0a52105633134210715"
+    },
+    "guard_weak": {
+      "src/Tedd.OpenVDB/Tree/ValueAccessor.cs": "a14e31843127f09c175b47f58b9250359902e56a2b1e3ec5c5045a53acd46017",
+      "src/Tedd.OpenVDB/Tree/LeafNode.cs": "ca8efefa5cab11c38f1cc4db5acf75c5e743e704aa0b0d28c280259e942284a0",
+      "src/Tedd.OpenVDB/Tree/VdbTree.cs": "fba392b3d807261f8359f7133f9a0eca1fc816a4180e675334710886ccdbb8e3",
+      "src/Tedd.OpenVDB/Util/NodeMask.cs": "abb7410c97f77654be4af639eceedced5150f244d977a639c91e13a36b272f3a",
+      "benchmarks/CachedAccess.Managed/Program.cs": "1072fcb9c0636ba0eb251de8a614797c41c834f4599b0dd412a7ccbef51608ee"
+    },
+    "inline_slots": {
+      "src/Tedd.OpenVDB/Tree/ValueAccessor.cs": "3b415bc0e6f047de44618f7e6153eeec8a637a1f85a14004ea1e32521a6f1197",
+      "src/Tedd.OpenVDB/Tree/LeafNode.cs": "e92607537a58d5b4f91a15236be98c693e3fb8bb6107d4df43742a970b9d7535",
+      "src/Tedd.OpenVDB/Util/NodeMask.cs": "abb7410c97f77654be4af639eceedced5150f244d977a639c91e13a36b272f3a",
+      "benchmarks/CachedAccess.Managed/Program.cs": "7c87a1dfde3908aaba5a5e8c49ea1a215fb9fd9b8440a0a52105633134210715"
+    },
+    "integrated_candidate": {
+      "src/Tedd.OpenVDB/Tree/ValueAccessor.cs": "06f83a446221cf34d0310299a604634d8212a9541699a5531b2e48d7e471ef16",
+      "src/Tedd.OpenVDB/Tree/LeafNode.cs": "ca8efefa5cab11c38f1cc4db5acf75c5e743e704aa0b0d28c280259e942284a0",
+      "src/Tedd.OpenVDB/Util/NodeMask.cs": "abb7410c97f77654be4af639eceedced5150f244d977a639c91e13a36b272f3a",
+      "benchmarks/CachedAccess.Managed/Program.cs": "1072fcb9c0636ba0eb251de8a614797c41c834f4599b0dd412a7ccbef51608ee"
+    },
+    "leaf_only": {
+      "src/Tedd.OpenVDB/Tree/ValueAccessor.cs": "b58ffa4e5a168860adfe2cbc5e2ab9748b25a6c80ff4ec0b5f45e72431b76383",
+      "src/Tedd.OpenVDB/Tree/LeafNode.cs": "ca8efefa5cab11c38f1cc4db5acf75c5e743e704aa0b0d28c280259e942284a0",
+      "src/Tedd.OpenVDB/Util/NodeMask.cs": "abb7410c97f77654be4af639eceedced5150f244d977a639c91e13a36b272f3a",
+      "benchmarks/CachedAccess.Managed/Program.cs": "1072fcb9c0636ba0eb251de8a614797c41c834f4599b0dd412a7ccbef51608ee"
+    },
+    "leaf_resolution": {
+      "src/Tedd.OpenVDB/Tree/ValueAccessor.cs": "598ed716aeb2e0610b8a957c58b9f5b5cbb042517e0c5954ce12094ad8c151de",
+      "src/Tedd.OpenVDB/Tree/LeafNode.cs": "d603a977b1b5d3ca3df9b48ac6395c9e33844e9d6f3d312afe3af8014aba8a72",
+      "src/Tedd.OpenVDB/Util/NodeMask.cs": "8d83d7088ed3a5071e2522760062cfc2b4632da4aeccaf69e605aa5bc31ad170"
+    },
+    "leaf_slots": {
+      "src/Tedd.OpenVDB/Tree/ValueAccessor.cs": "223834bbb668fac31efd00c30ce7bab8480b8027599ebb4b5f38c0f497aa3b9b"
+    },
+    "path_cache": {
+      "src/Tedd.OpenVDB/Tree/ValueAccessor.cs": "8926e440597399c476eb86894dc063229a4b6b603ae2909efa073f473ebf1e90"
+    },
+    "polled_safe": {
+      "src/Tedd.OpenVDB/Tree/ValueAccessor.cs": "236d872f1e4f87b2fe886c0667352599c12ec9d323d1f69700c5e346d4a8699d",
+      "src/Tedd.OpenVDB/Tree/LeafNode.cs": "ca8efefa5cab11c38f1cc4db5acf75c5e743e704aa0b0d28c280259e942284a0",
+      "src/Tedd.OpenVDB/Util/NodeMask.cs": "abb7410c97f77654be4af639eceedced5150f244d977a639c91e13a36b272f3a",
+      "benchmarks/CachedAccess.Managed/Program.cs": "1072fcb9c0636ba0eb251de8a614797c41c834f4599b0dd412a7ccbef51608ee"
+    },
+    "polled_secondary": {
+      "src/Tedd.OpenVDB/Tree/ValueAccessor.cs": "bd168320a906949ef7abaeaf3daef01aaf84a9373266d0100ea03134235e1545",
+      "src/Tedd.OpenVDB/Tree/LeafNode.cs": "ca8efefa5cab11c38f1cc4db5acf75c5e743e704aa0b0d28c280259e942284a0",
+      "src/Tedd.OpenVDB/Util/NodeMask.cs": "abb7410c97f77654be4af639eceedced5150f244d977a639c91e13a36b272f3a",
+      "benchmarks/CachedAccess.Managed/Program.cs": "1072fcb9c0636ba0eb251de8a614797c41c834f4599b0dd412a7ccbef51608ee"
+    },
+    "release_candidate": {
+      "src/Tedd.OpenVDB/Tree/ValueAccessor.cs": "236d872f1e4f87b2fe886c0667352599c12ec9d323d1f69700c5e346d4a8699d",
+      "src/Tedd.OpenVDB/Tree/LeafNode.cs": "ca8efefa5cab11c38f1cc4db5acf75c5e743e704aa0b0d28c280259e942284a0",
+      "src/Tedd.OpenVDB/Util/NodeMask.cs": "abb7410c97f77654be4af639eceedced5150f244d977a639c91e13a36b272f3a",
+      "benchmarks/CachedAccess.Managed/Program.cs": "1072fcb9c0636ba0eb251de8a614797c41c834f4599b0dd412a7ccbef51608ee"
+    },
+    "resolved_write": {
+      "src/Tedd.OpenVDB/Tree/ValueAccessor.cs": "de618a4af81da551fb734886f4ad51253554a8844d4a4028791ff53c84d613e4",
+      "src/Tedd.OpenVDB/Tree/LeafNode.cs": "ca8efefa5cab11c38f1cc4db5acf75c5e743e704aa0b0d28c280259e942284a0",
+      "src/Tedd.OpenVDB/Tree/VdbTree.cs": "ba24cb48c9964dae5dbc7c8a9d5010d331da76725fadf61ac6a059ec9458350d",
+      "src/Tedd.OpenVDB/Util/NodeMask.cs": "abb7410c97f77654be4af639eceedced5150f244d977a639c91e13a36b272f3a",
+      "benchmarks/CachedAccess.Managed/Program.cs": "1072fcb9c0636ba0eb251de8a614797c41c834f4599b0dd412a7ccbef51608ee"
+    },
+    "safe_mask": {
+      "src/Tedd.OpenVDB/Tree/ValueAccessor.cs": "223834bbb668fac31efd00c30ce7bab8480b8027599ebb4b5f38c0f497aa3b9b",
+      "src/Tedd.OpenVDB/Tree/LeafNode.cs": "e92607537a58d5b4f91a15236be98c693e3fb8bb6107d4df43742a970b9d7535",
+      "src/Tedd.OpenVDB/Util/NodeMask.cs": "abb7410c97f77654be4af639eceedced5150f244d977a639c91e13a36b272f3a",
+      "benchmarks/CachedAccess.Managed/Program.cs": "7c87a1dfde3908aaba5a5e8c49ea1a215fb9fd9b8440a0a52105633134210715"
+    },
+    "saturated_cache": {
+      "src/Tedd.OpenVDB/Tree/ValueAccessor.cs": "a14e31843127f09c175b47f58b9250359902e56a2b1e3ec5c5045a53acd46017",
+      "src/Tedd.OpenVDB/Tree/LeafNode.cs": "f6cbdd361b5b641a6843452eccdc30b9e143b499eedd2dcf35cf15697c11d492",
+      "src/Tedd.OpenVDB/Tree/LeafNode.Advanced.cs": "b5a126430f7a8d77f701ba75699d4589308d6775f0eaa977462bf7193d03cec3",
+      "src/Tedd.OpenVDB/Tree/VdbTree.cs": "fba392b3d807261f8359f7133f9a0eca1fc816a4180e675334710886ccdbb8e3",
+      "src/Tedd.OpenVDB/Util/NodeMask.cs": "abb7410c97f77654be4af639eceedced5150f244d977a639c91e13a36b272f3a",
+      "benchmarks/CachedAccess.Managed/Program.cs": "d6f1a6d70e37635e75eb550b9c3e8e3ad105704be5dc77b836dc482da5e41ecc"
+    },
+    "secondary_direct": {
+      "src/Tedd.OpenVDB/Tree/ValueAccessor.cs": "8ed2708f45bd10e46c8d7aeea67483caf322ae55224d48b1f384abf952b2359e",
+      "src/Tedd.OpenVDB/Tree/LeafNode.cs": "ca8efefa5cab11c38f1cc4db5acf75c5e743e704aa0b0d28c280259e942284a0",
+      "src/Tedd.OpenVDB/Tree/VdbTree.cs": "fba392b3d807261f8359f7133f9a0eca1fc816a4180e675334710886ccdbb8e3",
+      "src/Tedd.OpenVDB/Util/NodeMask.cs": "abb7410c97f77654be4af639eceedced5150f244d977a639c91e13a36b272f3a",
+      "benchmarks/CachedAccess.Managed/Program.cs": "1072fcb9c0636ba0eb251de8a614797c41c834f4599b0dd412a7ccbef51608ee"
+    },
+    "single_probe": {
+      "src/Tedd.OpenVDB/Tree/ValueAccessor.cs": "0defc1bbe9d9a2a397eeb2a6c6a3ca8e25adc3ca42ad7fd97cd885ce8b1e2316"
+    },
+    "value_only": {
+      "src/Tedd.OpenVDB/Tree/ValueAccessor.cs": "46d4cf8c1736bed9668e7c526720d083fd4b9eb452afd695c5278f8be4ae1e08"
+    },
+    "weak_list": {
+      "src/Tedd.OpenVDB/Tree/ValueAccessor.cs": "abefe53dbd29a99d3887e904232bd46c430a4313aa44d2cf8e6fdea2161b0a86",
+      "src/Tedd.OpenVDB/Tree/LeafNode.cs": "ca8efefa5cab11c38f1cc4db5acf75c5e743e704aa0b0d28c280259e942284a0",
+      "src/Tedd.OpenVDB/Tree/VdbTree.cs": "ba24cb48c9964dae5dbc7c8a9d5010d331da76725fadf61ac6a059ec9458350d",
+      "src/Tedd.OpenVDB/Util/NodeMask.cs": "abb7410c97f77654be4af639eceedced5150f244d977a639c91e13a36b272f3a",
+      "benchmarks/CachedAccess.Managed/Program.cs": "1072fcb9c0636ba0eb251de8a614797c41c834f4599b0dd412a7ccbef51608ee"
+    },
+    "weak_registry": {
+      "src/Tedd.OpenVDB/Tree/ValueAccessor.cs": "a14e31843127f09c175b47f58b9250359902e56a2b1e3ec5c5045a53acd46017",
+      "src/Tedd.OpenVDB/Tree/LeafNode.cs": "ca8efefa5cab11c38f1cc4db5acf75c5e743e704aa0b0d28c280259e942284a0",
+      "src/Tedd.OpenVDB/Tree/VdbTree.cs": "fba392b3d807261f8359f7133f9a0eca1fc816a4180e675334710886ccdbb8e3",
+      "src/Tedd.OpenVDB/Util/NodeMask.cs": "abb7410c97f77654be4af639eceedced5150f244d977a639c91e13a36b272f3a",
+      "benchmarks/CachedAccess.Managed/Program.cs": "996864c4041efe598dac211bb2951bd3ca28ea2a8c6102d9e52c455c3cdf0b12"
+    }
+  }
+}

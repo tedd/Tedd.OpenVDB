@@ -1,0 +1,46 @@
+{
+  "integrated_candidate": {
+    "accessor.read.coherent": {
+      "nsPerOperation": 3.038622854890236,
+      "launchMedians": [
+        3.03839487298288,
+        3.518280789236566,
+        3.038622854890236
+      ],
+      "minimum": 3.03839487298288,
+      "maximum": 3.518280789236566
+    },
+    "accessor.write.coherent": {
+      "nsPerOperation": 4.092227240846166,
+      "launchMedians": [
+        4.092227240846166,
+        3.978000305895724,
+        4.477288682370167
+      ],
+      "minimum": 3.978000305895724,
+      "maximum": 4.477288682370167
+    }
+  },
+  "leaf_only": {
+    "accessor.read.coherent": {
+      "nsPerOperation": 3.0384908653649245,
+      "launchMedians": [
+        3.0384908653649245,
+        3.37156043296404,
+        3.0338792313442005
+      ],
+      "minimum": 3.0338792313442005,
+      "maximum": 3.37156043296404
+    },
+    "accessor.write.coherent": {
+      "nsPerOperation": 4.3026385426052585,
+      "launchMedians": [
+        4.451454732552425,
+        3.8607976071019006,
+        4.3026385426052585
+      ],
+      "minimum": 3.8607976071019006,
+      "maximum": 4.451454732552425
+    }
+  }
+}

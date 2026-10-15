@@ -1,0 +1,38 @@
+{
+  "final_baseline": {
+    "accessor.topology.churn": {
+      "nsPerOperation": 427.825927734375,
+      "launchMedians": [
+        427.825927734375,
+        438.9892578125,
+        414.7430419921875
+      ],
+      "minimum": 414.7430419921875,
+      "maximum": 438.9892578125
+    }
+  },
+  "polled_safe": {
+    "accessor.topology.churn": {
+      "nsPerOperation": 457.8582763671875,
+      "launchMedians": [
+        476.0955810546875,
+        457.8582763671875,
+        433.3038330078125
+      ],
+      "minimum": 433.3038330078125,
+      "maximum": 476.0955810546875
+    }
+  },
+  "append_stamp": {
+    "accessor.topology.churn": {
+      "nsPerOperation": 421.64306640625,
+      "launchMedians": [
+        415.447998046875,
+        423.5748291015625,
+        421.64306640625
+      ],
+      "minimum": 415.447998046875,
+      "maximum": 423.5748291015625
+    }
+  }
+}

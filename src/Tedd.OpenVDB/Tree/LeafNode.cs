@@ -26,6 +26,8 @@ public sealed partial class LeafNode<T> where T : unmanaged
 
     private T[] _values;
     private readonly NodeMask _valueMask;
+    // NodeMask never replaces its backing words; both references observe all edits.
+    private readonly ulong[] _activityWords;
 
     public LeafNode(Coord origin, T value = default, bool active = false)
     {
@@ -33,6 +35,7 @@ public sealed partial class LeafNode<T> where T : unmanaged
         _values = GC.AllocateUninitializedArray<T>(Size);
         _values.AsSpan().Fill(value); // Initialize every byte-bearing value before exposing the buffer.
         _valueMask = new NodeMask(Log2Dim, active);
+        _activityWords = _valueMask.Storage;
     }
 
     private LeafNode(LeafNode<T> other)
@@ -40,6 +43,7 @@ public sealed partial class LeafNode<T> where T : unmanaged
         Origin = other.Origin;
         _values = (T[])other._values.Clone();
         _valueMask = other._valueMask.DeepCopy();
+        _activityWords = _valueMask.Storage;
     }
 
     public Coord Origin { get; }
@@ -106,7 +110,14 @@ public sealed partial class LeafNode<T> where T : unmanaged
     public void SetValueOn(int offset) => _valueMask.SetOn(offset);
     public void SetValueOff(Coord coordinate) => _valueMask.SetOff(CoordToOffset(coordinate));
     public void SetValueOff(int offset) => _valueMask.SetOff(offset);
-    public void SetValueOn(Coord coordinate, T value) => SetValueOn(CoordToOffset(coordinate), value);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void SetValueOn(Coord coordinate, T value)
+    {
+        int offset = CoordToOffset(coordinate);
+        _values[offset] = value;
+        ref ulong word = ref _activityWords[offset >> 6];
+        if (word != ulong.MaxValue) word |= 1UL << (offset & 63);
+    }
 
     public void SetValueOn(int offset, T value)
     {

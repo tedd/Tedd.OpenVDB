@@ -1,0 +1,68 @@
+{
+  "guard_weak": {
+    "accessor.read.coherent": {
+      "nsPerOperation": 3.178331767590924,
+      "launchMedians": [
+        3.178331767590924,
+        3.4205245471719365,
+        3.1356031585333386
+      ],
+      "minimum": 3.1356031585333386,
+      "maximum": 3.4205245471719365
+    },
+    "accessor.write.coherent": {
+      "nsPerOperation": 4.956374662106815,
+      "launchMedians": [
+        5.313074354419233,
+        4.756770502692906,
+        4.956374662106815
+      ],
+      "minimum": 4.756770502692906,
+      "maximum": 5.313074354419233
+    }
+  },
+  "secondary_direct": {
+    "accessor.read.coherent": {
+      "nsPerOperation": 2.747669944913172,
+      "launchMedians": [
+        2.747669944913172,
+        3.0858191093954783,
+        2.742438360091743
+      ],
+      "minimum": 2.742438360091743,
+      "maximum": 3.0858191093954783
+    },
+    "accessor.write.coherent": {
+      "nsPerOperation": 3.835919581422018,
+      "launchMedians": [
+        3.835919581422018,
+        3.7939989082466417,
+        4.2720569695588955
+      ],
+      "minimum": 3.7939989082466417,
+      "maximum": 4.2720569695588955
+    }
+  },
+  "native": {
+    "accessor.read.coherent": {
+      "nsPerOperation": 3.547450474330357,
+      "launchMedians": [
+        3.53846718724402,
+        6.231369478518185,
+        3.547450474330357
+      ],
+      "minimum": 3.53846718724402,
+      "maximum": 6.231369478518185
+    },
+    "accessor.write.coherent": {
+      "nsPerOperation": 4.603658653649246,
+      "launchMedians": [
+        4.606254447647035,
+        4.190975404191923,
+        4.603658653649246
+      ],
+      "minimum": 4.190975404191923,
+      "maximum": 4.606254447647035
+    }
+  }
+}

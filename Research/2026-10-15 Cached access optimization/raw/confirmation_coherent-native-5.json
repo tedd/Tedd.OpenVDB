@@ -1,0 +1,46 @@
+{
+  "implementation": "native",
+  "valueType": "UInt16",
+  "coordinates": 32768,
+  "coordinateHash": "0b6895be43c67b25",
+  "checksum": 147456,
+  "activeVoxelCount": 32768,
+  "leafCount": 64,
+  "openvdbVersion": "13.0.1",
+  "msvc": 195136260,
+  "cpu": 8,
+  "warmupMilliseconds": 2000,
+  "results": [
+    {
+      "name": "accessor.read.coherent",
+      "operations": 50003968,
+      "elapsedMilliseconds": [
+        176.8181,
+        176.9163,
+        176.6974,
+        176.6457,
+        176.8583,
+        186.9031,
+        191.8712,
+        204.5179,
+        211.3029
+      ]
+    },
+    {
+      "name": "accessor.write.coherent",
+      "operations": 50003968,
+      "elapsedMilliseconds": [
+        239.5799,
+        234.4631,
+        230.9055,
+        230.7591,
+        225.6832,
+        231.3194,
+        223.6874,
+        231.3481,
+        244.7176
+      ]
+    }
+  ],
+  "sink": 225017856
+}

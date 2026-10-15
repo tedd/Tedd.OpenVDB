@@ -1,0 +1,46 @@
+{
+  "guard_baseline": {
+    "accessor.read.random": {
+      "nsPerOperation": 46.687229016688484,
+      "launchMedians": [
+        46.687229016688484,
+        47.343532702061516,
+        46.36796881391116
+      ],
+      "minimum": 46.36796881391116,
+      "maximum": 47.343532702061516
+    },
+    "accessor.write.random": {
+      "nsPerOperation": 88.12705634152078,
+      "launchMedians": [
+        87.91740377535994,
+        88.12705634152078,
+        94.46165873742228
+      ],
+      "minimum": 87.91740377535994,
+      "maximum": 94.46165873742228
+    }
+  },
+  "safe_mask": {
+    "accessor.read.random": {
+      "nsPerOperation": 55.25748367709015,
+      "launchMedians": [
+        54.81084853566754,
+        55.25748367709015,
+        55.55104360530514
+      ],
+      "minimum": 54.81084853566754,
+      "maximum": 55.55104360530514
+    },
+    "accessor.write.random": {
+      "nsPerOperation": 65.25856537344568,
+      "launchMedians": [
+        65.25856537344568,
+        62.89974032896352,
+        67.69928457849313
+      ],
+      "minimum": 62.89974032896352,
+      "maximum": 67.69928457849313
+    }
+  }
+}

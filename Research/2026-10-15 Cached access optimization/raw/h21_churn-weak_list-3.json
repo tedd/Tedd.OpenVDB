@@ -1,0 +1,25 @@
+{
+  "implementation": "managed",
+  "pattern": "churn",
+  "runtime": ".NET 11.0.0-rc.1.26425.128",
+  "results": [
+    {
+      "name": "accessor.topology.churn",
+      "operations": 32768,
+      "elapsedMilliseconds": [
+        16.6514,
+        16.4648,
+        16.13,
+        16.0308,
+        16.0211
+      ],
+      "allocatedBytes": [
+        40370176,
+        40370176,
+        40370176,
+        40370176,
+        40370176
+      ]
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "final_baseline": {
+    "CachedAccess.Managed.deps.json": "9b13090d8c387876859c73b98ff25c5a9a6e4a265c295d054ffdd51498614db0",
+    "CachedAccess.Managed.dll": "67570d081c5d6e431f7e7207250a2b35c62040d3604d8e0ada1324c091bb7170",
+    "CachedAccess.Managed.runtimeconfig.json": "e347210f619ed3d12464ebbc82830ad17b344442d167be8cbef99f894fc9cd48",
+    "Tedd.OpenVDB.dll": "0b92d0a6bfaccb58c92299ed0ded6904230208c5fea30955aa7a18f02cc2020f"
+  },
+  "final_leaf": {
+    "CachedAccess.Managed.deps.json": "9b13090d8c387876859c73b98ff25c5a9a6e4a265c295d054ffdd51498614db0",
+    "CachedAccess.Managed.dll": "0d3553aab9b01110b288eb20a1370148c64b8bedc886dec310df6b5517e0666e",
+    "CachedAccess.Managed.runtimeconfig.json": "e347210f619ed3d12464ebbc82830ad17b344442d167be8cbef99f894fc9cd48",
+    "Tedd.OpenVDB.dll": "ccc96d6de73aa413dd971d9d5547a84988c2dc6364603bcf62cf049d37e88270"
+  }
+}

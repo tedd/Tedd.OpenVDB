@@ -1,0 +1,24 @@
+--- a/src/Tedd.OpenVDB/Tree/ValueAccessor.cs
++++ b/src/Tedd.OpenVDB/Tree/ValueAccessor.cs
+@@ -35,7 +35,20 @@
+         _version = _tree.TopologyVersion;
+         return active;
+     }
+-    public T GetValue(Coord coordinate) { ProbeValue(coordinate, out T value); return value; }
++    [MethodImpl(MethodImplOptions.AggressiveInlining)]
++    public T GetValue(Coord coordinate)
++    {
++        var leaf = Cached(coordinate);
++        return leaf is not null ? leaf.GetValue(coordinate) : GetValueUncached(coordinate);
++    }
++
++    [MethodImpl(MethodImplOptions.NoInlining)]
++    private T GetValueUncached(Coord coordinate)
++    {
++        _tree.Probe(coordinate, out T value, out _leaf, out _);
++        _version = _tree.TopologyVersion;
++        return value;
++    }
+     public bool IsValueOn(Coord coordinate) => ProbeValue(coordinate, out _);
+     public T this[Coord coordinate] { get => GetValue(coordinate); set => SetValueOn(coordinate, value); }
+     public void SetValueOn(Coord coordinate, T value)

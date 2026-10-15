@@ -39,6 +39,7 @@ public sealed class NodeMask : IEquatable<NodeMask>
     public int Size { get; }
     public int WordCount => _words.Length;
     public ReadOnlySpan<ulong> Words => _words;
+    internal ulong[] Storage => _words;
     public IndexEnumerable OnIndices => new(this, true);
     public IndexEnumerable OffIndices => new(this, false);
 

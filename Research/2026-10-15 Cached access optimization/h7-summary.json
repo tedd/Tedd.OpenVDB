@@ -1,0 +1,46 @@
+{
+  "bounded_leaf": {
+    "accessor.read.coherent": {
+      "nsPerOperation": 4.0104137335661045,
+      "launchMedians": [
+        3.9555220897669563,
+        4.270321107316923,
+        4.0104137335661045
+      ],
+      "minimum": 3.9555220897669563,
+      "maximum": 4.270321107316923
+    },
+    "accessor.write.coherent": {
+      "nsPerOperation": 6.930889964572412,
+      "launchMedians": [
+        6.930889964572412,
+        6.757047760689711,
+        6.995932802772772
+      ],
+      "minimum": 6.757047760689711,
+      "maximum": 6.995932802772772
+    }
+  },
+  "leaf_resolution": {
+    "accessor.read.coherent": {
+      "nsPerOperation": 4.06874110470593,
+      "launchMedians": [
+        4.06874110470593,
+        4.21637338860788,
+        4.050794528946183
+      ],
+      "minimum": 4.050794528946183,
+      "maximum": 4.21637338860788
+    },
+    "accessor.write.coherent": {
+      "nsPerOperation": 7.012887457251392,
+      "launchMedians": [
+        6.969522898662762,
+        7.012887457251392,
+        7.057335929820609
+      ],
+      "minimum": 6.969522898662762,
+      "maximum": 7.057335929820609
+    }
+  }
+}

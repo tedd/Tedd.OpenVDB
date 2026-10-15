@@ -1,0 +1,120 @@
+--- a/src/Tedd.OpenVDB/Tree/ValueAccessor.cs
++++ b/src/Tedd.OpenVDB/Tree/ValueAccessor.cs
+@@ -14,35 +14,60 @@
+ {
+     private readonly VdbTree<T> _tree;
+     private LeafNode<T>? _leaf;
++    private InternalNode<T>? _lower;
++    private InternalNode<T>? _upper;
+     private long _version;
+     public ValueAccessor(VdbTree<T> tree) => _tree = tree ?? throw new ArgumentNullException(nameof(tree));
+     public VdbTree<T> Tree => _tree;
+-    public void Clear() { _leaf = null; _version = _tree.TopologyVersion; }
++    public void Clear() { _leaf = null; _lower = null; _upper = null; _version = _tree.TopologyVersion; }
+ 
+     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+     private LeafNode<T>? Cached(Coord coordinate)
+     {
+         var leaf = _leaf;
+         if (_version != _tree.TopologyVersion) { Clear(); return null; }
+-        return leaf is not null && leaf.Origin == VdbTree<T>.Align(coordinate, 3) ? leaf : null;
++        if (leaf is null) return null;
++        var origin = leaf.Origin;
++        return (((coordinate.X ^ origin.X) | (coordinate.Y ^ origin.Y) | (coordinate.Z ^ origin.Z)) & -8) == 0
++            ? leaf : null;
+     }
+ 
+     public bool ProbeValue(Coord coordinate, out T value)
+     {
+         var leaf = Cached(coordinate);
+         if (leaf is not null) return leaf.ProbeValue(coordinate, out value);
+-        bool active = _tree.Probe(coordinate, out value, out _leaf, out _);
+-        _version = _tree.TopologyVersion;
+-        return active;
++        return Resolve(coordinate, out value);
+     }
+-    public T GetValue(Coord coordinate) { ProbeValue(coordinate, out T value); return value; }
++    [MethodImpl(MethodImplOptions.AggressiveInlining)]
++    public T GetValue(Coord coordinate)
++    {
++        var leaf = Cached(coordinate);
++        return leaf is not null ? leaf.GetValue(coordinate) : GetValueUncached(coordinate);
++    }
++
++    [MethodImpl(MethodImplOptions.NoInlining)]
++    private T GetValueUncached(Coord coordinate)
++    {
++        Resolve(coordinate, out T value);
++        return value;
++    }
+     public bool IsValueOn(Coord coordinate) => ProbeValue(coordinate, out _);
+     public T this[Coord coordinate] { get => GetValue(coordinate); set => SetValueOn(coordinate, value); }
++    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+     public void SetValueOn(Coord coordinate, T value)
+     {
+         var leaf = Cached(coordinate);
+         if (leaf is not null) leaf.SetValueOn(coordinate, value);
++        else SetValueOnUncached(coordinate, value);
++    }
++
++    [MethodImpl(MethodImplOptions.NoInlining)]
++    private void SetValueOnUncached(Coord coordinate, T value)
++    {
++        Resolve(coordinate, out _);
++        if (_leaf is not null) _leaf.SetValueOn(coordinate, value);
+         else { _tree.SetValueOn(coordinate, value); Cache(coordinate); }
++        _version = _tree.TopologyVersion;
+     }
+     public void SetValueOff(Coord coordinate, T value)
+     {
+@@ -66,7 +91,49 @@
+     public void SetValueOff(Coord coordinate) => SetActiveState(coordinate, false);
+     private void Cache(Coord coordinate)
+     {
+-        _tree.Probe(coordinate, out _, out _leaf, out _);
++        if (_version != _tree.TopologyVersion) Clear();
++        Resolve(coordinate, out _);
++    }
++
++    // Cache the path as well as the leaf. Every topology change clears all three
++    // references before reuse; no cached dictionary slot or raw address escapes.
++    [MethodImpl(MethodImplOptions.NoInlining)]
++    private bool Resolve(Coord coordinate, out T value)
++    {
++        _leaf = null;
++        var lower = _lower;
++        if (lower is null || lower.Origin != VdbTree<T>.Align(coordinate, 7))
++        {
++            var upper = _upper;
++            if (upper is null || upper.Origin != VdbTree<T>.Align(coordinate, 12))
++            {
++                _lower = null;
++                if (!_tree.Entries.TryGetValue(VdbTree<T>.Align(coordinate, 12), out var entry))
++                {
++                    _upper = null;
++                    value = _tree.Background;
++                    return false;
++                }
++                _upper = upper = entry.Child;
++                if (upper is null) { value = entry.Value; return entry.Active; }
++            }
++            int upperOffset = upper.Offset(coordinate);
++            if (!upper.Children.TryGetValue(upperOffset, out var child))
++            {
++                _lower = null;
++                value = upper.Values[upperOffset];
++                return upper.Active.IsOn(upperOffset);
++            }
++            _lower = lower = (InternalNode<T>)child;
++        }
++        int offset = lower.Offset(coordinate);
++        if (!lower.Children.TryGetValue(offset, out var leaf))
++        {
++            value = lower.Values[offset];
++            return lower.Active.IsOn(offset);
++        }
++        _leaf = (LeafNode<T>)leaf;
+         _version = _tree.TopologyVersion;
++        return _leaf.ProbeValue(coordinate, out value);
+     }
+ }

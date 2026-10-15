@@ -1,0 +1,22 @@
+{
+  "cpu": "AMD Ryzen 9 5950X 16-Core Processor",
+  "physicalCores": 16,
+  "logicalProcessors": 32,
+  "os": "Microsoft Windows 10.0.26200",
+  "architecture": "X64",
+  "sdk": "11.0.100-rc.1.26425.128",
+  "runtime": ".NET 11.0.0-rc.1.26425.128",
+  "serverGc": true,
+  "tieredCompilation": true,
+  "tieredPgo": true,
+  "vectorBytes": 32,
+  "affinityCpu": 8,
+  "affinityMask": "100",
+  "configuration": "Release; no debugger; warm steady state",
+  "native": "OpenVDB 13.0.1, MSVC x64 Release; pinned source and library hashes in raw/native-identity.json",
+  "clock": "Stopwatch.GetTimestamp / Stopwatch.Frequency for managed; std::chrono::steady_clock for native",
+  "observer": "No EventPipe or native profiler in timed workers; JIT disassembly uses separate diagnostic launches",
+  "sharedHost": "All task builds/tests/timings use the shared performance lock. External system load, frequency and thermal drift remain uncontrolled; all samples retained.",
+  "baselineFixture": "UInt16; 32768 coordinates in [-16,15]^3; 64 leaves; coordinate hash 0b6895be43c67b25; checksum 147456",
+  "otherWork": "Existing untracked pending files and .codex-remote-attachments were present at task start and are excluded from task commits."
+}

@@ -1,0 +1,54 @@
+{
+  "integrationBranch": "main",
+  "startingRevision": "0f56c8272ee342305c29bee82e482ed56487e5a6",
+  "scope": "steady-state cached UInt16 read/write; coherent primary, random/partial/churn contrasts",
+  "correctness": "independent dense/native fixtures; full regression suite; signed boundaries; detached nodes; activity invalidation; weak lifetime; frozen-tree concurrent registration; compacting GC",
+  "hostLock": "C:/Users/tedd/.codex/locks/performance-measurement.lock",
+  "coordinationThread": "01a139db-b768-7261-ace7-93131460d9bb",
+  "dotnetlab": {
+    "workspace": "workspace-56ac7483d5f244c5bfeec9f6cfbb43fe",
+    "qualifiedRuntime": "10.0.12",
+    "actualRuntime": "11.0.0-rc.1.26425.128",
+    "role": "MCP compatibility discovery and hypothesis records; external .NET 11 rig for timing and JIT diagnostics",
+    "normalBuildPromotionClaim": false
+  },
+  "catalogue": {
+    "M1": "One reused inline-cache object: accessor allocation 40 -> 552 bytes. Zero measured steady-state allocation. Churn allocation adds one word-array reference per leaf.",
+    "M2": "No temporary buffers in the access operation; stack storage does not apply.",
+    "M3": "H6/H17: optimized caller retains array guards; unchecked alternatives measured without repeatable benefit.",
+    "M4": "H6/H17: GC-tracked byref experiments; no raw pointers or pinning; rejected.",
+    "M5": "H8/H9/H13/H18/H24: retain safe activity-word alias and inline leaf cache; reject cached-origin/saturation metadata; remove internal-node retention.",
+    "M6": "H3/H5/H10/H24: retain 64-slot leaf lookup; canonical tree probing handles genuine misses; internal-node caches removed.",
+    "M7": "No copies or bulk output in a scalar accessor; no caller reordering or bulk-API substitution.",
+    "C1": "H13: dependent origin loads; caller accumulation/unrolling retained identically across managed/native comparisons.",
+    "C2": "H4/H11/H12/H14/H16/H18: containment predicates, saturation branch, hit/miss layout.",
+    "C3": "Scalar operation with single logical value; batching/SIMD would change the measured public caller contract.",
+    "C4": "Coordinate and bit offsets already use shifts/masks; no division or manual bit scan to replace.",
+    "C5": "No neighborhood or stencil in this accessor.",
+    "S1": "H11/H18: avoid idempotent saturated-word updates, with conservative activity invalidation.",
+    "S2": "H2/H3/H5/H10: repeated dictionary traversal, node cache, direct-mapped leaf cache.",
+    "S3": "Tree mappings are mutable; frozen replacement would require rebuild/invalidation outside this scope.",
+    "S4": "Original lazy topology-version invalidation clears all secondary entries before reuse; full origin checks reject collisions.",
+    "S5": "Arbitrary unmanaged values and independent activity prohibit substituting compressed uniform values for general writes.",
+    "R1": "No reflection/delegate dispatch in access; separate value-only reads in H1.",
+    "R2": "H1/H2/H12/H16: selective hot inlining/cold splitting; 12-byte Coord remains by-value for API compatibility and identical callers.",
+    "R3": "Runtime/PGO settings frozen across arms; no per-access feature flags.",
+    "T1": "One accessor per thread; no shared mutable cache or parallel timed kernel.",
+    "T2": "Original one-accessor-per-thread/exclusive tree mutation protocol retained. Registry experiments H15/H20 were superseded.",
+    "T3": "Final code introduces no registry or locks. Callback/weak-table/weak-list alternatives were rejected after churn measurements.",
+    "T4": "Single-thread scalar accessor objective; parallelism or bulk batching would change useful work. All host benchmarks serialized."
+  },
+  "inference": "Descriptive paired process launches, not independent individual-latency observations. No p-values, p99, PMU, application-speed, or full-runtime-qualification claims. No favorable-sample exclusions.",
+  "incompleteExecution": "h17 acquired the lock before its build; original partial control retained. h17_repaired froze the same complete budget after verifying the artifact.",
+  "finalSource": "final_leaf; ordinary .NET 11 build; no unsafe access or new public API",
+  "finalGates": {
+    "target": true,
+    "guardrails": true,
+    "tests": {
+      "failed": 0,
+      "passed": 21007,
+      "skipped": 0,
+      "total": 21007
+    }
+  }
+}

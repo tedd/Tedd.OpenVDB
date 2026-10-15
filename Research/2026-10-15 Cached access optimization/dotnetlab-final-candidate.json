@@ -1,0 +1,16 @@
+{
+  "role": "Candidate provenance metadata; external .NET 11 confirmation evidence is comparison.json.",
+  "result": {
+    "schema_version": "1.0",
+    "status": "ok",
+    "data": {
+      "id": "candidate-3a662836d28947ee9d8ab250848f2bd6",
+      "name": "Final leaf-only cached access; external .NET 11 acceptance",
+      "build_identity": "Tedd.OpenVDB.dll sha256=ccc96d6de73aa413dd971d9d5547a84988c2dc6364603bcf62cf049d37e88270; source: Research/2026-10-15 Cached access optimization/raw/final_leaf-source.json; external net11.0 Release acceptance, not qualified server normal-build confirmation.",
+      "components": []
+    },
+    "code": null,
+    "message": null,
+    "recovery": null
+  }
+}

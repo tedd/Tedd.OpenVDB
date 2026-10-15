@@ -1,0 +1,301 @@
+{
+  "generatedUtc": "2026-10-15T02:02:13.693925+00:00",
+  "branch": "main",
+  "sourceTag": "final_leaf",
+  "baseRevision": "0f56c8272ee342305c29bee82e482ed56487e5a6",
+  "unit": "ns per useful access, measured as a batch average",
+  "estimator": "median of process-launch medians",
+  "targetPassed": true,
+  "guardrailsPassed": true,
+  "results": [
+    {
+      "phase": "coherent",
+      "name": "accessor.read.coherent",
+      "before": {
+        "nsPerOperation": 8.191481923994512,
+        "launchMedians": [
+          10.289089457860625,
+          9.136934892846904,
+          8.132676590785755,
+          8.046187454563606,
+          8.191481923994512
+        ],
+        "minimum": 8.046187454563606,
+        "maximum": 10.289089457860625
+      },
+      "after": {
+        "nsPerOperation": 3.1205043567742465,
+        "launchMedians": [
+          3.107497389007208,
+          3.803226175970675,
+          3.1161986984712895,
+          3.398064329614802,
+          3.1205043567742465
+        ],
+        "minimum": 3.107497389007208,
+        "maximum": 3.803226175970675
+      },
+      "native": {
+        "nsPerOperation": 3.5858374279417187,
+        "launchMedians": [
+          3.5818317458326505,
+          5.098209406101532,
+          3.5858374279417187,
+          3.942645111683937,
+          3.5643191356333963
+        ],
+        "minimum": 3.5643191356333963,
+        "maximum": 5.098209406101532
+      },
+      "throughputRatio": 2.625050628822797,
+      "nativeThroughputRatio": 1.1491211092710987,
+      "candidateOverOriginal": 0.3809450336005328
+    },
+    {
+      "phase": "coherent",
+      "name": "accessor.write.coherent",
+      "before": {
+        "nsPerOperation": 13.771875063994921,
+        "launchMedians": [
+          13.771875063994921,
+          13.45916788043701,
+          13.18673750051196,
+          15.514626759220388,
+          15.516214633206708
+        ],
+        "minimum": 13.18673750051196,
+        "maximum": 15.516214633206708
+      },
+      "after": {
+        "nsPerOperation": 4.355616338287393,
+        "launchMedians": [
+          4.555638464531455,
+          4.25952196433691,
+          4.465179643343505,
+          3.874932485357962,
+          4.355616338287393
+        ],
+        "minimum": 3.874932485357962,
+        "maximum": 4.555638464531455
+      },
+      "native": {
+        "nsPerOperation": 4.877974883913213,
+        "launchMedians": [
+          5.447051721975344,
+          4.877974883913213,
+          6.113070866696019,
+          4.601286841876228,
+          4.6645958176759095
+        ],
+        "minimum": 4.601286841876228,
+        "maximum": 6.113070866696019
+      },
+      "throughputRatio": 3.1618659666911695,
+      "nativeThroughputRatio": 1.119927584308587,
+      "candidateOverOriginal": 0.31626894072504924
+    },
+    {
+      "phase": "random",
+      "name": "accessor.read.random",
+      "before": {
+        "nsPerOperation": 47.173640865305956,
+        "launchMedians": [
+          50.28337408734866,
+          47.173640865305956,
+          46.66299869876882
+        ],
+        "minimum": 46.66299869876882,
+        "maximum": 50.28337408734866
+      },
+      "after": {
+        "nsPerOperation": 7.245384336142016,
+        "launchMedians": [
+          7.213836190588188,
+          8.229024996932264,
+          7.245384336142016
+        ],
+        "minimum": 7.213836190588188,
+        "maximum": 8.229024996932264
+      },
+      "native": null,
+      "throughputRatio": 6.510854176498348,
+      "nativeThroughputRatio": null,
+      "candidateOverOriginal": 0.1535896785416591
+    },
+    {
+      "phase": "random",
+      "name": "accessor.write.random",
+      "before": {
+        "nsPerOperation": 87.00538355642588,
+        "launchMedians": [
+          87.00538355642588,
+          89.44889088575752,
+          85.96288870766524
+        ],
+        "minimum": 85.96288870766524,
+        "maximum": 89.44889088575752
+      },
+      "after": {
+        "nsPerOperation": 9.787546527323299,
+        "launchMedians": [
+          10.199190309534522,
+          8.901985527957297,
+          9.787546527323299
+        ],
+        "minimum": 8.901985527957297,
+        "maximum": 10.199190309534522
+      },
+      "native": null,
+      "throughputRatio": 8.889396675003102,
+      "nativeThroughputRatio": null,
+      "candidateOverOriginal": 0.11249357369910046
+    },
+    {
+      "phase": "partial",
+      "name": "accessor.read.partial",
+      "before": {
+        "nsPerOperation": 7.616443559039155,
+        "launchMedians": [
+          7.616443559039155,
+          8.427355205090924,
+          7.400028733719692
+        ],
+        "minimum": 7.400028733719692,
+        "maximum": 8.427355205090924
+      },
+      "after": {
+        "nsPerOperation": 3.046306245136386,
+        "launchMedians": [
+          3.037786921229931,
+          3.469384669632618,
+          3.046306245136386
+        ],
+        "minimum": 3.037786921229931,
+        "maximum": 3.469384669632618
+      },
+      "native": null,
+      "throughputRatio": 2.5002225469613477,
+      "nativeThroughputRatio": null,
+      "candidateOverOriginal": 0.3999643956556398
+    },
+    {
+      "phase": "partial",
+      "name": "accessor.write.partial",
+      "before": {
+        "nsPerOperation": 21.893422537987384,
+        "launchMedians": [
+          21.808549273529653,
+          21.893422537987384,
+          22.083339466179964
+        ],
+        "minimum": 21.808549273529653,
+        "maximum": 22.083339466179964
+      },
+      "after": {
+        "nsPerOperation": 6.03068140512369,
+        "launchMedians": [
+          6.03068140512369,
+          5.149951299864842,
+          6.295804364965596
+        ],
+        "minimum": 5.149951299864842,
+        "maximum": 6.295804364965596
+      },
+      "native": null,
+      "throughputRatio": 3.6303397688006944,
+      "nativeThroughputRatio": null,
+      "candidateOverOriginal": 0.275456310892453
+    },
+    {
+      "phase": "churn",
+      "name": "accessor.topology.churn",
+      "before": {
+        "nsPerOperation": 403.1890869140625,
+        "launchMedians": [
+          395.880126953125,
+          415.4876708984375,
+          403.1890869140625
+        ],
+        "minimum": 395.880126953125,
+        "maximum": 415.4876708984375
+      },
+      "after": {
+        "nsPerOperation": 418.88427734375,
+        "launchMedians": [
+          418.88427734375,
+          419.671630859375,
+          411.5966796875
+        ],
+        "minimum": 411.5966796875,
+        "maximum": 419.671630859375
+      },
+      "native": null,
+      "throughputRatio": 0.962530963135655,
+      "nativeThroughputRatio": null,
+      "candidateOverOriginal": 1.0389276171877957
+    }
+  ],
+  "allocations": {
+    "coherent/final_baseline": {
+      "managedBytesPerOperation": [
+        0.0
+      ]
+    },
+    "coherent/final_leaf": {
+      "managedBytesPerOperation": [
+        0.0
+      ]
+    },
+    "random/final_baseline": {
+      "managedBytesPerOperation": [
+        0.0
+      ]
+    },
+    "random/final_leaf": {
+      "managedBytesPerOperation": [
+        0.0
+      ]
+    },
+    "partial/final_baseline": {
+      "managedBytesPerOperation": [
+        0.0
+      ]
+    },
+    "partial/final_leaf": {
+      "managedBytesPerOperation": [
+        0.0
+      ]
+    },
+    "churn/final_baseline": {
+      "managedBytesPerOperation": [
+        1224.0
+      ]
+    },
+    "churn/final_leaf": {
+      "managedBytesPerOperation": [
+        1232.0
+      ]
+    }
+  },
+  "accessorAllocationBytes": {
+    "final_baseline": 40,
+    "final_leaf": 552
+  },
+  "setupAllocationBytes": {
+    "final_baseline": 718808,
+    "final_leaf": 719320
+  },
+  "tests": {
+    "failed": 0,
+    "passed": 21007,
+    "skipped": 0,
+    "total": 21007
+  },
+  "profilerEnvironment": {
+    "CORECLR_ENABLE_PROFILING": null,
+    "COR_ENABLE_PROFILING": null,
+    "CORECLR_PROFILER": null,
+    "COR_PROFILER": null
+  },
+  "rigSha256": "d9bd7363adf83fc50e381cdcf6b9d00e6782689555526ba8100a5bc66f60e75a"
+}

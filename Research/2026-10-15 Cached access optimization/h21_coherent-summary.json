@@ -1,0 +1,46 @@
+{
+  "weak_list": {
+    "accessor.read.coherent": {
+      "nsPerOperation": 2.7560372808813893,
+      "launchMedians": [
+        2.743198299782929,
+        4.109045906116891,
+        2.7560372808813893
+      ],
+      "minimum": 2.743198299782929,
+      "maximum": 4.109045906116891
+    },
+    "accessor.write.coherent": {
+      "nsPerOperation": 4.0548062105791285,
+      "launchMedians": [
+        4.196426971555537,
+        3.585011493487877,
+        4.0548062105791285
+      ],
+      "minimum": 3.585011493487877,
+      "maximum": 4.196426971555537
+    }
+  },
+  "resolved_write": {
+    "accessor.read.coherent": {
+      "nsPerOperation": 2.745106148376065,
+      "launchMedians": [
+        2.745106148376065,
+        3.0169565743262616,
+        2.7362148539891873
+      ],
+      "minimum": 2.7362148539891873,
+      "maximum": 3.0169565743262616
+    },
+    "accessor.write.coherent": {
+      "nsPerOperation": 3.820128834575688,
+      "launchMedians": [
+        3.820128834575688,
+        3.8068178909321757,
+        3.9224807119307012
+      ],
+      "minimum": 3.8068178909321757,
+      "maximum": 3.9224807119307012
+    }
+  }
+}

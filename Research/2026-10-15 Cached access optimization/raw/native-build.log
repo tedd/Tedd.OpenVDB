@@ -1,0 +1,21 @@
+['C:\\Program Files\\Microsoft Visual Studio\\18\\Insiders\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin\\cmake.exe', '-S', 'D:\\SourceCode\\Tedd.OpenVDB\\benchmarks\\CachedAccess.Native', '-B', 'D:\\Workspaces\\AI\\openvdb-cached-optimize\\native', '-G', 'Visual Studio 18 2026', '-A', 'x64', '-DOPENVDB_SOURCE_DIR=D:\\source\\openvdb', '-DOPENVDB_BUILD_DIR=D:\\SourceCode\\Tedd.OpenVDB\\reference\\build-upstream-zlib', '-DTBB_ROOT=D:\\Workspaces\\AI\\openvdb-cached-optimize\\oneapi-tbb-2022.2.0', '-DZLIB_LIBRARY=D:\\SourceCode\\Tedd.OpenVDB\\reference\\build-zlib\\Release\\zs.lib']
+-- Selecting Windows SDK version 10.0.26100.0 to target Windows 10.0.26200.
+-- The CXX compiler identification is MSVC 19.51.36260.0
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: C:/Program Files/Microsoft Visual Studio/18/Insiders/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/cl.exe - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Configuring done (4.0s)
+-- Generating done (0.0s)
+-- Build files have been written to: D:/Workspaces/AI/openvdb-cached-optimize/native
+
+['C:\\Program Files\\Microsoft Visual Studio\\18\\Insiders\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin\\cmake.exe', '--build', 'D:\\Workspaces\\AI\\openvdb-cached-optimize\\native', '--config', 'Release', '--parallel', '2']
+MSBuild version 18.11.0-1.26427.13+9353559c2 for .NET Framework
+
+  1>Checking Build System
+  Building Custom Rule D:/SourceCode/Tedd.OpenVDB/benchmarks/CachedAccess.Native/CMakeLists.txt
+  main.cpp
+  cached-access-native.vcxproj -> D:\Workspaces\AI\openvdb-cached-optimize\native\Release\cached-access-native.exe
+  Building Custom Rule D:/SourceCode/Tedd.OpenVDB/benchmarks/CachedAccess.Native/CMakeLists.txt
+

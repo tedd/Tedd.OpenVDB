@@ -1,0 +1,155 @@
+['dotnet', 'test', 'D:\\SourceCode\\Tedd.OpenVDB\\tests\\Tedd.OpenVDB.Tests\\Tedd.OpenVDB.Tests.csproj', '-c', 'Release', '--artifacts-path', 'D:\\Workspaces\\AI\\openvdb-cached-optimize\\tests', '-p:GeneratePackageOnBuild=false', '--results-directory', 'D:\\Workspaces\\AI\\openvdb-cached-optimize\\test-results']
+  Determining projects to restore...
+  Restored D:\SourceCode\Tedd.OpenVDB\src\Tedd.OpenVDB\Tedd.OpenVDB.csproj (in 105 ms).
+  Restored D:\SourceCode\Tedd.OpenVDB\tests\Tedd.OpenVDB.Tests\Tedd.OpenVDB.Tests.csproj (in 1.45 sec).
+C:\Program Files\dotnet\sdk\11.0.100-rc.1.26425.128\Sdks\Microsoft.NET.Sdk\targets\Microsoft.NET.RuntimeIdentifierInference.targets(385,5): message NETSDK1057: You are using a preview version of .NET. See: https://aka.ms/dotnet-support-policy [D:\SourceCode\Tedd.OpenVDB\tests\Tedd.OpenVDB.Tests\Tedd.OpenVDB.Tests.csproj]
+  Tedd.OpenVDB -> D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB\release\Tedd.OpenVDB.dll
+  Tedd.OpenVDB.Tests -> D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB.Tests\release\Tedd.OpenVDB.Tests.dll
+Test run for D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB.Tests\release\Tedd.OpenVDB.Tests.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed: 20990, Skipped:     0, Total: 20990, Duration: 59 s - Tedd.OpenVDB.Tests.dll (net11.0)
+
+['dotnet', 'test', 'D:\\SourceCode\\Tedd.OpenVDB\\tests\\Tedd.OpenVDB.Tests\\Tedd.OpenVDB.Tests.csproj', '-c', 'Release', '--artifacts-path', 'D:\\Workspaces\\AI\\openvdb-cached-optimize\\tests', '-p:GeneratePackageOnBuild=false', '--results-directory', 'D:\\Workspaces\\AI\\openvdb-cached-optimize\\test-results']
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+C:\Program Files\dotnet\sdk\11.0.100-rc.1.26425.128\Sdks\Microsoft.NET.Sdk\targets\Microsoft.NET.RuntimeIdentifierInference.targets(385,5): message NETSDK1057: You are using a preview version of .NET. See: https://aka.ms/dotnet-support-policy [D:\SourceCode\Tedd.OpenVDB\tests\Tedd.OpenVDB.Tests\Tedd.OpenVDB.Tests.csproj]
+  Tedd.OpenVDB -> D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB\release\Tedd.OpenVDB.dll
+  Tedd.OpenVDB.Tests -> D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB.Tests\release\Tedd.OpenVDB.Tests.dll
+Test run for D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB.Tests\release\Tedd.OpenVDB.Tests.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed: 20992, Skipped:     0, Total: 20992, Duration: 57 s - Tedd.OpenVDB.Tests.dll (net11.0)
+
+['dotnet', 'test', 'D:\\SourceCode\\Tedd.OpenVDB\\tests\\Tedd.OpenVDB.Tests\\Tedd.OpenVDB.Tests.csproj', '-c', 'Release', '--artifacts-path', 'D:\\Workspaces\\AI\\openvdb-cached-optimize\\tests', '-p:GeneratePackageOnBuild=false', '--results-directory', 'D:\\Workspaces\\AI\\openvdb-cached-optimize\\test-results']
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+C:\Program Files\dotnet\sdk\11.0.100-rc.1.26425.128\Sdks\Microsoft.NET.Sdk\targets\Microsoft.NET.RuntimeIdentifierInference.targets(385,5): message NETSDK1057: You are using a preview version of .NET. See: https://aka.ms/dotnet-support-policy [D:\SourceCode\Tedd.OpenVDB\tests\Tedd.OpenVDB.Tests\Tedd.OpenVDB.Tests.csproj]
+  Tedd.OpenVDB -> D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB\release\Tedd.OpenVDB.dll
+  Tedd.OpenVDB.Tests -> D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB.Tests\release\Tedd.OpenVDB.Tests.dll
+Test run for D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB.Tests\release\Tedd.OpenVDB.Tests.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed: 20994, Skipped:     0, Total: 20994, Duration: 1 m 5 s - Tedd.OpenVDB.Tests.dll (net11.0)
+
+['dotnet', 'test', 'D:\\SourceCode\\Tedd.OpenVDB\\tests\\Tedd.OpenVDB.Tests\\Tedd.OpenVDB.Tests.csproj', '-c', 'Release', '--artifacts-path', 'D:\\Workspaces\\AI\\openvdb-cached-optimize\\tests', '-p:GeneratePackageOnBuild=false', '--results-directory', 'D:\\Workspaces\\AI\\openvdb-cached-optimize\\test-results']
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+C:\Program Files\dotnet\sdk\11.0.100-rc.1.26425.128\Sdks\Microsoft.NET.Sdk\targets\Microsoft.NET.RuntimeIdentifierInference.targets(385,5): message NETSDK1057: You are using a preview version of .NET. See: https://aka.ms/dotnet-support-policy [D:\SourceCode\Tedd.OpenVDB\tests\Tedd.OpenVDB.Tests\Tedd.OpenVDB.Tests.csproj]
+  Tedd.OpenVDB -> D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB\release\Tedd.OpenVDB.dll
+  Tedd.OpenVDB.Tests -> D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB.Tests\release\Tedd.OpenVDB.Tests.dll
+Test run for D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB.Tests\release\Tedd.OpenVDB.Tests.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed: 21006, Skipped:     0, Total: 21006, Duration: 1 m 3 s - Tedd.OpenVDB.Tests.dll (net11.0)
+
+['dotnet', 'test', 'D:\\SourceCode\\Tedd.OpenVDB\\tests\\Tedd.OpenVDB.Tests\\Tedd.OpenVDB.Tests.csproj', '-c', 'Release', '--artifacts-path', 'D:\\Workspaces\\AI\\openvdb-cached-optimize\\tests', '-p:GeneratePackageOnBuild=false', '--results-directory', 'D:\\Workspaces\\AI\\openvdb-cached-optimize\\test-results']
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+C:\Program Files\dotnet\sdk\11.0.100-rc.1.26425.128\Sdks\Microsoft.NET.Sdk\targets\Microsoft.NET.RuntimeIdentifierInference.targets(385,5): message NETSDK1057: You are using a preview version of .NET. See: https://aka.ms/dotnet-support-policy [D:\SourceCode\Tedd.OpenVDB\tests\Tedd.OpenVDB.Tests\Tedd.OpenVDB.Tests.csproj]
+  Tedd.OpenVDB -> D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB\release\Tedd.OpenVDB.dll
+  Tedd.OpenVDB.Tests -> D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB.Tests\release\Tedd.OpenVDB.Tests.dll
+Test run for D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB.Tests\release\Tedd.OpenVDB.Tests.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed: 21006, Skipped:     0, Total: 21006, Duration: 1 m 7 s - Tedd.OpenVDB.Tests.dll (net11.0)
+
+['dotnet', 'test', 'D:\\SourceCode\\Tedd.OpenVDB\\tests\\Tedd.OpenVDB.Tests\\Tedd.OpenVDB.Tests.csproj', '-c', 'Release', '--artifacts-path', 'D:\\Workspaces\\AI\\openvdb-cached-optimize\\tests', '-p:GeneratePackageOnBuild=false', '--results-directory', 'D:\\Workspaces\\AI\\openvdb-cached-optimize\\test-results', '--filter', 'FullyQualifiedName~Accessor']
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+C:\Program Files\dotnet\sdk\11.0.100-rc.1.26425.128\Sdks\Microsoft.NET.Sdk\targets\Microsoft.NET.RuntimeIdentifierInference.targets(385,5): message NETSDK1057: You are using a preview version of .NET. See: https://aka.ms/dotnet-support-policy [D:\SourceCode\Tedd.OpenVDB\tests\Tedd.OpenVDB.Tests\Tedd.OpenVDB.Tests.csproj]
+  Tedd.OpenVDB -> D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB\release\Tedd.OpenVDB.dll
+  Tedd.OpenVDB.Tests -> D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB.Tests\release\Tedd.OpenVDB.Tests.dll
+Test run for D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB.Tests\release\Tedd.OpenVDB.Tests.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:    46, Skipped:     0, Total:    46, Duration: 1 s - Tedd.OpenVDB.Tests.dll (net11.0)
+
+['dotnet', 'test', 'D:\\SourceCode\\Tedd.OpenVDB\\tests\\Tedd.OpenVDB.Tests\\Tedd.OpenVDB.Tests.csproj', '-c', 'Release', '--artifacts-path', 'D:\\Workspaces\\AI\\openvdb-cached-optimize\\tests', '-p:GeneratePackageOnBuild=false', '--results-directory', 'D:\\Workspaces\\AI\\openvdb-cached-optimize\\test-results', '--filter', 'FullyQualifiedName~Accessor']
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+C:\Program Files\dotnet\sdk\11.0.100-rc.1.26425.128\Sdks\Microsoft.NET.Sdk\targets\Microsoft.NET.RuntimeIdentifierInference.targets(385,5): message NETSDK1057: You are using a preview version of .NET. See: https://aka.ms/dotnet-support-policy [D:\SourceCode\Tedd.OpenVDB\tests\Tedd.OpenVDB.Tests\Tedd.OpenVDB.Tests.csproj]
+  Tedd.OpenVDB -> D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB\release\Tedd.OpenVDB.dll
+  Tedd.OpenVDB.Tests -> D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB.Tests\release\Tedd.OpenVDB.Tests.dll
+Test run for D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB.Tests\release\Tedd.OpenVDB.Tests.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:    46, Skipped:     0, Total:    46, Duration: 1 s - Tedd.OpenVDB.Tests.dll (net11.0)
+
+['dotnet', 'test', 'D:\\SourceCode\\Tedd.OpenVDB\\tests\\Tedd.OpenVDB.Tests\\Tedd.OpenVDB.Tests.csproj', '-c', 'Release', '--artifacts-path', 'D:\\Workspaces\\AI\\openvdb-cached-optimize\\tests', '-p:GeneratePackageOnBuild=false', '--results-directory', 'D:\\Workspaces\\AI\\openvdb-cached-optimize\\test-results', '--filter', 'FullyQualifiedName~Accessor']
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+C:\Program Files\dotnet\sdk\11.0.100-rc.1.26425.128\Sdks\Microsoft.NET.Sdk\targets\Microsoft.NET.RuntimeIdentifierInference.targets(385,5): message NETSDK1057: You are using a preview version of .NET. See: https://aka.ms/dotnet-support-policy [D:\SourceCode\Tedd.OpenVDB\tests\Tedd.OpenVDB.Tests\Tedd.OpenVDB.Tests.csproj]
+  Tedd.OpenVDB -> D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB\release\Tedd.OpenVDB.dll
+  Tedd.OpenVDB.Tests -> D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB.Tests\release\Tedd.OpenVDB.Tests.dll
+Test run for D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB.Tests\release\Tedd.OpenVDB.Tests.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:    46, Skipped:     0, Total:    46, Duration: 1 s - Tedd.OpenVDB.Tests.dll (net11.0)
+
+['dotnet', 'test', 'D:\\SourceCode\\Tedd.OpenVDB\\tests\\Tedd.OpenVDB.Tests\\Tedd.OpenVDB.Tests.csproj', '-c', 'Release', '--artifacts-path', 'D:\\Workspaces\\AI\\openvdb-cached-optimize\\tests', '-p:GeneratePackageOnBuild=false', '--results-directory', 'D:\\Workspaces\\AI\\openvdb-cached-optimize\\test-results', '--filter', 'FullyQualifiedName~Accessor']
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+C:\Program Files\dotnet\sdk\11.0.100-rc.1.26425.128\Sdks\Microsoft.NET.Sdk\targets\Microsoft.NET.RuntimeIdentifierInference.targets(385,5): message NETSDK1057: You are using a preview version of .NET. See: https://aka.ms/dotnet-support-policy [D:\SourceCode\Tedd.OpenVDB\tests\Tedd.OpenVDB.Tests\Tedd.OpenVDB.Tests.csproj]
+  Tedd.OpenVDB -> D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB\release\Tedd.OpenVDB.dll
+  Tedd.OpenVDB.Tests -> D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB.Tests\release\Tedd.OpenVDB.Tests.dll
+Test run for D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB.Tests\release\Tedd.OpenVDB.Tests.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:    47, Skipped:     0, Total:    47, Duration: 1 s - Tedd.OpenVDB.Tests.dll (net11.0)
+
+['dotnet', 'test', 'D:\\SourceCode\\Tedd.OpenVDB\\tests\\Tedd.OpenVDB.Tests\\Tedd.OpenVDB.Tests.csproj', '-c', 'Release', '--artifacts-path', 'D:\\Workspaces\\AI\\openvdb-cached-optimize\\tests', '-p:GeneratePackageOnBuild=false', '--results-directory', 'D:\\Workspaces\\AI\\openvdb-cached-optimize\\test-results']
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+C:\Program Files\dotnet\sdk\11.0.100-rc.1.26425.128\Sdks\Microsoft.NET.Sdk\targets\Microsoft.NET.RuntimeIdentifierInference.targets(385,5): message NETSDK1057: You are using a preview version of .NET. See: https://aka.ms/dotnet-support-policy [D:\SourceCode\Tedd.OpenVDB\tests\Tedd.OpenVDB.Tests\Tedd.OpenVDB.Tests.csproj]
+  Tedd.OpenVDB -> D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB\release\Tedd.OpenVDB.dll
+  Tedd.OpenVDB.Tests -> D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB.Tests\release\Tedd.OpenVDB.Tests.dll
+Test run for D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB.Tests\release\Tedd.OpenVDB.Tests.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed: 21007, Skipped:     0, Total: 21007, Duration: 55 s - Tedd.OpenVDB.Tests.dll (net11.0)
+
+['dotnet', 'test', 'D:\\SourceCode\\Tedd.OpenVDB\\tests\\Tedd.OpenVDB.Tests\\Tedd.OpenVDB.Tests.csproj', '-c', 'Release', '--artifacts-path', 'D:\\Workspaces\\AI\\openvdb-cached-optimize\\tests', '-p:GeneratePackageOnBuild=false', '--results-directory', 'D:\\Workspaces\\AI\\openvdb-cached-optimize\\test-results', '--filter', 'FullyQualifiedName~Accessor']
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+C:\Program Files\dotnet\sdk\11.0.100-rc.1.26425.128\Sdks\Microsoft.NET.Sdk\targets\Microsoft.NET.RuntimeIdentifierInference.targets(385,5): message NETSDK1057: You are using a preview version of .NET. See: https://aka.ms/dotnet-support-policy [D:\SourceCode\Tedd.OpenVDB\tests\Tedd.OpenVDB.Tests\Tedd.OpenVDB.Tests.csproj]
+  Tedd.OpenVDB -> D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB\release\Tedd.OpenVDB.dll
+  Tedd.OpenVDB.Tests -> D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB.Tests\release\Tedd.OpenVDB.Tests.dll
+Test run for D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB.Tests\release\Tedd.OpenVDB.Tests.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:    47, Skipped:     0, Total:    47, Duration: 1 s - Tedd.OpenVDB.Tests.dll (net11.0)
+
+['dotnet', 'test', 'D:\\SourceCode\\Tedd.OpenVDB\\tests\\Tedd.OpenVDB.Tests\\Tedd.OpenVDB.Tests.csproj', '-c', 'Release', '--artifacts-path', 'D:\\Workspaces\\AI\\openvdb-cached-optimize\\tests', '-p:GeneratePackageOnBuild=false', '--results-directory', 'D:\\Workspaces\\AI\\openvdb-cached-optimize\\test-results']
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+C:\Program Files\dotnet\sdk\11.0.100-rc.1.26425.128\Sdks\Microsoft.NET.Sdk\targets\Microsoft.NET.RuntimeIdentifierInference.targets(385,5): message NETSDK1057: You are using a preview version of .NET. See: https://aka.ms/dotnet-support-policy [D:\SourceCode\Tedd.OpenVDB\tests\Tedd.OpenVDB.Tests\Tedd.OpenVDB.Tests.csproj]
+  Tedd.OpenVDB -> D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB\release\Tedd.OpenVDB.dll
+  Tedd.OpenVDB.Tests -> D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB.Tests\release\Tedd.OpenVDB.Tests.dll
+Test run for D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB.Tests\release\Tedd.OpenVDB.Tests.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed: 21007, Skipped:     0, Total: 21007, Duration: 59 s - Tedd.OpenVDB.Tests.dll (net11.0)
+
+['dotnet', 'test', 'D:\\SourceCode\\Tedd.OpenVDB\\tests\\Tedd.OpenVDB.Tests\\Tedd.OpenVDB.Tests.csproj', '-c', 'Release', '--artifacts-path', 'D:\\Workspaces\\AI\\openvdb-cached-optimize\\tests', '-p:GeneratePackageOnBuild=false', '--results-directory', 'D:\\Workspaces\\AI\\openvdb-cached-optimize\\test-results', '--filter', 'FullyQualifiedName~Accessor']
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+C:\Program Files\dotnet\sdk\11.0.100-rc.1.26425.128\Sdks\Microsoft.NET.Sdk\targets\Microsoft.NET.RuntimeIdentifierInference.targets(385,5): message NETSDK1057: You are using a preview version of .NET. See: https://aka.ms/dotnet-support-policy [D:\SourceCode\Tedd.OpenVDB\tests\Tedd.OpenVDB.Tests\Tedd.OpenVDB.Tests.csproj]
+  Tedd.OpenVDB -> D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB\release\Tedd.OpenVDB.dll
+  Tedd.OpenVDB.Tests -> D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB.Tests\release\Tedd.OpenVDB.Tests.dll
+Test run for D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB.Tests\release\Tedd.OpenVDB.Tests.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:    47, Skipped:     0, Total:    47, Duration: 1 s - Tedd.OpenVDB.Tests.dll (net11.0)
+
+['dotnet', 'test', 'D:\\SourceCode\\Tedd.OpenVDB\\tests\\Tedd.OpenVDB.Tests\\Tedd.OpenVDB.Tests.csproj', '-c', 'Release', '--artifacts-path', 'D:\\Workspaces\\AI\\openvdb-cached-optimize\\tests', '-p:GeneratePackageOnBuild=false', '--results-directory', 'D:\\Workspaces\\AI\\openvdb-cached-optimize\\test-results']
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+C:\Program Files\dotnet\sdk\11.0.100-rc.1.26425.128\Sdks\Microsoft.NET.Sdk\targets\Microsoft.NET.RuntimeIdentifierInference.targets(385,5): message NETSDK1057: You are using a preview version of .NET. See: https://aka.ms/dotnet-support-policy [D:\SourceCode\Tedd.OpenVDB\tests\Tedd.OpenVDB.Tests\Tedd.OpenVDB.Tests.csproj]
+  Tedd.OpenVDB -> D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB\release\Tedd.OpenVDB.dll
+  Tedd.OpenVDB.Tests -> D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB.Tests\release\Tedd.OpenVDB.Tests.dll
+Test run for D:\Workspaces\AI\openvdb-cached-optimize\tests\bin\Tedd.OpenVDB.Tests\release\Tedd.OpenVDB.Tests.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed: 21007, Skipped:     0, Total: 21007, Duration: 1 m - Tedd.OpenVDB.Tests.dll (net11.0)
+

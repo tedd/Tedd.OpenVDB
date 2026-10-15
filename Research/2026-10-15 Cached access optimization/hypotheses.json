@@ -1,0 +1,242 @@
+[
+  {
+    "id": "H1",
+    "mcpId": "hyp-fbab7544743d4fdead8e30f6e57e4a33",
+    "state": "supported",
+    "disposition": "tested-retained",
+    "mechanism": "Cached GetValue currently calls ProbeValue, including activity lookup, and hot accessor methods cross call boundaries.",
+    "prediction": "A direct value-only cached path with a separate cold miss method reduces coherent read ns/op without changing inactive values or invalidation.",
+    "evidence": "h1-summary.json",
+    "outcome": "Value-only reads improved; individual launch variability remains in raw data."
+  },
+  {
+    "id": "H2",
+    "mcpId": "hyp-4a9f5eed81d64f3e801988171f297b2a",
+    "state": "supported",
+    "disposition": "tested-retained",
+    "mechanism": "Cached writes refresh their leaf after tree.SetValueOn, repeating root and internal dictionary lookups on each leaf transition.",
+    "prediction": "Reusing resolved leaf/internal nodes on misses reduces coherent write ns/op, preserving no-op tile writes and topology invalidation.",
+    "evidence": "h2-summary.json",
+    "outcome": "A single resolution improved existing-leaf writes."
+  },
+  {
+    "id": "H3",
+    "mcpId": "hyp-bfce44f9cc1049778f4b88cabefc31f8",
+    "state": "superseded",
+    "disposition": "tested-rejected",
+    "mechanism": "A single-leaf cache misses every eight sequential coordinates and repeats root/upper/lower hash lookups.",
+    "prediction": "A version-validated lower/upper node cache reduces transition cost under coherent and randomized workloads without returning detached nodes.",
+    "evidence": "h3-summary.json",
+    "outcome": "Internal-node caches helped the early design; H24 removed them after secondary caching covered the working set."
+  },
+  {
+    "id": "H4",
+    "mcpId": "hyp-dbbcd3f6d12e40f6ab62c6c27ced12c7",
+    "state": "supported",
+    "disposition": "tested-retained",
+    "mechanism": "Tier 1 Cached checks leaf origin with three serial component comparisons; the same three bits define leaf membership.",
+    "prediction": "One combined XOR/OR/mask containment predicate reduces coherent hit-path branches with identical membership over signed Int32 coordinates.",
+    "evidence": "h14-summary.json",
+    "outcome": "The original aligned-comparison alternative regressed reads in the later cache regime."
+  },
+  {
+    "id": "H5",
+    "mcpId": "hyp-aa8c70ed5fce402d9fa688e4808a5634",
+    "state": "not_supported",
+    "disposition": "tested-rejected",
+    "mechanism": "The coherent loop repeatedly revisits four Z-neighboring leaves within each X/Y leaf strip; a one-leaf cache still resolves every eight voxels.",
+    "prediction": "A four-slot direct-mapped leaf cache used only on leaf misses eliminates repeated internal dictionary lookups while preserving full origin checks and clearing all slots on topology changes. Measure added per-accessor storage and random/sparse controls.",
+    "evidence": "random_guard-summary.json",
+    "outcome": "Four slots improved coherent access but regressed randomized reads; replaced by 64 slots."
+  },
+  {
+    "id": "H6",
+    "mcpId": "hyp-c110093f1ba44c7fb2f0b497da28e0dc",
+    "state": "not_supported",
+    "disposition": "tested-rejected",
+    "mechanism": "Optimized write caller still checks the leaf array length, dynamic NodeMask size, and mask array length for a coordinate offset already bounded to 0..511. Leaf buffers always contain 512 values and masks 8 words.",
+    "prediction": "GC-tracked byref coordinate access with a private bounded leaf-mask path removes redundant checks and improves complete cached read/write loops. Retain public integer-index validation and verify buffer swapping, compacting GC, Bool and unmanaged record values.",
+    "evidence": "h6-summary.json",
+    "outcome": "Unchecked read/write accesses did not demonstrate repeatable benefit."
+  },
+  {
+    "id": "H7",
+    "mcpId": "hyp-fb473b207c1f46dc85c5ff5e9aec3cf7",
+    "state": "not_supported",
+    "disposition": "tested-rejected",
+    "mechanism": "Leaf resolution calls ProbeValue even when callers need only a leaf for writing or a value for reading; this performs unused value/activity loads on every leaf transition.",
+    "prediction": "Return the resolved leaf and tile state separately; each caller performs only its required value/activity operation. Complete coherent reads/writes improve with identical missing/tile semantics.",
+    "evidence": "h7-summary.json",
+    "outcome": "General leaf-only resolution produced no repeatable gain in its tested regime."
+  },
+  {
+    "id": "H8",
+    "mcpId": "hyp-1cc9fd39d7f1462b9223188d80ef0c0e",
+    "state": "inconclusive",
+    "disposition": "included-in-validated-combination",
+    "mechanism": "The managed leaf activity update follows LeafNode -> NodeMask -> word array, unlike native inline mask storage. Removing guards alone produced negligible write benefit and worse read timings.",
+    "prediction": "Cache the immutable word-array identity in each leaf and use safe coordinate-indexed stores, retaining the NodeMask facade and checked integer API. One fewer dependent reference load improves cached writes; read path remains safe.",
+    "evidence": "h8-summary.json",
+    "outcome": "Safe direct mask-word alias had a modest write benefit; no independent percentage claim."
+  },
+  {
+    "id": "H9",
+    "mcpId": "hyp-8fbf6b25f0784109ab9473397acc119a",
+    "state": "supported",
+    "disposition": "tested-retained",
+    "mechanism": "The four-slot leaf cache adds a separate small array allocation and indexed miss lookup. Fixed inline storage can remove this object and known-range array checks.",
+    "prediction": "A four-element InlineArray of managed leaf references reduces accessor allocation without weakening GC relocation or invalidation, and has no material cached-access regression.",
+    "evidence": "h9-summary.json",
+    "outcome": "Inline storage removes the separate cache-array allocation; speed changes alone were inconclusive."
+  },
+  {
+    "id": "H10",
+    "mcpId": "hyp-d8a8c0e465d34139a7e2d6da43f4806b",
+    "state": "supported",
+    "disposition": "tested-retained",
+    "mechanism": "Four direct-mapped slots collide for randomized traversal over the 64-leaf working set, causing a repeatable 18% read regression versus the original library.",
+    "prediction": "An inline 64-slot cache indexed by the low two leaf-coordinate bits per axis removes these collisions, improving random access and coherent transitions. Charge approximately 512 bytes of per-accessor cache storage; preserve full origin checks and invalidation.",
+    "evidence": "random_cache64-summary.json",
+    "outcome": "64 slots removed the observed random-access collision regression."
+  },
+  {
+    "id": "H11",
+    "mcpId": "hyp-6dabc11415e242f5bcb95656cb90d186",
+    "state": "inconclusive",
+    "disposition": "included-in-validated-combination",
+    "mechanism": "SetValueOn unconditionally performs an activity-word read/modify/write even when all 64 voxels in the word are already active.",
+    "prediction": "Skip the mask update when the word is ulong.MaxValue, retaining the value store and all sparse-word updates. Dense coherent/random writes improve; initial materialization and mixed-activity correctness remain unchanged.",
+    "evidence": "h11-summary.json",
+    "outcome": "Skipping already-saturated mask stores is a small local component of the final verified build."
+  },
+  {
+    "id": "H12",
+    "mcpId": "hyp-ceff5f713a8f40a1a3cd09512be9ac89",
+    "state": "not_supported",
+    "disposition": "tested-rejected",
+    "mechanism": "The hot GetValue/SetValueOn caller checks the nullable result of Cached after Cached has already checked the leaf, generating redundant hit-path tests and control-flow joins.",
+    "prediction": "Express the leaf/version/containment hit condition directly in the hot methods and validate/clear stale caches in their cold miss helpers. This reduces hit-path control flow without omitting topology validation.",
+    "evidence": "h12-summary.json",
+    "outcome": "Direct nullable hit predicate did not improve the version-polled design."
+  },
+  {
+    "id": "H13",
+    "mcpId": "hyp-e16b8d59449d4bdbb0736b5719c87ce2",
+    "state": "not_supported",
+    "disposition": "tested-rejected",
+    "mechanism": "The hit predicate loads the cached leaf reference and then leaf.Origin before deciding membership. Native accessors keep the cache key alongside the node pointer.",
+    "prediction": "Store the cached leaf origin in the accessor when resolving a leaf. Membership loads become independent of leaf dereferencing, shortening the hit-path dependency chain; all key updates must coincide with leaf replacement.",
+    "evidence": "h13-summary.json",
+    "outcome": "A separate cached origin did not improve complete callers."
+  },
+  {
+    "id": "H14",
+    "mcpId": "hyp-68593130cbcf4eb89ac2cd04299a74c7",
+    "state": "not_supported",
+    "disposition": "tested-rejected",
+    "mechanism": "The combined XOR predicate was marginal in the earlier single-leaf regime. With a 64-slot cache the bottleneck is predominantly the seven-of-eight last-leaf hit path.",
+    "prediction": "Retest original short-circuit aligned-coordinate comparisons in the materially changed 64-slot regime. Fewer unconditional ALU operations may improve coherent hits despite extra predictable branches.",
+    "evidence": "h14-summary.json",
+    "outcome": "Original short-circuit aligned comparisons were slower in the tested final-cache regime."
+  },
+  {
+    "id": "H15",
+    "mcpId": "hyp-995d2d74a2154ed0829d0cbe3466faf1",
+    "state": "superseded",
+    "disposition": "tested-rejected",
+    "mechanism": "Every cached operation reads the tree topology version through an additional reference and compares it. Native safe accessors are invalidated by the tree when topology changes.",
+    "prediction": "Register accessors as ConditionalWeakTable keys and clear their caches at the existing InvalidateAccessors boundaries. Remove per-access version polling while retaining tree epochs for iterators/managers. Validate weak lifetime, concurrent accessor creation on frozen trees, all topology mutations and topology-churn allocation/time.",
+    "evidence": "confirmation_churn-summary.json",
+    "outcome": "Weak-table callbacks improved hits but materially regressed topology churn; original lazy invalidation restored."
+  },
+  {
+    "id": "H16",
+    "mcpId": "hyp-ec7bc56288ee4af2add8125ee5daacbf",
+    "state": "not_supported",
+    "disposition": "tested-rejected",
+    "mechanism": "After mutation-time invalidation, the hit condition no longer needs version polling. Cached still returns a nullable node and joins hit/miss control flow before the caller tests it again.",
+    "prediction": "Retest direct hit conditions in the materially changed callback-invalidation regime; remove redundant nullable-result joins while retaining the cold resolver and tree-owned invalidation.",
+    "evidence": "h16-summary.json",
+    "outcome": "Direct callback-regime predicates did not improve callers."
+  },
+  {
+    "id": "H17",
+    "mcpId": "hyp-e5d337b2302e455db69adf0e5d4405c2",
+    "state": "not_supported",
+    "disposition": "tested-rejected",
+    "mechanism": "The revised write path now directly aliases activity words and skips saturated stores. Its remaining array guards differ from the earlier two-indirection NodeMask experiment.",
+    "prediction": "Retest GC-tracked bounded byrefs for coordinate writes only in this changed layout; retain safe GetValue and checked public integer overloads. Benefit must justify unsafe maintenance and preserve compacting-GC/buffer-swap semantics.",
+    "evidence": "h17_repaired-summary.json",
+    "outcome": "Write-only bounded byrefs did not justify unsafe maintenance. Original incomplete run is preserved separately."
+  },
+  {
+    "id": "H18",
+    "mcpId": "hyp-468ddd14f5a043a68513014e7659e65f",
+    "state": "not_supported",
+    "disposition": "tested-rejected",
+    "mechanism": "Dense existing writes still load the activity-word array and read a saturated word on every voxel, although these words cannot change until a mask-clearing mutation.",
+    "prediction": "Maintain a conservative eight-bit cache of saturated activity words. Dense writes skip mask access entirely; every operation that can clear activity resets the cache. Verify all mutation surfaces, partial-density controls, cloning, and compacting GC.",
+    "evidence": "h18-summary.json",
+    "outcome": "Per-leaf saturation metadata gave too little benefit for its invalidation burden."
+  },
+  {
+    "id": "H19",
+    "mcpId": "hyp-a890bafb0da54567b262d2d1cd043c23",
+    "state": "supported",
+    "disposition": "tested-retained",
+    "mechanism": "A last-leaf miss that hits the 64-slot cache still calls the non-inlined generic resolver and ProbeValue, then performs its real read/write. This extra call and unused activity/value work recurs every eight coherent voxels.",
+    "prediction": "Inline a secondary-cache lookup into each cold accessor helper and perform the requested leaf operation directly; reserve full resolution for genuine cache misses. This removes one call boundary and unused probes without per-leaf metadata or unsafe indexing.",
+    "evidence": "h19-summary.json",
+    "outcome": "Direct secondary-cache operations removed a call and unused probing."
+  },
+  {
+    "id": "H20",
+    "mcpId": "hyp-239a300273564586b9015399c093cdbb",
+    "state": "superseded",
+    "disposition": "tested-rejected",
+    "mechanism": "The selected fast cached path improves coherent/random/partial accesses, but topology churn rises from 425 to 702 ns/op. ConditionalWeakTable invalidation creates enumerators on each structural event.",
+    "prediction": "Replace weak-table storage with a lazily allocated, lock-protected list of weak accessor references; scan/cull without allocating during invalidation. Preserve concurrent construction and weak lifetime; reduce churn and registration costs while retaining identical cached hit code.",
+    "evidence": "h20_churn-summary.json",
+    "outcome": "Weak-list invalidation reduced weak-table cost but retained unnecessary registry and mutation overhead."
+  },
+  {
+    "id": "H21",
+    "mcpId": "hyp-aa105a38425f4a6a9fceba859937b3ce",
+    "state": "inconclusive",
+    "disposition": "included-in-validated-combination",
+    "mechanism": "After allocation-free weak invalidation, structural writes still resolve a tile, then repeat resolution in tree.SetValueOn and again when populating the accessor cache.",
+    "prediction": "Reuse the resolved tile value/activity for no-op detection; materialize once through TouchLeaf and cache the returned leaf directly. Preserve inherited values/activity and topology boundaries while reducing churn lookup work.",
+    "evidence": "h21_churn-summary.json",
+    "outcome": "Reused materialization is retained with the callback-version check and append-only stamp refinement."
+  },
+  {
+    "id": "H22",
+    "mcpId": "hyp-bab69d9a9fae411aabe524d589f85b6f",
+    "state": "supported",
+    "disposition": "tested-retained",
+    "mechanism": "Weak-list invalidation removes enumeration allocation but still adds registration, locking and full-cache clearing to structural mutations. The now-direct secondary-hit path is substantially faster than the path used when version polling was first compared.",
+    "prediction": "Retest original lazy version polling in the changed direct-secondary regime. It may meet native cached throughput while avoiding weak registries and mutation-time cache clearing; preserve original lazy invalidation semantics and stamp newly materialized leaves.",
+    "evidence": "h22_coherent-summary.json",
+    "outcome": "Original lazy topology polling meets the target in the improved secondary-cache regime."
+  },
+  {
+    "id": "H23",
+    "mcpId": "hyp-b68ef205df544cf0b386df60dd4de7be",
+    "state": "supported",
+    "disposition": "tested-retained",
+    "mechanism": "The polled candidate clears its 64-slot cache on observing an external topology change, then clears it again after TouchLeaf. TouchLeaf itself only materializes nodes; it does not detach existing leaves.",
+    "prediction": "After any value-equality callback, clear only if its topology version changed, then materialize and stamp the returned leaf. Retain already-valid references across append-only materialization. This removes redundant clearing while preserving the explicit reentrant-equality regression case.",
+    "evidence": "h23_churn-summary.json",
+    "outcome": "Avoiding the redundant clear restored churn performance; reentrant equality regression passes."
+  },
+  {
+    "id": "H24",
+    "mcpId": "hyp-efce93d41c5e40cabbd9d10bef94a214",
+    "state": "supported",
+    "disposition": "tested-retained",
+    "mechanism": "The 64-slot secondary cache now handles all warm accesses in the primary working set. Retained upper/lower node references are no longer needed there and can keep whole detached branches alive while an accessor is idle.",
+    "prediction": "Use the canonical VdbTree.Probe only on genuine leaf-cache misses; remove internal-node cache fields and duplicated traversal. Preserve cached throughput and improve code/storage simplicity, while bounding detached-node retention to leaf entries.",
+    "evidence": "acceptance_leaf_coherent-summary.json",
+    "outcome": "Canonical full-tree probing on genuine misses simplifies code and bounds detached retention to leaf entries; final gates pass."
+  }
+]

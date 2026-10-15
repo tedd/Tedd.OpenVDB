@@ -1,0 +1,46 @@
+{
+  "guard_slots": {
+    "accessor.read.coherent": {
+      "nsPerOperation": 3.9250605071981486,
+      "launchMedians": [
+        3.9117975597456587,
+        4.25479033983863,
+        3.9250605071981486
+      ],
+      "minimum": 3.9117975597456587,
+      "maximum": 4.25479033983863
+    },
+    "accessor.write.coherent": {
+      "nsPerOperation": 7.228574340340351,
+      "launchMedians": [
+        8.401089289553981,
+        6.8423649899144,
+        7.228574340340351
+      ],
+      "minimum": 6.8423649899144,
+      "maximum": 8.401089289553981
+    }
+  },
+  "safe_mask": {
+    "accessor.read.coherent": {
+      "nsPerOperation": 3.937847492423001,
+      "launchMedians": [
+        3.9135654194483127,
+        4.413241765133519,
+        3.937847492423001
+      ],
+      "minimum": 3.9135654194483127,
+      "maximum": 4.413241765133519
+    },
+    "accessor.write.coherent": {
+      "nsPerOperation": 6.8265422456073885,
+      "launchMedians": [
+        7.072426732214532,
+        6.1750059515276865,
+        6.8265422456073885
+      ],
+      "minimum": 6.1750059515276865,
+      "maximum": 7.072426732214532
+    }
+  }
+}

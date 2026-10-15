@@ -1,0 +1,56 @@
+--- a/benchmarks/CachedAccess.Managed/Program.cs
++++ b/benchmarks/CachedAccess.Managed/Program.cs
+@@ -11,6 +11,8 @@
+ int samples = IntArg("--samples", 9);
+ int warmupMilliseconds = IntArg("--warmup-ms", 2000);
+ int cpu = IntArg("--cpu", 8);
++string pattern = Array.IndexOf(args, "--pattern") is int patternIndex && patternIndex >= 0 ? args[patternIndex + 1] : "coherent";
++if (pattern is not ("coherent" or "random")) throw new ArgumentException("Unknown access pattern.");
+ if (operations < 32768 || operations % 32768 != 0 || samples < 1 || warmupMilliseconds < 0 || cpu is < 0 or > 62)
+     throw new ArgumentException("Operations must be a positive multiple of 32768; invalid sample, warmup or CPU argument.");
+ if (OperatingSystem.IsWindows()) Process.GetCurrentProcess().ProcessorAffinity = new IntPtr(1L << cpu);
+@@ -19,10 +21,25 @@
+ var tree = new VdbTree<ushort>(0);
+ var accessor = tree.GetAccessor();
+ for (int i = 0; i < coordinates.Length; ++i)
++    coordinates[i] = new((i >> 10) - 16, ((i >> 5) & 31) - 16, (i & 31) - 16);
++if (pattern == "random")
+ {
+-    coordinates[i] = new((i >> 10) - 16, ((i >> 5) & 31) - 16, (i & 31) - 16);
++    uint seed = 7391;
++    for (int i = coordinates.Length - 1; i > 0; --i)
++    {
++        seed = unchecked(seed * 1664525 + 1013904223);
++        int j = (int)(seed % (uint)(i + 1));
++        (coordinates[i], coordinates[j]) = (coordinates[j], coordinates[i]);
++    }
++}
++long setupAllocation = GC.GetAllocatedBytesForCurrentThread();
++long setupStart = Stopwatch.GetTimestamp();
++for (int i = 0; i < coordinates.Length; ++i)
++{
+     accessor.SetValueOn(coordinates[i], (ushort)(1 + (i & 7)));
+ }
++double setupMilliseconds = Stopwatch.GetElapsedTime(setupStart).TotalMilliseconds;
++setupAllocation = GC.GetAllocatedBytesForCurrentThread() - setupAllocation;
+ ulong coordinateHash = 14695981039346656037UL;
+ foreach (var c in coordinates)
+     foreach (int component in new[] { c.X, c.Y, c.Z }) coordinateHash = unchecked((coordinateHash ^ (uint)component) * 1099511628211UL);
+@@ -56,14 +73,15 @@
+             if (workload == "read" && sink != operations / 8L * 36) throw new InvalidOperationException("Read checksum mismatch.");
+             Validate(workload == "read" ? 0 : sample + 1);
+         }
+-        results.Add(new { name = "accessor." + workload + ".coherent", operations, elapsedMilliseconds = elapsed, allocatedBytes = allocated });
++        results.Add(new { name = "accessor." + workload + "." + pattern, operations, elapsedMilliseconds = elapsed, allocatedBytes = allocated });
+         Write(accessor, coordinates, coordinates.Length, 0);
+     }
+ }
+ Validate(0);
+ Console.WriteLine(JsonSerializer.Serialize(new
+ {
+-    implementation = "managed", valueType = "UInt16", coordinates = coordinates.Length,
++    implementation = "managed", valueType = "UInt16", coordinates = coordinates.Length, pattern,
++    setupMilliseconds, setupAllocatedBytes = setupAllocation,
+     coordinateHash = coordinateHash.ToString("x16"), checksum = 147456,
+     activeVoxelCount = tree.ActiveVoxelCount, leafCount = tree.LeafCount,
+     runtime = RuntimeInformation.FrameworkDescription, os = RuntimeInformation.OSDescription,

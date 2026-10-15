@@ -1,0 +1,26 @@
+{
+  "final_baseline": {
+    "accessor.topology.churn": {
+      "nsPerOperation": 416.6656494140625,
+      "launchMedians": [
+        410.9100341796875,
+        419.5465087890625,
+        416.6656494140625
+      ],
+      "minimum": 410.9100341796875,
+      "maximum": 419.5465087890625
+    }
+  },
+  "leaf_only": {
+    "accessor.topology.churn": {
+      "nsPerOperation": 401.727294921875,
+      "launchMedians": [
+        397.0855712890625,
+        406.878662109375,
+        401.727294921875
+      ],
+      "minimum": 397.0855712890625,
+      "maximum": 406.878662109375
+    }
+  }
+}

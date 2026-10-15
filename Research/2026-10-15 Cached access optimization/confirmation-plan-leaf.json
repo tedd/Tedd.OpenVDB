@@ -1,0 +1,15 @@
+{
+  "supersedes": "confirmation-plan-final.json: internal-node cache fields removed after a controlled ablation; canonical tree probing handles genuine leaf-cache misses",
+  "selectedSource": "leaf_only; fresh build final_leaf; original VdbTree invalidation implementation",
+  "arms": ["final_baseline", "final_leaf", "native"],
+  "coherent": {"launches": 5, "samplesPerLaunch": 9, "operationsPerSample": 50003968, "warmupMillisecondsPerWorkload": 2000, "cpu": 8},
+  "random": {"launches": 3, "samplesPerLaunch": 5, "operationsPerSample": 12517376, "warmupMillisecondsPerWorkload": 2000, "cpu": 8},
+  "partial": {"launches": 3, "samplesPerLaunch": 5, "operationsPerSample": 25001984, "warmupMillisecondsPerWorkload": 2000, "cpu": 8},
+  "churn": {"launches": 3, "samplesPerLaunch": 5, "operationsPerSample": 32768, "warmupMilliseconds": 2000, "cpu": 8},
+  "goal": "approximately 2.5x or greater original cached throughput; match or exceed native coherent throughput",
+  "guardrails": "all correctness fixtures pass; zero steady-state allocation; no median random/partial/churn regression above 5% versus original",
+  "estimator": "median of launch medians; complete launch ranges and all raw samples retained",
+  "order": "rotate arms; alternate read/write first",
+  "independence": "descriptive sequential host sessions; no population significance or individual latency-tail claim",
+  "exclusions": "none; no favorable-run selection or post-result sample expansion"
+}

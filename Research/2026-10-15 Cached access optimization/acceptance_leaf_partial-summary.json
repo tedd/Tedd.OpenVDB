@@ -1,0 +1,46 @@
+{
+  "final_baseline": {
+    "accessor.read.partial": {
+      "nsPerOperation": 7.616443559039155,
+      "launchMedians": [
+        7.616443559039155,
+        8.427355205090924,
+        7.400028733719692
+      ],
+      "minimum": 7.400028733719692,
+      "maximum": 8.427355205090924
+    },
+    "accessor.write.partial": {
+      "nsPerOperation": 21.893422537987384,
+      "launchMedians": [
+        21.808549273529653,
+        21.893422537987384,
+        22.083339466179964
+      ],
+      "minimum": 21.808549273529653,
+      "maximum": 22.083339466179964
+    }
+  },
+  "final_leaf": {
+    "accessor.read.partial": {
+      "nsPerOperation": 3.046306245136386,
+      "launchMedians": [
+        3.037786921229931,
+        3.469384669632618,
+        3.046306245136386
+      ],
+      "minimum": 3.037786921229931,
+      "maximum": 3.469384669632618
+    },
+    "accessor.write.partial": {
+      "nsPerOperation": 6.03068140512369,
+      "launchMedians": [
+        6.03068140512369,
+        5.149951299864842,
+        6.295804364965596
+      ],
+      "minimum": 5.149951299864842,
+      "maximum": 6.295804364965596
+    }
+  }
+}

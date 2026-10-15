@@ -1,0 +1,26 @@
+{
+  "final_candidate": {
+    "accessor.topology.churn": {
+      "nsPerOperation": 712.640380859375,
+      "launchMedians": [
+        756.4697265625,
+        712.640380859375,
+        679.4403076171875
+      ],
+      "minimum": 679.4403076171875,
+      "maximum": 756.4697265625
+    }
+  },
+  "weak_list": {
+    "accessor.topology.churn": {
+      "nsPerOperation": 496.368408203125,
+      "launchMedians": [
+        504.339599609375,
+        496.368408203125,
+        492.29431152343744
+      ],
+      "minimum": 492.29431152343744,
+      "maximum": 504.339599609375
+    }
+  }
+}

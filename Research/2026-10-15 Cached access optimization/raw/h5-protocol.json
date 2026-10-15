@@ -1,0 +1,21 @@
+{
+  "tags": [
+    "combined_region",
+    "leaf_slots"
+  ],
+  "launches": 3,
+  "samples": 5,
+  "operations": 25001984,
+  "warmupMilliseconds": 2000,
+  "cpu": 8,
+  "order": "rotate arms; alternate read/write first",
+  "estimator": "median of per-launch medians; descriptive paired ratios",
+  "independence": "not asserted; shared-host sequential sessions",
+  "exclusions": "none",
+  "retainedThreshold": "all coherent launch pairs improve >=10%; no random regression >5%",
+  "runtimeControls": {
+    "DOTNET_TieredCompilation": "1",
+    "DOTNET_TieredPGO": "1",
+    "DOTNET_EnableHWIntrinsic": "1"
+  }
+}

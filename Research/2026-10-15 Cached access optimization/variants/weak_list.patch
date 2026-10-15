@@ -1,0 +1,410 @@
+--- a/src/Tedd.OpenVDB/Tree/ValueAccessor.cs
++++ b/src/Tedd.OpenVDB/Tree/ValueAccessor.cs
+@@ -6,42 +6,82 @@
+ namespace Tedd.OpenVDB.Tree;
+ 
+ /// <summary>
+-/// A leaf-caching accessor. Keep one per thread; never mutate a tree concurrently.
++/// A node-caching accessor. Keep one per thread; never mutate a tree concurrently.
+ /// Tile replacement, pruning and clearing invalidate cached nodes automatically.
+-/// The cache holds a managed object, never a raw pointer across a GC safepoint.
++/// The caches hold managed references, never raw pointers across GC safepoints.
+ /// </summary>
+ public sealed class ValueAccessor<T> where T : unmanaged
+ {
+     private readonly VdbTree<T> _tree;
+     private LeafNode<T>? _leaf;
+-    private long _version;
+-    public ValueAccessor(VdbTree<T> tree) => _tree = tree ?? throw new ArgumentNullException(nameof(tree));
++    private InternalNode<T>? _lower;
++    private InternalNode<T>? _upper;
++    [InlineArray(64)]
++    private struct LeafCache
++    {
++        private LeafNode<T>? _first;
++    }
++    private LeafCache _leaves;
++    public ValueAccessor(VdbTree<T> tree)
++    {
++        _tree = tree ?? throw new ArgumentNullException(nameof(tree));
++        _tree.RegisterAccessor(this);
++    }
+     public VdbTree<T> Tree => _tree;
+-    public void Clear() { _leaf = null; _version = _tree.TopologyVersion; }
++    public void Clear()
++    {
++        _leaf = null; _lower = null; _upper = null;
++        _leaves = default;
++    }
+ 
+     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+     private LeafNode<T>? Cached(Coord coordinate)
+     {
+         var leaf = _leaf;
+-        if (_version != _tree.TopologyVersion) { Clear(); return null; }
+-        return leaf is not null && leaf.Origin == VdbTree<T>.Align(coordinate, 3) ? leaf : null;
++        if (leaf is null) return null;
++        var origin = leaf.Origin;
++        return (((coordinate.X ^ origin.X) | (coordinate.Y ^ origin.Y) | (coordinate.Z ^ origin.Z)) & -8) == 0
++            ? leaf : null;
+     }
+ 
+     public bool ProbeValue(Coord coordinate, out T value)
+     {
++        var leaf = Cached(coordinate) ?? CachedSecondary(coordinate);
++        if (leaf is not null) return leaf.ProbeValue(coordinate, out value);
++        return Resolve(coordinate, out value);
++    }
++    [MethodImpl(MethodImplOptions.AggressiveInlining)]
++    public T GetValue(Coord coordinate)
++    {
+         var leaf = Cached(coordinate);
+-        if (leaf is not null) return leaf.ProbeValue(coordinate, out value);
+-        bool active = _tree.Probe(coordinate, out value, out _leaf, out _);
+-        _version = _tree.TopologyVersion;
+-        return active;
++        return leaf is not null ? leaf.GetValue(coordinate) : GetValueUncached(coordinate);
+     }
+-    public T GetValue(Coord coordinate) { ProbeValue(coordinate, out T value); return value; }
++
++    [MethodImpl(MethodImplOptions.NoInlining)]
++    private T GetValueUncached(Coord coordinate)
++    {
++        var leaf = CachedSecondary(coordinate);
++        if (leaf is not null) return leaf.GetValue(coordinate);
++        Resolve(coordinate, out T value);
++        return value;
++    }
+     public bool IsValueOn(Coord coordinate) => ProbeValue(coordinate, out _);
+     public T this[Coord coordinate] { get => GetValue(coordinate); set => SetValueOn(coordinate, value); }
++    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+     public void SetValueOn(Coord coordinate, T value)
+     {
+         var leaf = Cached(coordinate);
+         if (leaf is not null) leaf.SetValueOn(coordinate, value);
++        else SetValueOnUncached(coordinate, value);
++    }
++
++    [MethodImpl(MethodImplOptions.NoInlining)]
++    private void SetValueOnUncached(Coord coordinate, T value)
++    {
++        var leaf = CachedSecondary(coordinate);
++        if (leaf is not null) { leaf.SetValueOn(coordinate, value); return; }
++        Resolve(coordinate, out _);
++        if (_leaf is not null) _leaf.SetValueOn(coordinate, value);
+         else { _tree.SetValueOn(coordinate, value); Cache(coordinate); }
+     }
+     public void SetValueOff(Coord coordinate, T value)
+@@ -66,7 +106,61 @@
+     public void SetValueOff(Coord coordinate) => SetActiveState(coordinate, false);
+     private void Cache(Coord coordinate)
+     {
+-        _tree.Probe(coordinate, out _, out _leaf, out _);
+-        _version = _tree.TopologyVersion;
++        if (CachedSecondary(coordinate) is null) Resolve(coordinate, out _);
++    }
++
++    [MethodImpl(MethodImplOptions.AggressiveInlining)]
++    private LeafNode<T>? CachedSecondary(Coord coordinate)
++    {
++        var leaf = _leaves[CacheSlot(coordinate)];
++        if (leaf is null || leaf.Origin != VdbTree<T>.Align(coordinate, 3)) return null;
++        _leaf = leaf;
++        return leaf;
++    }
++
++    [MethodImpl(MethodImplOptions.AggressiveInlining)]
++    private static int CacheSlot(Coord coordinate) =>
++        ((coordinate.X >> 3) & 3) << 4 | ((coordinate.Y >> 3) & 3) << 2 | ((coordinate.Z >> 3) & 3);
++
++    // Cache the path as well as the leaf. Every topology change clears all cached
++    // references before reuse; no cached dictionary slot or raw address escapes.
++    [MethodImpl(MethodImplOptions.NoInlining)]
++    private bool Resolve(Coord coordinate, out T value)
++    {
++        _leaf = null;
++        var lower = _lower;
++        if (lower is null || lower.Origin != VdbTree<T>.Align(coordinate, 7))
++        {
++            var upper = _upper;
++            if (upper is null || upper.Origin != VdbTree<T>.Align(coordinate, 12))
++            {
++                _lower = null;
++                if (!_tree.Entries.TryGetValue(VdbTree<T>.Align(coordinate, 12), out var entry))
++                {
++                    _upper = null;
++                    value = _tree.Background;
++                    return false;
++                }
++                _upper = upper = entry.Child;
++                if (upper is null) { value = entry.Value; return entry.Active; }
++            }
++            int upperOffset = upper.Offset(coordinate);
++            if (!upper.Children.TryGetValue(upperOffset, out var child))
++            {
++                _lower = null;
++                value = upper.Values[upperOffset];
++                return upper.Active.IsOn(upperOffset);
++            }
++            _lower = lower = (InternalNode<T>)child;
++        }
++        int offset = lower.Offset(coordinate);
++        if (!lower.Children.TryGetValue(offset, out var leaf))
++        {
++            value = lower.Values[offset];
++            return lower.Active.IsOn(offset);
++        }
++        _leaf = (LeafNode<T>)leaf;
++        _leaves[CacheSlot(coordinate)] = _leaf;
++        return _leaf.ProbeValue(coordinate, out value);
+     }
+ }
+--- a/src/Tedd.OpenVDB/Tree/LeafNode.cs
++++ b/src/Tedd.OpenVDB/Tree/LeafNode.cs
+@@ -26,6 +26,8 @@
+ 
+     private T[] _values;
+     private readonly NodeMask _valueMask;
++    // NodeMask never replaces its backing words; both references observe all edits.
++    private readonly ulong[] _activityWords;
+ 
+     public LeafNode(Coord origin, T value = default, bool active = false)
+     {
+@@ -33,6 +35,7 @@
+         _values = GC.AllocateUninitializedArray<T>(Size);
+         _values.AsSpan().Fill(value); // Initialize every byte-bearing value before exposing the buffer.
+         _valueMask = new NodeMask(Log2Dim, active);
++        _activityWords = _valueMask.Storage;
+     }
+ 
+     private LeafNode(LeafNode<T> other)
+@@ -40,6 +43,7 @@
+         Origin = other.Origin;
+         _values = (T[])other._values.Clone();
+         _valueMask = other._valueMask.DeepCopy();
++        _activityWords = _valueMask.Storage;
+     }
+ 
+     public Coord Origin { get; }
+@@ -106,7 +110,14 @@
+     public void SetValueOn(int offset) => _valueMask.SetOn(offset);
+     public void SetValueOff(Coord coordinate) => _valueMask.SetOff(CoordToOffset(coordinate));
+     public void SetValueOff(int offset) => _valueMask.SetOff(offset);
+-    public void SetValueOn(Coord coordinate, T value) => SetValueOn(CoordToOffset(coordinate), value);
++    [MethodImpl(MethodImplOptions.AggressiveInlining)]
++    public void SetValueOn(Coord coordinate, T value)
++    {
++        int offset = CoordToOffset(coordinate);
++        _values[offset] = value;
++        ref ulong word = ref _activityWords[offset >> 6];
++        if (word != ulong.MaxValue) word |= 1UL << (offset & 63);
++    }
+ 
+     public void SetValueOn(int offset, T value)
+     {
+--- a/src/Tedd.OpenVDB/Tree/VdbTree.cs
++++ b/src/Tedd.OpenVDB/Tree/VdbTree.cs
+@@ -28,6 +28,7 @@
+ {
+     internal readonly Dictionary<Coord, RootEntry> Entries = [];
+     private long _topologyVersion;
++    private List<WeakReference<ValueAccessor<T>>>? _accessors;
+     internal long TopologyVersion => Volatile.Read(ref _topologyVersion);
+     internal readonly record struct RootEntry(T Value, bool Active, InternalNode<T>? Child = null);
+     public const int Depth = 4;
+@@ -452,7 +453,31 @@
+     }
+ 
+     public ValueAccessor<T> GetAccessor() => new(this);
+-    internal void InvalidateAccessors() => Interlocked.Increment(ref _topologyVersion);
++    internal void RegisterAccessor(ValueAccessor<T> accessor)
++    {
++        var accessors = LazyInitializer.EnsureInitialized(ref _accessors);
++        lock (accessors)
++        {
++            for (int index = accessors.Count - 1; index >= 0; --index)
++                if (!accessors[index].TryGetTarget(out _)) accessors.RemoveAt(index);
++            accessors.Add(new(accessor));
++        }
++    }
++
++    internal void InvalidateAccessors()
++    {
++        Interlocked.Increment(ref _topologyVersion);
++        // Weak references avoid retaining abandoned per-thread accessors. The lock
++        // protects registration and allocation-free invalidation, never voxel hits.
++        // Tree mutation itself still requires exclusive ownership.
++        if (_accessors is { } accessors)
++            lock (accessors)
++                for (int index = accessors.Count - 1; index >= 0; --index)
++                {
++                    if (accessors[index].TryGetTarget(out var accessor)) accessor.Clear();
++                    else accessors.RemoveAt(index);
++                }
++    }
+ 
+     /// <summary>Enumerates stored values (tiles once), not every voxel represented by a tile.</summary>
+     public IEnumerable<VoxelValue<T>> EnumerateValues(ValueIterationMode mode = ValueIterationMode.Active)
+--- a/src/Tedd.OpenVDB/Util/NodeMask.cs
++++ b/src/Tedd.OpenVDB/Util/NodeMask.cs
+@@ -39,6 +39,7 @@
+     public int Size { get; }
+     public int WordCount => _words.Length;
+     public ReadOnlySpan<ulong> Words => _words;
++    internal ulong[] Storage => _words;
+     public IndexEnumerable OnIndices => new(this, true);
+     public IndexEnumerable OffIndices => new(this, false);
+ 
+--- a/benchmarks/CachedAccess.Managed/Program.cs
++++ b/benchmarks/CachedAccess.Managed/Program.cs
+@@ -11,18 +11,63 @@
+ int samples = IntArg("--samples", 9);
+ int warmupMilliseconds = IntArg("--warmup-ms", 2000);
+ int cpu = IntArg("--cpu", 8);
++string pattern = Array.IndexOf(args, "--pattern") is int patternIndex && patternIndex >= 0 ? args[patternIndex + 1] : "coherent";
++if (pattern is not ("coherent" or "random" or "partial" or "churn")) throw new ArgumentException("Unknown access pattern.");
+ if (operations < 32768 || operations % 32768 != 0 || samples < 1 || warmupMilliseconds < 0 || cpu is < 0 or > 62)
+     throw new ArgumentException("Operations must be a positive multiple of 32768; invalid sample, warmup or CPU argument.");
+ if (OperatingSystem.IsWindows()) Process.GetCurrentProcess().ProcessorAffinity = new IntPtr(1L << cpu);
+ 
++if (pattern == "churn")
++{
++    var changingTree = new VdbTree<ushort>(0);
++    var changingAccessor = changingTree.GetAccessor();
++    long warmupStart = Stopwatch.GetTimestamp();
++    do { Churn(changingTree, changingAccessor, 8192); }
++    while (Stopwatch.GetElapsedTime(warmupStart).TotalMilliseconds < warmupMilliseconds);
++    var elapsed = new double[samples];
++    var allocated = new long[samples];
++    for (int sample = 0; sample < samples; ++sample)
++    {
++        long before = GC.GetAllocatedBytesForCurrentThread();
++        long start = Stopwatch.GetTimestamp();
++        Churn(changingTree, changingAccessor, operations);
++        elapsed[sample] = Stopwatch.GetElapsedTime(start).TotalMilliseconds;
++        allocated[sample] = GC.GetAllocatedBytesForCurrentThread() - before;
++        if (changingAccessor.GetValue(new(1, 2, 3)) != (ushort)((operations - 1) & 65535)
++            || changingTree.ActiveVoxelCount != 1 || changingTree.LeafCount != 1)
++            throw new InvalidOperationException("Topology-churn validation failed.");
++    }
++    Console.WriteLine(JsonSerializer.Serialize(new { implementation = "managed", pattern, runtime = RuntimeInformation.FrameworkDescription,
++        results = new[] { new { name = "accessor.topology.churn", operations, elapsedMilliseconds = elapsed, allocatedBytes = allocated } } }));
++    return;
++}
++
+ var coordinates = new Coord[32768];
+ var tree = new VdbTree<ushort>(0);
++long accessorAllocation = GC.GetAllocatedBytesForCurrentThread();
+ var accessor = tree.GetAccessor();
++accessorAllocation = GC.GetAllocatedBytesForCurrentThread() - accessorAllocation;
++for (int i = 0; i < coordinates.Length; ++i)
++    coordinates[i] = new((i >> 10) - 16, ((i >> 5) & 31) - 16, (i & 31) - 16);
++if (pattern == "random")
++{
++    uint seed = 7391;
++    for (int i = coordinates.Length - 1; i > 0; --i)
++    {
++        seed = unchecked(seed * 1664525 + 1013904223);
++        int j = (int)(seed % (uint)(i + 1));
++        (coordinates[i], coordinates[j]) = (coordinates[j], coordinates[i]);
++    }
++}
++long setupAllocation = GC.GetAllocatedBytesForCurrentThread();
++long setupStart = Stopwatch.GetTimestamp();
+ for (int i = 0; i < coordinates.Length; ++i)
+ {
+-    coordinates[i] = new((i >> 10) - 16, ((i >> 5) & 31) - 16, (i & 31) - 16);
+-    accessor.SetValueOn(coordinates[i], (ushort)(1 + (i & 7)));
++    if (pattern == "partial" && (i & 1) != 0) accessor.SetValueOff(coordinates[i], (ushort)(1 + (i & 7)));
++    else accessor.SetValueOn(coordinates[i], (ushort)(1 + (i & 7)));
+ }
++double setupMilliseconds = Stopwatch.GetElapsedTime(setupStart).TotalMilliseconds;
++setupAllocation = GC.GetAllocatedBytesForCurrentThread() - setupAllocation;
+ ulong coordinateHash = 14695981039346656037UL;
+ foreach (var c in coordinates)
+     foreach (int component in new[] { c.X, c.Y, c.Z }) coordinateHash = unchecked((coordinateHash ^ (uint)component) * 1099511628211UL);
+@@ -38,9 +83,9 @@
+         do
+         {
+             if (workload == "read") sink = Read(accessor, coordinates, 1_048_576);
+-            else Write(accessor, coordinates, 1_048_576, 3);
++            else WriteFixture(1_048_576, 3);
+         } while (Stopwatch.GetElapsedTime(warmupStart).TotalMilliseconds < warmupMilliseconds);
+-        Write(accessor, coordinates, coordinates.Length, 0);
++        WriteFixture(coordinates.Length, 0);
+         Validate(0);
+         var elapsed = new double[samples];
+         var allocated = new long[samples];
+@@ -49,21 +94,22 @@
+             long beforeAllocation = GC.GetAllocatedBytesForCurrentThread();
+             long start = Stopwatch.GetTimestamp();
+             if (workload == "read") sink = Read(accessor, coordinates, operations);
+-            else Write(accessor, coordinates, operations, sample + 1);
++            else WriteFixture(operations, sample + 1);
+             long end = Stopwatch.GetTimestamp();
+             allocated[sample] = GC.GetAllocatedBytesForCurrentThread() - beforeAllocation;
+             elapsed[sample] = (end - start) * 1000.0 / Stopwatch.Frequency;
+             if (workload == "read" && sink != operations / 8L * 36) throw new InvalidOperationException("Read checksum mismatch.");
+             Validate(workload == "read" ? 0 : sample + 1);
+         }
+-        results.Add(new { name = "accessor." + workload + ".coherent", operations, elapsedMilliseconds = elapsed, allocatedBytes = allocated });
+-        Write(accessor, coordinates, coordinates.Length, 0);
++        results.Add(new { name = "accessor." + workload + "." + pattern, operations, elapsedMilliseconds = elapsed, allocatedBytes = allocated });
++        WriteFixture(coordinates.Length, 0);
+     }
+ }
+ Validate(0);
+ Console.WriteLine(JsonSerializer.Serialize(new
+ {
+-    implementation = "managed", valueType = "UInt16", coordinates = coordinates.Length,
++    implementation = "managed", valueType = "UInt16", coordinates = coordinates.Length, pattern,
++    setupMilliseconds, setupAllocatedBytes = setupAllocation, accessorAllocatedBytes = accessorAllocation,
+     coordinateHash = coordinateHash.ToString("x16"), checksum = 147456,
+     activeVoxelCount = tree.ActiveVoxelCount, leafCount = tree.LeafCount,
+     runtime = RuntimeInformation.FrameworkDescription, os = RuntimeInformation.OSDescription,
+@@ -85,13 +131,20 @@
+     long checksum = 0;
+     for (int i = 0; i < coordinates.Length; ++i)
+     {
+-        ushort expected = (ushort)(1 + ((i + phase) & 7));
+-        if (!accessor.ProbeValue(coordinates[i], out ushort actual) || actual != expected)
++        bool active = pattern != "partial" || (i & 1) == 0;
++        ushort expected = (ushort)(1 + ((i + (active ? phase : 0)) & 7));
++        if (accessor.ProbeValue(coordinates[i], out ushort actual) != active || actual != expected)
+             throw new InvalidOperationException("Voxel value/activity mismatch at " + i);
+         checksum += actual;
+     }
+-    if (checksum != 147456 || tree.ActiveVoxelCount != 32768 || tree.LeafCount != 64)
++    long expectedChecksum = pattern == "partial" && (phase & 1) != 0 ? 163840 : 147456;
++    if (checksum != expectedChecksum || tree.ActiveVoxelCount != (pattern == "partial" ? 16384UL : 32768UL) || tree.LeafCount != 64)
+         throw new InvalidOperationException("Tree topology or aggregate checksum mismatch.");
++}
++void WriteFixture(int count, int phase)
++{
++    if (pattern == "partial") WritePartial(accessor, coordinates, count, phase);
++    else Write(accessor, coordinates, count, phase);
+ }
+ [MethodImpl(MethodImplOptions.NoInlining)]
+ static long Read(ValueAccessor<ushort> accessor, Coord[] coordinates, int count)
+@@ -106,3 +159,21 @@
+     for (int i = 0; i < count; ++i)
+         accessor.SetValueOn(coordinates[i & 32767], (ushort)(1 + ((i + phase) & 7)));
+ }
++
++[MethodImpl(MethodImplOptions.NoInlining)]
++static void WritePartial(ValueAccessor<ushort> accessor, Coord[] coordinates, int count, int phase)
++{
++    for (int i = 0; i < count; ++i)
++        accessor.SetValueOn(coordinates[(i & 16383) << 1], (ushort)(1 + (((i << 1) + phase) & 7)));
++}
++
++[MethodImpl(MethodImplOptions.NoInlining)]
++static void Churn(VdbTree<ushort> tree, ValueAccessor<ushort> accessor, int count)
++{
++    var point = new Coord(1, 2, 3);
++    for (int i = 0; i < count; ++i)
++    {
++        tree.AddTile(1, point, 0, false);
++        accessor.SetValueOn(point, (ushort)(i & 65535));
++    }
++}
