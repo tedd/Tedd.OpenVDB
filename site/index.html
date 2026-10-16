@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7faf9">
+  <meta name="description" content="Tedd.OpenVDB is an independent managed C# port of core OpenVDB facilities for .NET 11. Sparse voxel trees, volume tools, and VDB archives without a native runtime.">
+  <meta property="og:title" content="Tedd.OpenVDB — sparse volumes, managed .NET">
+  <meta property="og:description" content="Store the detail. Skip the empty space. Sparse voxel trees, volume processing, and VDB archives in managed C#.">
+  <meta property="og:type" content="website">
+  <title>Tedd.OpenVDB — sparse volumes, managed .NET</title>
+  <link rel="icon" href="assets/openvdb-icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="Tedd.OpenVDB home"><img src="assets/openvdb-icon.svg" width="32" height="32" alt=""><span>TEDD<span class="brand-slash">/</span>OPENVDB</span></a>
+    <nav aria-label="Primary navigation"><a href="#structure">The structure</a><a href="#capabilities">Capabilities</a><a href="#quickstart">Quick start</a><a class="nav-cta" href="https://github.com/tedd/Tedd.OpenVDB">GitHub ↗</a></nav>
+  </header>
+  <main id="main">
+    <section class="hero" id="top">
+      <div class="hero-grid" aria-hidden="true"></div>
+      <div class="hero-copy">
+        <p class="eyebrow"><span></span>Sparse volumetric data for .NET</p>
+        <h1>Store the detail.<br><em>Skip the empty space.</em></h1>
+        <p class="lede">Sparse voxel trees, volume processing, and VDB archives. Core OpenVDB facilities in managed C#, without a native runtime dependency.</p>
+        <div class="hero-actions"><a class="button primary" href="https://www.nuget.org/packages/Tedd.OpenVDB">Get the package <span aria-hidden="true">↗</span></a><a class="button secondary" href="#quickstart">Start building</a></div>
+        <div class="install-command"><code>dotnet add package Tedd.OpenVDB --prerelease</code><button type="button" data-copy="dotnet add package Tedd.OpenVDB --prerelease" aria-label="Copy installation command">Copy</button></div>
+        <ul class="hero-checks"><li>Managed C#</li><li>.NET 11</li><li>OpenVDB 13.0.1 reference</li></ul>
+      </div>
+      <figure class="volume-window">
+        <div class="window-bar"><span class="window-dots" aria-hidden="true">● ● ●</span><b>Tedd.OpenVDB · Sparse volume</b><span class="live-label">ILLUSTRATION</span></div>
+        <div class="volume-heading"><div><span class="micro">VOLUME INSPECTOR</span><h2>Detail where it matters.</h2></div><code>Tree4&lt;UInt16&gt;</code></div>
+        <div class="volume-scene"><svg id="volume" viewBox="0 0 560 340" role="img" aria-labelledby="volume-title volume-description"><title id="volume-title">Sparse voxel volume</title><desc id="volume-description">An illustrative cutaway sphere built from teal voxels. Empty space needs no individual voxel storage.</desc><g id="voxel-cells"></g></svg><div class="scene-label"><span></span>8 × 8 × 8 voxel leaves</div></div>
+        <div class="volume-controls" role="group" aria-label="Illustration view"><button type="button" data-view="cutaway" aria-pressed="true">Cutaway</button><button type="button" data-view="surface" aria-pressed="false">Surface</button><button type="button" data-view="bounds" aria-pressed="false">Bounds</button></div>
+        <figcaption><span><i class="legend-dot"></i>Stored detail</span><span><i class="legend-dot amber"></i>Cut surface</span><span class="caption-note">Conceptual view · not a memory profiler</span></figcaption>
+      </figure>
+    </section>
+
+    <div class="identity-strip"><p class="product-name">Tedd.<span>OpenVDB</span></p><p>Independent managed port.<br><strong>Built for sparse 3D data.</strong></p><a href="https://github.com/tedd/Tedd.OpenVDB/blob/main/docs/PORT_STATUS.md">Preview scope &amp; compatibility <span aria-hidden="true">↗</span></a></div>
+
+    <section class="section structure-section" id="structure">
+      <div class="section-heading"><p class="eyebrow">01 / The structure</p><h2>A large world.<br>A shallow tree.</h2><p>Dense grids pay for every voxel. A sparse tree represents empty and uniform regions compactly, allocating individual values where detail is needed.</p></div>
+      <div class="tree-panel">
+        <div class="panel-top"><span class="micro">STANDARD TREE4 LAYOUT</span><code>5 / 4 / 3</code></div>
+        <div class="tree-level"><span class="level-number">03</span><div><h3>Root</h3><p>Sparse entries across signed 32-bit coordinates.</p></div><div class="node-symbol root-symbol" aria-hidden="true">⌘</div></div>
+        <div class="tree-level"><span class="level-number">02</span><div><h3>Upper internal</h3><p>32³ child or tile slots · 4096³ voxel coverage.</p></div><div class="node-symbol grid-symbol" aria-hidden="true"></div></div>
+        <div class="tree-level"><span class="level-number">01</span><div><h3>Lower internal</h3><p>16³ child or tile slots · 128³ voxel coverage.</p></div><div class="node-symbol grid-symbol small-grid" aria-hidden="true"></div></div>
+        <div class="tree-level"><span class="level-number">00</span><div><h3>Leaf</h3><p>8³ values · 512 voxels with separate activity bits.</p></div><div class="node-symbol leaf-symbol" aria-hidden="true"></div></div>
+        <div class="tree-note"><span class="tile-key" aria-hidden="true"></span><p>A uniform region can be one tile. An aligned 4096³ tile represents <strong>68.7 billion logical voxels</strong> with one value.</p></div>
+      </div>
+    </section>
+
+    <section class="section capabilities-section" id="capabilities">
+      <div class="section-heading wide"><p class="eyebrow">02 / Capabilities</p><h2>From voxel storage<br>to volume workflows.</h2><p>Use the storage layer directly, or work with grids, transforms, and the supported volume-processing tools.</p></div>
+      <div class="feature-grid">
+        <article class="feature-card"><span class="feature-index">01 / STORAGE</span><h3>Sparse by construction.</h3><p>Tree4 storage, uniform tiles, cached accessors, pruning, topology operations, and dense transfers. Values and activity are independent.</p><a href="https://github.com/tedd/Tedd.OpenVDB/blob/main/docs/PORT_STATUS.md">Explore tree storage ↗</a></article>
+        <article class="feature-card"><span class="feature-index">02 / VOLUMES</span><h3>Work with the field.</h3><p>Level sets, CSG, filtering, sampling, resampling, differential operators, and mesh conversion within the documented port scope.</p><a href="https://github.com/tedd/Tedd.OpenVDB/blob/main/docs/UPSTREAM_INVENTORY.md">Browse implemented tools ↗</a></article>
+        <article class="feature-card"><span class="feature-index">03 / INTERCHANGE</span><h3>Bring your VDB data.</h3><p>Read and write supported format-225 archives, with metadata, transforms, heterogeneous grids, and managed compression codecs.</p><a href="https://github.com/tedd/Tedd.OpenVDB/blob/main/docs/PORT_STATUS.md">Check archive compatibility ↗</a></article>
+      </div>
+    </section>
+
+    <section class="section quickstart-section" id="quickstart">
+      <div class="section-heading"><p class="eyebrow">03 / Quick start</p><h2>One tree.<br>Room to build.</h2><p>Start with a background value. Fill a region, reuse an accessor, and edit individual voxels.</p><ol class="usage-list"><li><span>01</span><div><strong>Create a sparse region</strong><p>Uniform fills can remain compact tiles.</p></div></li><li><span>02</span><div><strong>Access nearby voxels</strong><p>Reuse the accessor to cache tree lookups.</p></div></li><li><span>03</span><div><strong>Keep activity explicit</strong><p>Turn a voxel off without clearing its value.</p></div></li></ol><a class="text-link" href="https://github.com/tedd/Tedd.OpenVDB#quick-start">Read the repository guide ↗</a></div>
+      <div class="code-window"><div class="code-bar"><span>Program.cs</span><span>C# / .NET 11</span></div><pre><code><span class="kw">using</span> Tedd.OpenVDB.Math;
+<span class="kw">using</span> Tedd.OpenVDB.Tree;
+
+<span class="comment">// Empty space returns the background value.</span>
+<span class="kw">var</span> tree = <span class="kw">new</span> <span class="type">VdbTree</span>&lt;<span class="kw">ushort</span>&gt;(background: <span class="num">0</span>);
+<span class="kw">var</span> region = <span class="kw">new</span> <span class="type">CoordBBox</span>(
+    <span class="kw">new</span>(-<span class="num">32</span>, -<span class="num">32</span>, -<span class="num">32</span>), <span class="kw">new</span>(-<span class="num">1</span>, -<span class="num">1</span>, -<span class="num">1</span>));
+
+tree.Fill(region, <span class="num">1</span>);
+<span class="kw">var</span> accessor = tree.GetAccessor();
+
+<span class="comment">// Edit one voxel inside the region.</span>
+accessor.SetValueOn(<span class="kw">new</span>(-<span class="num">16</span>, -<span class="num">16</span>, -<span class="num">16</span>), <span class="num">2</span>);
+
+<span class="comment">// Deactivate it; the value is still 2.</span>
+accessor.SetValueOff(<span class="kw">new</span>(-<span class="num">16</span>, -<span class="num">16</span>, -<span class="num">16</span>));
+tree.Prune();</code></pre><div class="code-foot"><span class="status-dot"></span>Managed storage · no native OpenVDB installation</div></div>
+    </section>
+
+    <section class="compatibility section"><p class="eyebrow">Choose with the scope in view</p><div><h2>A managed port.<br>An explicit compatibility boundary.</h2><p>Tedd.OpenVDB is a preview implementation of core OpenVDB facilities, not a complete 1:1 replacement. Check supported grid types, archive formats, tool families, and concurrency rules before integrating it.</p><a class="button secondary" href="https://github.com/tedd/Tedd.OpenVDB/blob/main/docs/PORT_STATUS.md">Read port status <span aria-hidden="true">↗</span></a></div></section>
+
+    <section class="closing"><div class="hero-grid" aria-hidden="true"></div><p class="eyebrow">Build on open foundations</p><h2>Your volumes.<br><span>Managed.</span></h2><div class="hero-actions"><a class="button primary" href="https://github.com/tedd/Tedd.OpenVDB">Explore the source ↗</a><a class="button secondary" href="https://www.nuget.org/packages/Tedd.OpenVDB">View on NuGet</a></div></section>
+  </main>
+  <footer><div><a class="footer-brand" href="#top">Tedd.<span>OpenVDB</span></a><p>Independent C# port of core OpenVDB facilities.</p></div><div class="footer-links"><a href="https://github.com/tedd/Tedd.OpenVDB/blob/main/LICENSE">Apache-2.0</a><a href="https://github.com/tedd/Tedd.OpenVDB/blob/main/THIRD_PARTY_NOTICES.md">Third-party notices</a><a href="https://www.openvdb.org/">Upstream OpenVDB ↗</a></div><p class="attribution">OpenVDB was developed at DreamWorks Animation. This project is not affiliated with or endorsed by OpenVDB or its contributors.</p></footer>
+  <span id="copy-status" class="sr-only" role="status" aria-live="polite"></span>
+</body>
+</html>
