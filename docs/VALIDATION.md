@@ -1,12 +1,28 @@
 # Validation record
 
-Date: 2026-09-04. Platform: Windows x64. SDK: 11.0.100-preview.7.26381.103.
+Latest local validation: 2026-10-16. Platform: Windows x64. SDK: 11.0.100-rc.2.26504.105.
 Upstream OpenVDB: f42248c35a9f7bb30641a8a74d9075ce7d1ddcaf (13.0.1).
 Original wrapper HEAD: f05f82318811b97e1591395df10979c6cacb5886.
 
 The managed replacement is on main. Commit 5eb1137 replaced the wrappers; development continues directly on main. Original Git history remains available.
 
+## Integrated checkpoint: 0.1.0-preview.8
+
+| Validation | Result |
+|---|---|
+| Release solution build | 0 warnings; 0 errors |
+| Windows x64 Release | 21,008 passed; 0 failed; 0 skipped |
+| VoxelBlocks sample | Executed successfully |
+| NuGet package and symbols | Version 0.1.0-preview.8 generated and inspected |
+| Package contents | Assembly, README, license, notices and symbols verified; no `.pending` files |
+
+The complete local test command took approximately 75 seconds. This is a correctness-validation duration, not a performance benchmark. Windows/Linux Release checks with hardware intrinsics enabled and disabled gate package publication in the [deployment workflow](https://github.com/tedd/Tedd.OpenVDB/actions/workflows/nuget-publish.yml).
+
+This checkpoint retains the existing managed cache implementation and adds cache/buffer lifetime regression coverage. Public-API inventory and experimental benchmark evidence are retained in `Research/`; the exhaustive three-way timing comparison is incomplete.
+
 ## Integrated checkpoint: 0.1.0-preview.7
+
+Measured 2026-09-04 with SDK 11.0.100-preview.7.26381.103.
 
 | Validation | Result |
 |---|---|
@@ -34,9 +50,8 @@ profiles and 45 ray-tracer profiles. Every generated managed paged stream was re
 native OpenVDB. The AOT sample additionally exercises PointDataGrid, paged storage and
 level-set preview rendering.
 
-The remaining PointStatistics and point-mutation implementations are preserved as
-untracked .pending work after an agent usage-limit interruption. They are not part of
-this checkpoint or its compatibility claims.
+PointStatistics and the remaining bulk point-mutation tools are outside this
+checkpoint's supported surface and compatibility claims.
 ## Integrated checkpoint: 0.1.0-preview.6
 
 | Validation | Result |

@@ -6,6 +6,12 @@
 
 Tedd.OpenVDB is an independent, managed C# port of core [OpenVDB](https://www.openvdb.org/) storage, archive, math, and volume-processing facilities for .NET 11. It targets sparse voxel-world and volumetric-data workloads without requiring a native runtime.
 
+[Documentation](https://tedd.github.io/Tedd.OpenVDB/) · [NuGet package](https://www.nuget.org/packages/Tedd.OpenVDB)
+
+~~~powershell
+dotnet add package Tedd.OpenVDB --version 0.1.0-preview.8
+~~~
+
 > [!WARNING]
 > This is a preview port, not a complete 1:1 replacement for upstream OpenVDB. Its supported surface and compatibility limits are documented in [Port status](docs/PORT_STATUS.md).
 
@@ -66,7 +72,7 @@ Treat an archive round trip as an explicit compatibility boundary: validate file
 
 ## Validation
 
-The 0.1.0-preview.7 checkpoint passed 20,990 tests in Release, Debug, and scalar-intrinsics-disabled configurations. The NativeAOT voxel sample published and executed on Windows x64, and the native fixture manifest verified 417 files totaling 195,864,993 bytes. These are correctness gates, not performance claims. See [Validation](docs/VALIDATION.md) for commands, timings, fixture provenance, and scope.
+The managed validation suite covers native differential fixtures, cache invalidation, buffer swapping, compacting GC, archive interoperability, and scalar/SIMD paths. The publishing workflow runs Release tests and the voxel sample on Windows and Linux with hardware intrinsics enabled and disabled. See [Validation](docs/VALIDATION.md) for measured results, fixture provenance, and scope, and [Performance](docs/PERFORMANCE.md) for scoped timing measurements.
 
 ## Documentation
 

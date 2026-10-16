@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <PackageId>Tedd.OpenVDB</PackageId>
-    <Version>0.1.0-preview.7</Version>
+    <Version>0.1.0-preview.8</Version>
     <Authors>tedd</Authors>
     <Company>Tedd Hansen</Company>
     <Description>Managed .NET 11 port of OpenVDB 13.0.1 sparse voxel and volume data structures.</Description>
     <PackageTags>openvdb;vdb;voxel;sparse;volume;3d;managed</PackageTags>
-    <PackageProjectUrl>https://github.com/tedd/Tedd.OpenVDB</PackageProjectUrl>
+    <PackageProjectUrl>https://tedd.github.io/Tedd.OpenVDB/</PackageProjectUrl>
     <PackageLicenseExpression>Apache-2.0 AND BSD-3-Clause AND BSD-2-Clause AND MIT AND (Apache-2.0 WITH LLVM-exception)</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/tedd/Tedd.OpenVDB</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
